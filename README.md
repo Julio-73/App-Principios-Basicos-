@@ -83,9 +83,10 @@ Comunidad de desarrolladores cristianos - Por la inspiración y recursos compart
 Dios - Por la sabiduría y guía en este proyecto
 
 📞 Contacto
-Correo : julioquispe.dev@gmail.com
-Linkedim: linkedin.com/in/julio-cesar-quispe-garrido
-Demo: https://julio-73.github.io/App-Principios-Basicos-/
+
+- Correo : julioquispe.dev@gmail.com
+- Linkedim: linkedin.com/in/julio-cesar-quispe-garrido
+- Demo: https://julio-73.github.io/App-Principios-Basicos-/
 
 
 Hecho con ❤️ para la gloria de Dios
