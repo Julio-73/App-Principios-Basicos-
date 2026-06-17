@@ -1394,9 +1394,18 @@ body.light .nbtn{background: var(--bg2);}
     height: 3px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 1.5px;
+    overflow: hidden;
   }
   body.light .sb-prog-bar {
     background: rgba(0, 0, 0, 0.05);
+  }
+  .sb-prog-fill {
+    background: linear-gradient(90deg, var(--gold) 0%, #FFEFA6 100%) !important;
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.5) !important;
+  }
+  body.light .sb-prog-fill {
+    background: linear-gradient(90deg, var(--gold) 0%, #B8941F 100%) !important;
+    box-shadow: 0 0 6px rgba(139, 105, 20, 0.3) !important;
   }
 
   /* Sidebar List Items - Premium styling */
@@ -1416,9 +1425,25 @@ body.light .nbtn{background: var(--bg2);}
     display: none !important; /* disable default line */
   }
   
+  /* Glow Pulse animation for active lesson */
+  @keyframes goldPulse {
+    0% {
+      box-shadow: 0 0 4px rgba(212, 175, 55, 0.3);
+      opacity: 0.8;
+    }
+    50% {
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.75);
+      opacity: 1;
+    }
+    100% {
+      box-shadow: 0 0 4px rgba(212, 175, 55, 0.3);
+      opacity: 0.8;
+    }
+  }
+
   /* Gold vertical line accent on active item */
   .sb-item.active {
-    background: linear-gradient(90deg, rgba(212, 175, 55, 0.06) 0%, transparent 100%) !important;
+    background: linear-gradient(90deg, rgba(212, 175, 55, 0.05) 0%, transparent 100%) !important;
     position: relative;
   }
   .sb-item.active::before {
@@ -1431,7 +1456,7 @@ body.light .nbtn{background: var(--bg2);}
     background: var(--gold);
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
-    box-shadow: 0 0 10px var(--gold);
+    animation: goldPulse 3s infinite ease-in-out;
   }
   
   .sb-item .sb-text {
@@ -1453,6 +1478,14 @@ body.light .nbtn{background: var(--bg2);}
     color: var(--muted);
     display: flex;
     align-items: center;
+    width: 100%;
+  }
+  .sb-desc-txt {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
   }
   .sb-desc-ico {
     background: rgba(255, 255, 255, 0.04);
@@ -2121,11 +2154,14 @@ function sSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 var S={cur:-1,done:sGet('ici_done',[])};
 /* ── BUILD UI ───────────────────────────────────────────── */
 function buildSB(){
-document.getElementById('sbList').innerHTML=PP.map(function(p,i){
+var homeActive = S.cur===-1;
+var html = '<div class="sb-item'+(homeActive?' active':'')+'" id="si_home" onclick="go(-1)"><div class="sb-num">✦</div><div class="sb-text"><div class="sb-title">Inicio</div><div class="sb-desc"><span class="sb-desc-ico">📖</span><span class="sb-desc-txt">Portada y presentación del curso</span></div></div></div>';
+html += PP.map(function(p,i){
 var done=S.done.indexOf(p.id)!==-1;
 var formattedId=p.id<10?'0'+p.id:p.id;
-return '<div class="sb-item'+(done?' done':'')+(S.cur===i?' active':'')+'" id="si'+i+'" onclick="go('+i+')"><div class="sb-num">'+(done?'✓':formattedId)+'</div><div class="sb-text"><div class="sb-title">'+p.titulo+'</div><div class="sb-desc"><span class="sb-desc-ico">'+p.icono+'</span>'+p.desc.substring(0,40)+'...</div></div></div>';
+return '<div class="sb-item'+(done?' done':'')+(S.cur===i?' active':'')+'" id="si'+i+'" onclick="go('+i+')"><div class="sb-num">'+(done?'✓':formattedId)+'</div><div class="sb-text"><div class="sb-title">'+p.titulo+'</div><div class="sb-desc"><span class="sb-desc-ico">'+p.icono+'</span><span class="sb-desc-txt">'+p.desc+'</span></div></div></div>';
 }).join('');
+document.getElementById('sbList').innerHTML = html;
 }
 function buildW(){
 document.getElementById('wGrid').innerHTML=PP.map(function(p,i){
@@ -2150,13 +2186,25 @@ function go(idx){
 document.getElementById('welcome').style.display='none';
 document.querySelectorAll('.pview').forEach(function(v){v.classList.remove('active');});
 document.querySelectorAll('.sb-item').forEach(function(s){s.classList.remove('active');});
-if(idx===-1){document.getElementById('welcome').style.display='flex';S.cur=-1;return;}
+if(idx===-1){
+document.getElementById('welcome').style.display='flex';
+S.cur=-1;
+var siHome=document.getElementById('si_home');
+if(siHome)siHome.classList.add('active');
+} else {
 var v=document.getElementById('pv'+idx);
 if(v){v.classList.add('active');S.cur=idx;setTimeout(initReveal,100);}
 var si=document.getElementById('si'+idx);
 if(si)si.classList.add('active');
+}
 window.scrollTo(0,0);
-if(window.innerWidth<768){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('active');document.querySelector('.menubtn').classList.remove('active');}
+if(window.innerWidth<768){
+document.getElementById('sidebar').classList.remove('open');
+document.getElementById('overlay').classList.remove('active');
+var menubtn=document.querySelector('.menubtn');
+if(menubtn)menubtn.classList.remove('active');
+document.body.style.overflow = '';
+}
 }
 function markDone(id,idx){
 if(S.done.indexOf(id)===-1){S.done.push(id);sSet('ici_done',S.done);}
@@ -2622,6 +2670,8 @@ document.getElementById('searchBar').style.display = 'none';
 </body>
 
 </html>
+
+
 
 
 
