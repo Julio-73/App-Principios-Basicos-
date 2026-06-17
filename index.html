@@ -1601,6 +1601,88 @@ body.light .w-card:hover {
   background: var(--bg2);
   box-shadow: var(--shadow-sm), var(--shadow-gold);
 }
+
+/* ── MICRO-ANIMACIONES DE DESPLAZAMIENTO (FLECHAS) ── */
+.arrow-l, .arrow-r {
+  display: inline-block;
+  transition: transform var(--t2) !important;
+}
+.nbtn:hover .arrow-l {
+  transform: translateX(-4px);
+}
+.nbtn:hover .arrow-r {
+  transform: translateX(4px);
+}
+
+/* ── SUAVIZADO Y GLOW DE BARRAS DE PROGRESO ── */
+.hprog-fill, .sb-prog-fill {
+  transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.45);
+  position: relative;
+}
+body.light .hprog-fill, body.light .sb-prog-fill {
+  box-shadow: 0 0 6px rgba(139, 105, 20, 0.25);
+}
+
+/* ── GLASSMORPHISM EN PANEL DE BÚSQUEDA ── */
+#searchBar {
+  border-bottom: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-md) !important;
+  background: rgba(18, 18, 20, 0.95) !important;
+  backdrop-filter: blur(25px) !important;
+  -webkit-backdrop-filter: blur(25px) !important;
+}
+body.light #searchBar {
+  background: rgba(247, 245, 240, 0.95) !important;
+}
+.search-result-item {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: all var(--t2);
+  background: var(--bg2);
+  border-left: 3px solid transparent;
+}
+.search-result-item:hover {
+  background: var(--bg3);
+  border-left-color: var(--gold);
+  padding-left: 24px;
+}
+
+/* ── DISEÑO DE MARCO CLÁSICO EDITORIAL PARA MODAL ── */
+.modal-content {
+  background: var(--bg2);
+  border: 1px solid var(--gold) !important;
+  outline: 4px solid var(--bg2);
+  border-radius: var(--radius-card) !important;
+  max-width: 600px;
+  width: 100%;
+  max-height: 85vh;
+  box-shadow: var(--shadow-lg), var(--shadow-gold) !important;
+  transform: scale(0.97);
+  transition: transform var(--t3);
+}
+body.light .modal-content {
+  border-color: var(--gold2) !important;
+  outline: 4px solid var(--bg2);
+}
+.modal-close {
+  transition: transform var(--t2), color var(--t2), border-color var(--t2) !important;
+}
+.modal-close:hover {
+  transform: rotate(90deg);
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+/* ── HOVER DE EMBLEMA DE VIDEO ── */
+.video-wrap {
+  transition: border-color var(--t2), box-shadow var(--t2);
+}
+.video-wrap:hover {
+  border-color: var(--gold);
+  box-shadow: var(--shadow-gold);
+}
 </style>
 
 
@@ -1638,7 +1720,7 @@ body.light .w-card:hover {
 </div>
 
 <!-- ✅ BARRA DE BÚSQUEDA (AGREGAR ESTO): -->
-<div id="searchBar" style="display:none;position:fixed;top:var(--hh);left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 20px;z-index:99;box-shadow:var(--shadow-md);">
+<div id="searchBar" style="display:none;position:fixed;top:var(--hh);left:0;right:0;padding:16px 20px;z-index:99;">
   <div style="display:flex;align-items:center;gap:12px;">
     <span style="font-size:18px;">🔍</span>
     <input type="text" id="searchInput" placeholder="Buscar versículo, principio, tema o palabra..." style="flex:1;padding:12px 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--cream);font-size:16px;outline:none;" onkeyup="searchContent()">
@@ -1850,7 +1932,7 @@ function buildPP(){
 document.getElementById('pCont').innerHTML=PP.map(function(p,i){
 var vid=p.vid?'<div class="video-outer"><div class="video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/'+p.vid+'?rel=0" title="Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div><a class="vid-ext-btn" href="https://www.youtube.com/watch?v='+p.vid+'" target="_blank">▶ Ver en YouTube</a></div>':'<div class="video-outer"><div class="video-wrap"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:20px;"><div><div style="font-size:42px;opacity:.3;margin-bottom:10px;">▶</div><div style="font-size:13px;">Video Tutorial próximamente</div></div></div></div></div>';
 var done=S.done.indexOf(p.id)!==-1;
-return '<div class="pview" id="pv'+i+'"><div class="hero"><div class="hero-glow" style="background:radial-gradient(ellipse at 72% 50%,'+p.color+'18 0%,transparent 65%);"></div><div class="hero-grad"></div><div class="hero-n">✦ Principio '+p.id+' de '+PP.length+'</div><span class="hero-ico">'+p.icono+'</span><h1 class="hero-h">'+p.titulo+'</h1><p class="hero-d">'+p.desc+'</p><div class="hero-line" style="background:'+p.color+';"></div></div><div class="pbody">'+p.html+'<div class="slabel"><div class="slabel-ico">🎬</div><div class="slabel-txt">Video Tutorial</div><div class="sdiv"></div></div>'+vid+'</div><div class="navfoot"><button class="nbtn" onclick="go('+(i-1)+')"'+(i===0?' disabled':'')+'>← Anterior</button><div class="ncenter"><button class="cbtn'+(done?' done':'')+'" id="cb'+i+'" onclick="markDone('+p.id+','+i+')">'+(done?'✓ Completado':'Marcar completado')+'</button></div><button class="nbtn primary" onclick="'+(i<PP.length-1?'go('+(i+1)+')':'go(-1)')+'">'+(i<PP.length-1?'Siguiente →':'Inicio')+'</button></div></div>';
+return '<div class="pview" id="pv'+i+'"><div class="hero"><div class="hero-glow" style="background:radial-gradient(ellipse at 72% 50%,'+p.color+'18 0%,transparent 65%);"></div><div class="hero-grad"></div><div class="hero-n">✦ Principio '+p.id+' de '+PP.length+'</div><span class="hero-ico">'+p.icono+'</span><h1 class="hero-h">'+p.titulo+'</h1><p class="hero-d">'+p.desc+'</p><div class="hero-line" style="background:'+p.color+';"></div></div><div class="pbody">'+p.html+'<div class="slabel"><div class="slabel-ico">🎬</div><div class="slabel-txt">Video Tutorial</div><div class="sdiv"></div></div>'+vid+'</div><div class="navfoot"><button class="nbtn" onclick="go('+(i-1)+')"'+(i===0?' disabled':'')+'><span class="arrow-l">←</span> Anterior</button><div class="ncenter"><button class="cbtn'+(done?' done':'')+'" id="cb'+i+'" onclick="markDone('+p.id+','+i+')">'+(done?'✓ Completado':'Marcar completado')+'</button></div><button class="nbtn primary" onclick="'+(i<PP.length-1?'go('+(i+1)+')':'go(-1)')+'">'+(i<PP.length-1?'Siguiente <span class="arrow-r">→</span>':'Inicio')+'</button></div></div>';
 }).join('');
 }
 /* ── NAVIGATION ───────────────────────────────────────── */
