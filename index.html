@@ -586,10 +586,11 @@ main{
   background: var(--bg2);
   border: 1px solid var(--border);
   border-radius: 4px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
+  line-height: 1;
   flex-shrink: 0;
 }
 .slabel-txt{
@@ -738,6 +739,7 @@ main{
 
 .sc-pts{
   list-style: none;
+  list-style-type: none;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -750,13 +752,18 @@ main{
   font-size: 15px;
   color: var(--cream2);
   line-height: 1.7;
+  list-style: none;
+  list-style-type: none;
 }
 .sc-pts li::before{
-  content: '✦';
-  color: var(--muted);
-  font-size: 8px;
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background: var(--gold);
+  border-radius: 50%;
   flex-shrink: 0;
-  margin-top: 7px;
+  margin-top: 9px;
 }
 /* Preguntas de estudio con bloque estilizado */
 .sc-pts li.q{
@@ -771,12 +778,17 @@ main{
 }
 .sc-pts li.q::before{
   content: 'Pregunta:';
+  display: inline-block;
+  background: none;
+  width: auto;
+  height: auto;
   color: var(--gold);
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  margin-top: 3px;
+  margin-right: 8px;
+  margin-top: 0;
 }
 
 /* ── GLOSARIO Y DICCIONARIO BÍBLICO ── */
@@ -1443,15 +1455,16 @@ body.light .txt-gold-dark {
 .txt-highlight {
   color: var(--gold) !important;
   background: var(--gold-subtle);
-  padding: 2px 6px;
+  padding: 0 4px;
   border-radius: var(--radius-sm);
   font-weight: 700;
-  border: 1px solid rgba(212, 175, 55, 0.15);
+  display: inline-block;
+  vertical-align: baseline;
+  line-height: inherit;
 }
 body.light .txt-highlight {
   color: var(--gold2) !important;
   background: rgba(139, 105, 20, 0.05);
-  border-color: rgba(139, 105, 20, 0.15);
 }
 .txt-muted {
   color: var(--muted) !important;
