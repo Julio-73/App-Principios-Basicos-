@@ -21,292 +21,1573 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:hidden;}
 :root{
---gold:#D4AF37;--gold2:#F4E5C2;--gold3:#B8941F;
---gold-glow:rgba(212,175,55,0.25);--gold-subtle:rgba(212,175,55,0.08);
---bg:#0D0D0F;--bg2:#141417;--bg3:#1A1A1E;--bg4:#212126;
---cream:#F5F5F7;--cream2:#C8C4B8;--muted:#7A7570;
---border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
---sw:300px;--hh:68px;--radius:16px;--radius-sm:10px;
---shadow-sm:0 2px 8px rgba(0,0,0,0.3);--shadow-md:0 4px 20px rgba(0,0,0,0.4);
---shadow-lg:0 8px 40px rgba(0,0,0,0.5);--shadow-gold:0 0 20px rgba(212,175,55,0.15);
---t1:0.2s ease;--t2:0.3s ease;--t3:0.4s cubic-bezier(.4,0,.2,1);
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Lato', system-ui, -apple-system, sans-serif;
+  
+  --gold: #D4AF37;
+  --gold2: #F4E5C2;
+  --gold3: #B8941F;
+  --gold-glow: rgba(212,175,55,0.15);
+  --gold-subtle: rgba(212,175,55,0.03);
+  
+  /* Paleta Editorial Profunda (Modo Oscuro) */
+  --bg: #0B0B0C;
+  --bg2: #121214;
+  --bg3: #18181B;
+  --bg4: #202024;
+  --cream: #F5F5F3;
+  --cream2: #C5C4BE;
+  --muted: #6E6D68;
+  
+  --border: rgba(212, 175, 55, 0.08);
+  --border2: rgba(212, 175, 55, 0.16);
+  --radius-card: 4px;
+  --radius-sm: 4px;
+  
+  --shadow-sm: 0 2px 12px rgba(0,0,0,0.5);
+  --shadow-md: 0 8px 30px rgba(0,0,0,0.6);
+  --shadow-lg: 0 12px 50px rgba(0,0,0,0.7);
+  --shadow-gold: 0 0 15px rgba(212,175,55,0.08);
+  --t1: 0.2s cubic-bezier(.25,.8,.25,1);
+  --t2: 0.3s cubic-bezier(.25,.8,.25,1);
+  --t3: 0.4s cubic-bezier(.25,.8,.25,1);
+  --sw: 300px;
+  --hh: 68px;
 }
+
 body{
-font-family:'Lato',system-ui,Arial,sans-serif;background:var(--bg);color:var(--cream);
-min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;
-font-size:18px;line-height:1.7;transition:background var(--t3),color var(--t3);
--webkit-tap-highlight-color: transparent;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  font-size: 17px;
+  line-height: 1.85;
+  transition: background var(--t3), color var(--t3);
+  -webkit-tap-highlight-color: transparent;
+  letter-spacing: 0.01em;
 }
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-@keyframes scaleIn{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.98);}to{opacity:1;transform:scale(1);}}
 @keyframes shimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
-@keyframes pulse{0%,100%{opacity:0.6;transform:scale(1);}50%{opacity:1;transform:scale(1.05);}}
-.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease, transform 0.6s cubic-bezier(0.4,0,0.2,1);}
+@keyframes pulse{0%,100%{opacity:0.5;transform:scale(1);}50%{opacity:0.8;transform:scale(1.03);}}
+.reveal{opacity:0;transform:translateY(15px);transition:opacity 0.7s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);}
 .reveal.visible{opacity:1;transform:translateY(0);}
-header{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--hh);background:rgba(13,13,15,0.98);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;}
-.hbrand{display:flex;align-items:center;gap:12px;}
-.hcross{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--gold);filter:drop-shadow(0 0 8px var(--gold-glow));transition:transform var(--t2);animation:pulse 3s ease-in-out infinite;cursor:pointer;}
-.hcross:hover{transform:scale(1.15) rotate(5deg);}
-.htitles{display:flex;flex-direction:column;gap:1px;}
-.hsub{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;font-weight:700;}
-.htitle{font-family:'Playfair Display',Georgia,serif;font-size:16px;color:var(--gold);font-weight:600;}
-.hprog{display:flex;align-items:center;gap:10px;}
-.hprog-lbl{font-size:11px;color:var(--muted);letter-spacing:1px;font-weight:600;}
-.hprog-bar{width:100px;height:4px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;}
-.hprog-fill{height:100%;background:linear-gradient(90deg,var(--gold) 0%,var(--gold2) 100%);transition:width .5s ease;width:0%;position:relative;}
-.hprog-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);background-size:200% 100%;animation:shimmer 2s infinite;}
-.menubtn{display:none;background:none;border:none;cursor:pointer;color:var(--cream);padding:8px;min-width:44px;min-height:44px;border-radius:8px;touch-action: manipulation;}
-.menubtn:hover{background:rgba(255,255,255,0.07);}
-.menubtn span{display:block;width:20px;height:2px;background:var(--cream);border-radius:2px;transition:all var(--t2);margin:4px auto;}
-.menubtn.active span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+
+/* ── HEADER EDITORIAL ── */
+header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--hh);
+  background: rgba(11, 11, 12, 0.94);
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+.hbrand{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.hcross{
+  font-family: var(--font-serif);
+  font-size: 24px;
+  color: var(--gold);
+  filter: drop-shadow(0 0 6px var(--gold-glow));
+  transition: transform var(--t2), color var(--t2);
+  cursor: pointer;
+  user-select: none;
+}
+.hcross:hover{
+  transform: scale(1.1);
+  color: var(--gold2);
+}
+.htitles{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hsub{
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.htitle{
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.hprog{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hprog-lbl{
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.hprog-bar{
+  width: 90px;
+  height: 2px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+.hprog-fill{
+  height: 100%;
+  background: var(--gold);
+  transition: width .5s ease;
+  width: 0%;
+  position: relative;
+}
+.hprog-fill::after{
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+.menubtn{
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--cream);
+  padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  transition: opacity var(--t1);
+}
+.menubtn:hover{opacity: 0.8;}
+.menubtn span{
+  display: block;
+  width: 18px;
+  height: 1px;
+  background: var(--cream);
+  transition: all var(--t2);
+  margin: 4px auto;
+}
+.menubtn.active span:nth-child(1){transform:translateY(5px) rotate(45deg);}
 .menubtn.active span:nth-child(2){opacity:0;}
-.menubtn.active span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
-
-
+.menubtn.active span:nth-child(3){transform:translateY(-5px) rotate(-45deg);}
 
 #themeBtn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  border:1px solid var(--border2);
-  background:rgba(255,255,255,0.1);
-  cursor:pointer;
-  font-size:18px;
-  transition:all var(--t2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all var(--t2);
   touch-action: manipulation;
-  color: #D4AF37;
+  color: var(--gold);
+}
+#themeBtn:hover{
+  background: var(--gold-subtle);
+  border-color: var(--gold);
+  transform: translateY(-1px) rotate(15deg);
+  box-shadow: var(--shadow-gold);
 }
 
+.layout{
+  display: flex;
+  margin-top: var(--hh);
+  min-height: calc(100vh - var(--hh));
+}
 
-#themeBtn:hover{background:var(--gold-subtle);border-color:var(--gold);transform:scale(1.1) rotate(20deg);box-shadow:var(--shadow-gold);}
-.layout{display:flex;margin-top:var(--hh);min-height:calc(100vh - var(--hh));}
-aside{width:var(--sw);background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:var(--hh);left:0;bottom:0;overflow-y:auto;transition:transform var(--t3);z-index:50;box-shadow:2px 0 20px rgba(0,0,0,0.3);-webkit-overflow-scrolling: touch;}
-aside::-webkit-scrollbar{width:3px;}
-aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-.sb-top{padding:20px 18px 14px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--bg3) 0%,transparent 100%);}
-.sb-heading{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:10px;}
-.sb-prog-wrap{display:flex;align-items:center;gap:10px;}
-.sb-prog-bar{flex:1;height:3px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;}
-.sb-prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .5s ease;width:0%;}
-.sb-prog-pct{font-size:11px;color:var(--gold);font-weight:700;min-width:32px;text-align:right;}
-.sb-list{padding:8px 0 20px;}
-.sb-item{display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer;border-left:3px solid transparent;transition:all var(--t2);min-height:52px;touch-action: manipulation;}
-.sb-item:hover{background:rgba(255,255,255,0.04);}
-.sb-item.active{background:rgba(212,175,55,0.08);border-left-color:var(--gold);}
-.sb-num{width:28px;height:28px;border-radius:50%;background:var(--bg4);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);font-weight:700;flex-shrink:0;transition:all var(--t2);}
-.sb-item.active .sb-num,.sb-item.done .sb-num{background:rgba(212,175,55,0.15);border-color:var(--gold);color:var(--gold);box-shadow:0 0 8px var(--gold-glow);}
-.sb-text{flex:1;min-width:0;}
-.sb-title{font-size:13px;font-weight:700;color:var(--cream2);line-height:1.3;}
-.sb-item.active .sb-title{color:var(--gold);}
-.sb-desc{font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-main{margin-left:var(--sw);flex:1;min-height:calc(100vh - var(--hh));}
-.welcome{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - var(--hh));padding:48px 24px;text-align:center;background:radial-gradient(ellipse at 50% 30%,rgba(212,175,55,0.04) 0%,transparent 60%);position:relative;overflow:hidden;}
-.w-inner{max-width:640px;z-index:1;}
-.w-cross{font-size:72px;display:block;margin-bottom:24px;filter:drop-shadow(0 0 30px rgba(212,175,55,.5));animation:scaleIn 0.8s ease forwards;}
-.w-church{font-size:10px;letter-spacing:5px;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:14px;animation:fadeUp 0.6s ease forwards;opacity:0;animation-delay:0.1s;}
-.w-h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(34px,5vw,56px);line-height:1.1;color:var(--cream);margin-bottom:14px;font-weight:700;animation:fadeUp 0.6s ease forwards;opacity:0;animation-delay:0.2s;}
-.w-h1 em{color:var(--gold);font-style:italic;background:linear-gradient(135deg,var(--gold) 0%,var(--gold2) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
-.w-sub{font-size:18px;color:var(--cream2);line-height:1.7;margin-bottom:40px;animation:fadeUp 0.6s ease forwards;opacity:0;animation-delay:0.3s;}
-.w-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:40px;text-align:left;}
-.w-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;cursor:pointer;transition:all var(--t2);box-shadow:var(--shadow-sm);animation:fadeUp 0.6s ease forwards;opacity:0;touch-action: manipulation;}
-.w-card:hover{border-color:var(--gold3);background:var(--bg3);transform:translateY(-4px);box-shadow:var(--shadow-md),var(--shadow-gold);}
-.w-cnum{font-size:10px;color:var(--gold);font-weight:700;letter-spacing:2px;margin-bottom:5px;}
-.w-ctitle{font-family:'Playfair Display',Georgia,serif;font-size:14px;color:var(--cream);line-height:1.3;font-weight:600;}
-.w-btn{background:linear-gradient(135deg,var(--gold) 0%,var(--gold3) 100%);color:#1a1000;border:none;cursor:pointer;padding:16px 44px;border-radius:50px;font-size:15px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;transition:all var(--t2);box-shadow:0 4px 20px rgba(212,175,55,.35);animation:fadeUp 0.6s ease forwards;opacity:0;animation-delay:0.5s;touch-action: manipulation;}
-.w-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 8px 32px rgba(212,175,55,.5);}
+/* ── SIDEBAR EDITORIAL ── */
+aside{
+  width: var(--sw);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top: var(--hh);
+  left: 0;
+  bottom: 0;
+  overflow-y: auto;
+  transition: transform var(--t3);
+  z-index: 50;
+  box-shadow: none;
+  -webkit-overflow-scrolling: touch;
+}
+aside::-webkit-scrollbar{width: 2px;}
+aside::-webkit-scrollbar-thumb{background: var(--border); border-radius: 1px;}
+.sb-top{
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+}
+.sb-heading{
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.sb-prog-wrap{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sb-prog-bar{
+  flex: 1;
+  height: 2px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+.sb-prog-fill{
+  height: 100%;
+  background: var(--gold);
+  transition: width .5s ease;
+  width: 0%;
+}
+.sb-prog-pct{
+  font-size: 12px;
+  color: var(--gold);
+  font-weight: 700;
+  min-width: 36px;
+  text-align: right;
+  font-family: var(--font-serif);
+}
+.sb-list{
+  padding: 8px 0;
+}
+.sb-item{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all var(--t1);
+  min-height: 52px;
+}
+.sb-item:hover{
+  background: var(--gold-subtle);
+  border-left-color: rgba(212, 175, 55, 0.3);
+}
+.sb-item.active{
+  background: rgba(212, 175, 55, 0.04);
+  border-left-color: var(--gold);
+}
+.sb-num{
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 700;
+  font-family: var(--font-serif);
+  flex-shrink: 0;
+  transition: all var(--t2);
+}
+.sb-item.active .sb-num, .sb-item.done .sb-num{
+  background: var(--gold-subtle);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.sb-text{
+  flex: 1;
+  min-width: 0;
+}
+.sb-title{
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--cream2);
+  line-height: 1.35;
+}
+.sb-item.active .sb-title{
+  color: var(--gold);
+}
+.sb-desc{
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+main{
+  margin-left: var(--sw);
+  flex: 1;
+  min-height: calc(100vh - var(--hh));
+}
+
+/* ── WELCOME & DASHBOARD ── */
+.welcome{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--hh));
+  padding: 80px 24px;
+  text-align: center;
+  background: radial-gradient(circle at 50% 20%, rgba(212,175,55,0.03) 0%, transparent 70%);
+  position: relative;
+  overflow: hidden;
+}
+.w-inner{
+  max-width: 800px;
+  z-index: 1;
+}
+.w-cross{
+  font-family: var(--font-serif);
+  font-size: 56px;
+  display: block;
+  margin-bottom: 20px;
+  color: var(--gold);
+  filter: drop-shadow(0 0 10px rgba(212,175,55,0.2));
+  animation: scaleIn 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+.w-church{
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 16px;
+  animation: fadeUp 0.6s ease forwards;
+  opacity: 0;
+  animation-delay: 0.1s;
+}
+.w-h1{
+  font-family: var(--font-serif);
+  font-size: clamp(38px, 6vw, 64px);
+  line-height: 1.15;
+  color: var(--cream);
+  margin-bottom: 16px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  animation: fadeUp 0.6s ease forwards;
+  opacity: 0;
+  animation-delay: 0.2s;
+}
+.w-h1 em{
+  color: var(--gold);
+  font-style: italic;
+  font-family: var(--font-serif);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.w-sub{
+  font-size: 18px;
+  color: var(--cream2);
+  line-height: 1.8;
+  max-width: 600px;
+  margin: 0 auto 48px;
+  animation: fadeUp 0.6s ease forwards;
+  opacity: 0;
+  animation-delay: 0.3s;
+}
+
+/* wGrid como Sumario Editorial */
+.w-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 48px;
+  text-align: left;
+}
+.w-card{
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  cursor: pointer;
+  transition: all var(--t2);
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.6s ease forwards;
+  opacity: 0;
+}
+.w-card:hover{
+  border-color: var(--gold);
+  background: var(--bg3);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+.w-cnum{
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--gold);
+  opacity: 0.14;
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  letter-spacing: normal;
+  transition: opacity var(--t1);
+}
+.w-card:hover .w-cnum{
+  opacity: 0.3;
+}
+.w-ctitle{
+  font-family: var(--font-serif);
+  font-size: 15.5px;
+  color: var(--cream);
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  padding-right: 32px;
+}
+
+.w-btn{
+  background: var(--bg2);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  cursor: pointer;
+  padding: 16px 44px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all var(--t2);
+  box-shadow: none;
+  animation: fadeUp 0.6s ease forwards;
+  opacity: 0;
+  animation-delay: 0.5s;
+}
+.w-btn:hover{
+  background: var(--gold);
+  color: #1a1000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px var(--gold-glow);
+}
+
 .pview{display:none;}
-.pview.active{display:block;animation:fadeUp .35s cubic-bezier(.4,0,.2,1);}
-.hero{position:relative;padding:70px 52px 60px;overflow:hidden;border-bottom:1px solid var(--border);width:100%;box-sizing:border-box;background:linear-gradient(135deg, var(--bg) 0%, rgba(13,13,15,0.92) 45%, var(--bg) 100%);}
-.hero-glow{position:absolute;inset:0;pointer-events:none;opacity:0.8;background:radial-gradient(ellipse at 72% 50%, currentColor 0%, transparent 65%);mix-blend-mode: soft-light;}
-.hero-grad{position:absolute;inset:0;pointer-events:none;background:linear-gradient(135deg, var(--bg) 0%, rgba(13,13,15,0.75) 50%, var(--bg) 100%);}
-.hero-n{position:relative;font-size:10px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
-.hero-n::before{content:'';width:28px;height:2px;background:linear-gradient(90deg,var(--gold),transparent);display:inline-block;}
-.hero-ico{position:relative;font-size:64px;margin-bottom:20px;display:block;filter:drop-shadow(0 8px 24px rgba(212,175,55,0.5));}
-.pview.active .hero-ico{animation:scaleIn .6s cubic-bezier(.34,1.56,.64,1);}
-.hero-h{position:relative;font-family:'Playfair Display',Georgia,serif;font-size:clamp(32px,5vw,52px);font-weight:700;color:var(--cream);line-height:1.15;margin-bottom:16px;letter-spacing:-0.5px;}
-.hero-d{position:relative;font-size:18px;color:var(--cream2);max-width:min(600px,100%);line-height:1.8;opacity:0.95;}
-.hero-line{position:absolute;bottom:0;left:52px;width:80px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--gold),transparent);}
-body.light .hero{background:linear-gradient(135deg, var(--bg) 0%, rgba(250,249,246,0.96) 40%, var(--bg) 100%);}
-body.light .hero-grad{background:linear-gradient(135deg, rgba(250,249,246,0.95) 0%, rgba(250,249,246,0.90) 50%, rgba(250,249,246,0.95) 100%);}
-body.light .hero-glow{background:radial-gradient(ellipse at 72% 50%, rgba(139,105,20,0.18) 0%, transparent 65%);opacity:1;}
-body.light .hero-h{color:#1A1A1A;text-shadow:0 2px 12px rgba(0,0,0,0.08);}
-body.light .hero-d{color:#3D3830;opacity:1;}
-body.light .hero-n{color:#8B6914;}
-body.light .hero-line{background:linear-gradient(90deg,#8B6914,transparent);}
-@media(max-width:768px){.hero{padding:35px 18px 36px;}.hero-ico{font-size:52px;}.hero-h{font-size:clamp(28px,8vw,42px);}.hero-line{left:18px;width:60px;}}
-.pbody{padding:48px 52px 64px;max-width:840px;box-sizing:border-box;}
-.slabel{display:flex;align-items:center;gap:14px;margin:40px 0 20px;}
+.pview.active{display:block;animation:fadeUp .4s cubic-bezier(0.25, 0.8, 0.25, 1);}
+
+/* ── HERO DE LECCIÓN EDITORIAL ── */
+.hero{
+  position: relative;
+  padding: 80px 52px 60px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  width: 100%;
+  box-sizing: border-box;
+  background: radial-gradient(ellipse at 75% 50%, rgba(212,175,55,0.02) 0%, transparent 60%);
+}
+.hero-glow{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.7;
+  mix-blend-mode: soft-light;
+}
+.hero-grad{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.hero-n{
+  position: relative;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-n::before{
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+  display: inline-block;
+}
+.hero-ico{
+  position: relative;
+  font-size: 56px;
+  margin-bottom: 16px;
+  display: block;
+  filter: drop-shadow(0 4px 15px rgba(212,175,55,0.2));
+}
+.pview.active .hero-ico{
+  animation: scaleIn .6s cubic-bezier(.25, 1, .25, 1);
+}
+.hero-h{
+  position: relative;
+  font-family: var(--font-serif);
+  font-size: clamp(34px, 5vw, 52px);
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.15;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+}
+.hero-d{
+  position: relative;
+  font-size: 18px;
+  color: var(--cream2);
+  max-width: 600px;
+  line-height: 1.8;
+  opacity: 0.95;
+}
+.hero-line{
+  position: absolute;
+  bottom: 0;
+  left: 52px;
+  width: 60px;
+  height: 2px;
+  background: var(--gold);
+}
+
+/* ── CUERPO DE CONTENIDO EDITORIAL ── */
+.pbody{
+  padding: 56px 52px 72px;
+  max-width: 840px;
+  box-sizing: border-box;
+}
+
+/* Separadores de Sección */
+.slabel{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 52px 0 24px;
+}
 .slabel:first-child{margin-top:0;}
-.slabel-ico{width:34px;height:34px;background:var(--gold-subtle);border:1px solid rgba(212,175,55,.3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
-.slabel-txt{font-size:9px;letter-spacing:3.5px;color:var(--gold);text-transform:uppercase;font-weight:700;white-space:nowrap;}
-.sdiv{flex:1;height:1px;background:linear-gradient(90deg,rgba(212,175,55,.3),transparent);}
-.purpose{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--radius);padding:24px 28px;margin-bottom:32px;box-shadow:var(--shadow-sm);transition:transform var(--t2);}
-.purpose:hover{transform:translateX(4px);}
-.purpose-lbl{font-size:10px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;font-weight:700;margin-bottom:10px;}
-.purpose-txt{font-family:'Lato',sans-serif;font-size:18px;color:var(--cream);line-height:1.75;font-style:normal;font-weight:400;} /* Sin cursiva */
-.facts-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;margin-bottom:24px;box-shadow:var(--shadow-sm);}
-.facts-box h4{font-family:'Playfair Display',Georgia,serif;font-size:17px;color:var(--gold);margin-bottom:14px;font-weight:600;}
-.facts-box ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
-.facts-box ul li{display:flex;gap:10px;align-items:flex-start;font-size:16px;color:var(--cream2);line-height:1.6;}
-.facts-box ul li::before{content:'✦';color:var(--gold);font-size:10px;flex-shrink:0;margin-top:6px;}
-.sc-list{display:flex;flex-direction:column;gap:18px;}
-.sc-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all var(--t2);box-shadow:var(--shadow-sm);}
-.sc-card:hover{border-color:rgba(212,175,55,.3);transform:translateY(-3px);box-shadow:var(--shadow-md);}
-.sc-refbar{background:linear-gradient(90deg,rgba(212,175,55,.1) 0%,rgba(212,175,55,.04) 100%);border-bottom:1px solid var(--border);padding:12px 22px;}
-.sc-ref{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all var(--t1);display:inline-block;touch-action: manipulation;}
-.sc-ref:hover{color:var(--gold2);text-decoration:underline;}
-.sc-body{padding:24px 26px;position:relative;}
-.sc-qm{position:absolute;top:4px;left:14px;font-family:'Playfair Display',Georgia,serif;font-size:90px;line-height:1;color:var(--gold);opacity:.04;pointer-events:none;font-style:italic;}
+.slabel-ico{
+  width: 32px;
+  height: 32px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.slabel-txt{
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  text-transform: uppercase;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.sdiv{
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
 
-/* ✅ CAMBIO CLAVE: Tipografía Lato, sin cursiva, con números de versículo visibles */
+/* Caja de Propósito (Llamado de lectura) */
+.purpose{
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius-card);
+  padding: 28px 32px;
+  margin-bottom: 40px;
+  box-shadow: none;
+  transition: transform var(--t1);
+}
+.purpose:hover{
+  transform: translateX(2px);
+}
+.purpose-lbl{
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.purpose-txt{
+  font-family: var(--font-sans);
+  font-size: 17px;
+  color: var(--cream);
+  line-height: 1.8;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.facts-box{
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 24px 28px;
+  margin-bottom: 32px;
+}
+.facts-box h4{
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: var(--gold);
+  margin-bottom: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.facts-box ul{
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.facts-box ul li{
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 15px;
+  color: var(--cream2);
+  line-height: 1.65;
+}
+.facts-box ul li::before{
+  content: '✦';
+  color: var(--gold);
+  font-size: 9px;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+/* ── TARJETAS DE ESCRITURA PREMIUM ── */
+.sc-list{
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.sc-card{
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  overflow: visible;
+  transition: none;
+  box-shadow: none;
+  padding-bottom: 32px;
+}
+.sc-card:hover{
+  border-color: var(--border2);
+}
+.sc-refbar{
+  background: transparent;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+  padding: 8px 0;
+  margin-bottom: 20px;
+}
+.sc-ref{
+  font-family: var(--font-serif);
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--t1);
+  display: inline-block;
+}
+.sc-ref:hover{
+  color: var(--gold2);
+  text-decoration: none;
+}
+.sc-body{
+  padding: 0;
+  position: relative;
+}
+.sc-qm{
+  display: none;
+}
+
+/* Versículo en Lato con Borde Lateral Dorado */
 .sc-verse {
-    font-family: 'Lato', sans-serif; /* Fuente clara y legible */
-    font-size: 18px;
-    color: var(--cream);
-    line-height: 1.8;
-    position: relative;
-    font-style: normal; /* SIN CURSIVA */
-    margin-bottom: 18px;
-    font-weight: 400;
+  font-family: var(--font-sans);
+  font-size: 17.5px;
+  color: var(--cream);
+  line-height: 1.85;
+  position: relative;
+  font-style: normal;
+  font-weight: 400;
+  padding-left: 18px;
+  border-left: 2px solid var(--gold);
+  margin-bottom: 22px;
 }
 
-.sc-pts{list-style:none;display:flex;flex-direction:column;gap:10px;}
-.sc-pts li{display:flex;gap:10px;align-items:flex-start;font-size:16px;color:var(--cream2);line-height:1.65;}
-.sc-pts li::before{content:'›';color:var(--gold);font-size:20px;line-height:1;flex-shrink:0;margin-top:1px;}
-.sc-pts li.q{color:var(--gold2);font-style:italic;}
-.sc-pts li.q::before{content:'P:';font-size:12px;font-weight:700;margin-top:3px;}
-.def-grid{display:flex;flex-direction:column;gap:0;}
-.def-item{padding:14px 0;border-bottom:1px solid var(--border);transition:background var(--t1);}
+.sc-pts{
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-left: 18px;
+}
+.sc-pts li{
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 15px;
+  color: var(--cream2);
+  line-height: 1.7;
+}
+.sc-pts li::before{
+  content: '✦';
+  color: var(--muted);
+  font-size: 8px;
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+/* Preguntas de estudio con bloque estilizado */
+.sc-pts li.q{
+  color: var(--gold2);
+  font-style: normal;
+  background: var(--gold-subtle);
+  border-left: 2px solid var(--gold3);
+  padding: 10px 16px;
+  border-radius: 4px;
+  margin-top: 6px;
+  width: 100%;
+}
+.sc-pts li.q::before{
+  content: 'Pregunta:';
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+/* ── GLOSARIO Y DICCIONARIO BÍBLICO ── */
+.def-grid{
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.def-item{
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  transition: background var(--t1);
+}
 .def-item:last-child{border-bottom:none;}
-.def-item:hover{background:rgba(212,175,55,.03);}
-.def-term{font-family:'Playfair Display',Georgia,serif;font-size:16px;color:var(--gold);font-weight:600;margin-bottom:4px;}
-.def-greek{font-size:12px;color:var(--gold3);letter-spacing:1px;font-style:italic;}
-.def-desc{font-size:16px;color:var(--cream2);line-height:1.6;}
-.article-body{font-family:'Lato',sans-serif;font-size:18px;color:var(--cream2);line-height:1.85;} /* Sin serifas para lectura médica */
-.article-body p{margin-bottom:18px;}
-.article-body strong{color:var(--cream);font-family:'Lato',Arial,sans-serif;font-size:15px;font-weight:700;}
-.challenge{background:linear-gradient(135deg,rgba(212,175,55,.1) 0%,rgba(212,175,55,.04) 100%);border:1px solid rgba(212,175,55,.3);border-radius:var(--radius);padding:26px 30px;box-shadow:0 0 24px rgba(212,175,55,.08);}
-.challenge-h{font-family:'Playfair Display',Georgia,serif;font-size:22px;color:var(--gold);margin-bottom:12px;font-weight:600;}
-.challenge-t{font-size:17px;color:var(--cream2);line-height:1.7;}
-.video-outer{display:flex;flex-direction:column;gap:12px;}
-.video-wrap{position:relative;padding-bottom:56.25%;height:0;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);background:var(--bg2);}
-.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
-.vid-ext-btn{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid rgba(212,175,55,.35);color:var(--gold);padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;text-decoration:none;transition:all var(--t2);align-self:flex-start;touch-action: manipulation;}
-.vid-ext-btn:hover{background:var(--gold-subtle);border-color:var(--gold);}
-.navfoot{display:flex;justify-content:space-between;align-items:center;padding:32px 52px 52px;border-top:1px solid var(--border);}
-.nbtn{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);color:var(--cream2);cursor:pointer;padding:14px 22px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;transition:all var(--t2);text-transform:uppercase;min-height:50px;touch-action: manipulation;}
-.nbtn:hover:not(:disabled){border-color:var(--gold3);color:var(--gold);background:var(--gold-subtle);transform:translateY(-2px);}
-.nbtn:disabled{opacity:.2;cursor:not-allowed;}
-.nbtn.primary{background:linear-gradient(135deg,var(--gold) 0%,var(--gold3) 100%);color:#1a1000;border-color:transparent;box-shadow:0 4px 16px rgba(212,175,55,.35);}
-.nbtn.primary:hover:not(:disabled){box-shadow:0 6px 24px rgba(212,175,55,.5);transform:translateY(-2px) scale(1.02);}
-.ncenter{display:flex;flex-direction:column;align-items:center;gap:6px;}
-.cbtn{background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.3);color:var(--gold);cursor:pointer;padding:10px 22px;border-radius:30px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;transition:all var(--t2);touch-action: manipulation;}
-.cbtn:hover{background:rgba(212,175,55,.15);transform:scale(1.05);}
-.cbtn.done{background:rgba(212,175,55,.18);color:var(--gold2);}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all var(--t3);}
-.modal-overlay.active{opacity:1;visibility:visible;}
-.modal-content{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);max-width:500px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-lg);transform:scale(0.9);transition:transform var(--t3);-webkit-overflow-scrolling: touch;}
-.modal-overlay.active .modal-content{transform:scale(1);}
-.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:1;}
-.modal-title{font-family:'Playfair Display',Georgia,serif;font-size:18px;color:var(--gold);font-weight:600;}
-.modal-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all var(--t1);touch-action: manipulation;}
-.modal-close:hover{background:rgba(255,255,255,0.05);color:var(--cream);}
-.modal-body{padding:24px;}
+.def-item:hover{
+  background: var(--gold-subtle);
+}
+.def-term{
+  font-family: var(--font-serif);
+  font-size: 16.5px;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.def-greek{
+  font-size: 12.5px;
+  color: var(--gold2);
+  letter-spacing: 0.5px;
+  font-style: italic;
+  font-family: var(--font-serif);
+  font-weight: 400;
+}
+.def-desc{
+  font-size: 15px;
+  color: var(--cream2);
+  line-height: 1.7;
+}
 
-/* ✅ MODAL: Letra clara, sin cursiva */
+.article-body{
+  font-family: var(--font-sans);
+  font-size: 17px;
+  color: var(--cream2);
+  line-height: 1.85;
+}
+.article-body p{margin-bottom:20px;}
+.article-body strong{color:var(--cream);font-family:var(--font-sans);font-weight:700;}
+
+/* ── DESAFÍOS (VIGNETTE EDITORIAL) ── */
+.challenge{
+  background: var(--bg2);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-card);
+  padding: 32px 36px;
+  box-shadow: var(--shadow-gold);
+  position: relative;
+}
+.challenge-h{
+  font-family: var(--font-serif);
+  font-size: 19px;
+  color: var(--gold);
+  margin-bottom: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.challenge-t{
+  font-size: 16.5px;
+  color: var(--cream);
+  line-height: 1.8;
+}
+
+/* ── VIDEO CONTAINER ── */
+.video-outer{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.video-wrap{
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+}
+.video-wrap iframe{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.vid-ext-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid rgba(212,175,55,0.25);
+  color: var(--gold);
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all var(--t2);
+  align-self: flex-start;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.vid-ext-btn:hover{
+  background: var(--gold-subtle);
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
+
+/* ── PIE DE NAVEGACIÓN ── */
+.navfoot{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 52px 64px;
+  border-top: 1px solid var(--border);
+}
+.nbtn{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--cream2);
+  cursor: pointer;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 700;
+  transition: all var(--t2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-height: 46px;
+}
+.nbtn:hover:not(:disabled){
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold-subtle);
+  transform: translateY(-1px);
+}
+.nbtn:disabled{opacity:.25;cursor:not-allowed;}
+.nbtn.primary{
+  background: var(--bg2);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+}
+.nbtn.primary:hover:not(:disabled){
+  background: var(--gold);
+  color: #1a1000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px var(--gold-glow);
+}
+.ncenter{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.cbtn{
+  background: rgba(212, 175, 55, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  color: var(--gold);
+  cursor: pointer;
+  padding: 10px 22px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all var(--t2);
+}
+.cbtn:hover{
+  background: rgba(212, 175, 55, 0.12);
+  transform: scale(1.02);
+}
+.cbtn.done{
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--gold2);
+  border-color: var(--gold);
+}
+
+/* ── MODALES (MANUSCRITO FLOTANTE) ── */
+.modal-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(10px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--t3);
+}
+.modal-overlay.active{
+  opacity: 1;
+  visibility: visible;
+}
+.modal-content{
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  transform: scale(0.97);
+  transition: transform var(--t3);
+  -webkit-overflow-scrolling: touch;
+}
+.modal-overlay.active .modal-content{
+  transform: scale(1);
+}
+.modal-header{
+  padding: 24px 32px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: var(--bg2);
+  z-index: 1;
+}
+.modal-title{
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: var(--gold);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.modal-close{
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all var(--t1);
+}
+.modal-close:hover{
+  background: rgba(255,255,255,0.03);
+  color: var(--cream);
+  border-color: var(--gold);
+}
+.modal-body{
+  padding: 32px;
+}
 .modal-verse {
-    font-family: 'Lato', sans-serif;
-    font-size: 18px;
-    color: var(--cream);
-    line-height: 1.8;
-    font-style: normal; /* SIN CURSIVA */
-    margin-bottom: 20px;
-    font-weight: 400;
+  font-family: var(--font-sans);
+  font-size: 17.5px;
+  color: var(--cream);
+  line-height: 1.85;
+  font-style: normal;
+  margin-bottom: 20px;
+  font-weight: 400;
+  padding-left: 20px;
+  border-left: 3px solid var(--gold);
 }
 
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:40;backdrop-filter:blur(0px);touch-action: manipulation;}
-.overlay.active{display:block;}
-#offlineBar{display:none;position:fixed;top:var(--hh);left:0;right:0;z-index:200;background:linear-gradient(90deg,#8B3A3A,#A04040);color:#fff;font-size:13px;font-weight:700;text-align:center;padding:9px 16px;}
+.overlay{
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 40;
+  backdrop-filter: blur(5px);
+}
+.overlay.active{
+  display: block;
+}
+
+#offlineBar{
+  display: none;
+  position: fixed;
+  top: var(--hh);
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--gold-dark);
+  color: #1a1000;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-align: center;
+  padding: 8px 16px;
+}
 #offlineBar.show{display:block;}
-#installBanner{display:none;position:fixed;bottom:20px;left:50%;z-index:200;transform:translateX(-50%);background:rgba(20,20,23,0.97);border:1px solid rgba(212,175,55,.5);border-radius:var(--radius);padding:16px 22px;align-items:center;gap:14px;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow-lg);max-width:360px;width:calc(100% - 40px);}
+
+#installBanner{
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  z-index: 200;
+  transform: translateX(-50%);
+  background: rgba(18, 18, 20, 0.96);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-card);
+  padding: 20px 24px;
+  align-items: center;
+  gap: 16px;
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  box-shadow: var(--shadow-lg);
+  max-width: 400px;
+  width: calc(100% - 48px);
+}
 #installBanner.show{display:flex;}
-#installBanner .ib-txt{font-size:14px;color:var(--cream2);flex:1;line-height:1.5;}
-#installBanner .ib-txt strong{color:var(--cream);display:block;margin-bottom:2px;font-size:15px;}
-#installBanner .ib-install{background:linear-gradient(135deg,var(--gold),var(--gold3));color:#1a1000;border:none;cursor:pointer;padding:10px 18px;border-radius:var(--radius-sm);font-size:12px;font-weight:700;touch-action: manipulation;}
-#installBanner .ib-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px;touch-action: manipulation;}
-body.light{--bg:#FAF9F6;--bg2:#FFFFFF;--bg3:#F2EFE8;--bg4:#E8E4DA;--gold:#8B6914;--gold2:#A07820;--gold3:#C49A2A;--cream:#1A1A1A;--cream2:#3D3830;--muted:#7A7260;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);--shadow-sm:0 2px 8px rgba(0,0,0,0.06);--shadow-md:0 4px 20px rgba(0,0,0,0.1);}
-body.light header{background:rgba(250,249,246,0.95);}
-body.light aside{background:#FFFFFF;}
-body.light .modal-content{background:#FFFFFF;}
-body.light .modal-header{background:#FFFFFF;}
+#installBanner .ib-txt{
+  font-size: 13.5px;
+  color: var(--cream2);
+  flex: 1;
+  line-height: 1.5;
+}
+#installBanner .ib-txt strong{
+  color: var(--cream);
+  display: block;
+  margin-bottom: 2px;
+  font-family: var(--font-serif);
+  font-size: 14.5px;
+}
+#installBanner .ib-install{
+  background: var(--gold);
+  color: #1a1000;
+  border: none;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+#installBanner .ib-close{
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+}
+
+/* ── MODO CLARO PREMIUM (PAPEL Y TINTA) ── */
+body.light{
+  --bg: #F7F5F0;
+  --bg2: #FFFFFF;
+  --bg3: #EFECE6;
+  --bg4: #E7E3D8;
+  --gold: #8B6914;
+  --gold2: #5D4507;
+  --gold3: #C49A2A;
+  --cream: #2C2A29;
+  --cream2: #514F4C;
+  --muted: #8E8981;
+  --border: rgba(139, 105, 20, 0.1);
+  --border2: rgba(139, 105, 20, 0.25);
+  --shadow-sm: 0 2px 12px rgba(139, 105, 20, 0.08);
+  --shadow-md: 0 6px 20px rgba(139, 105, 20, 0.12);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,0.08);
+}
+body.light header{background: rgba(247, 245, 240, 0.95); border-bottom-color: var(--border);}
+body.light aside{background: var(--bg2);}
+body.light .modal-content{background: var(--bg2);}
+body.light .modal-header{background: var(--bg2);}
+body.light .purpose{background: var(--bg2);}
+body.light .w-card{background: var(--bg2);}
+body.light .w-card:hover{background: var(--bg3);}
+body.light .w-btn{background: var(--bg2);}
+body.light .nbtn{background: var(--bg2);}
+
+/* ── DESKTOP RESPONSIVE EDITORIAL ── */
 @media(min-width:769px){
-  .top-nav{display:block;}
-  .layout{display:flex;justify-content:center;margin-top:calc(var(--hh) + 52px);}
-  aside{display:none;}
-  main{margin-left:0;flex:0 1 100%;max-width:900px;}
-  .pbody{padding:48px 80px 64px;max-width:900px;margin:0 auto;}
-  .hero{padding:70px 80px 60px;max-width:900px;margin:0 auto;}
-  .hero-line{left:80px;}
-  .navfoot{padding:32px 80px 52px;max-width:900px;margin:0 auto;}
-  .welcome{padding:60px 24px;}
-  header{justify-content:center;gap:20px;}
-  .hbrand{gap:10px;}
-  .htitles{text-align:center;}
-  .menubtn{display:none !important;}
-  .hprog{position:absolute;right:20px;}
-  #searchBtn,#themeBtn{margin-left:0;padding:0;width:32px;height:32px;font-size:14px;}
-  #themeBtn{margin-left:8px;}
+  .top-nav{
+    display: flex;
+    position: fixed;
+    top: var(--hh);
+    left: 0;
+    right: 0;
+    background: rgba(11, 11, 12, 0.94);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    z-index: 99;
+    padding: 10px 24px;
+    overflow-x: auto;
+    box-shadow: none;
+    justify-content: center;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .top-nav::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, and Opera */
+  }
+  body.light .top-nav{
+    background: rgba(247, 245, 240, 0.95);
+  }
+  .top-nav-inner{
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  /* Botones del menú superior como pestañas tipográficas */
+  .top-nav-btn{
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--cream2);
+    padding: 8px 4px;
+    border-radius: 0;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--t2);
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  .top-nav-btn:hover{
+    color: var(--gold);
+    border-bottom-color: rgba(212, 175, 55, 0.3);
+  }
+  .top-nav-btn.active{
+    background: transparent;
+    border-color: var(--gold);
+    color: var(--gold);
+    font-weight: 700;
+  }
+  
+  .layout{
+    display: flex;
+    justify-content: center;
+    margin-top: calc(var(--hh) + 52px);
+  }
+  aside{display: none;}
+  main{
+    margin-left: 0;
+    flex: 0 1 100%;
+    max-width: 900px;
+  }
+  .pbody{
+    padding: 56px 80px 80px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .hero{
+    padding: 80px 80px 60px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .hero-line{left: 80px;}
+  .navfoot{
+    padding: 40px 80px 64px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .welcome{
+    padding: 80px 48px;
+  }
+  header{
+    justify-content: center;
+    gap: 40px;
+  }
+  .hbrand{gap: 12px;}
+  .htitles{text-align: center;}
+  .menubtn{display: none !important;}
+  .hprog{position: absolute; right: 24px;}
+  #searchBtn, #themeBtn{
+    margin-left: 0;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+  #themeBtn{margin-left: 8px;}
 }
+
 @media(max-width:768px){
-  .top-nav{display:none !important;}
+  .top-nav{display: none !important;}
+  header{padding: 0 16px;}
+  .hprog{display: none;}
+  .menubtn{display: flex; flex-direction: column; justify-content: center; align-items: center;}
+  aside{transform: translateX(-100%); box-shadow: 2px 0 20px rgba(0,0,0,0.5);}
+  aside.open{transform: translateX(0);}
+  main{margin-left: 0; width: 100%;}
+  .welcome{padding: 48px 16px;}
+  .w-cross{font-size: 48px;}
+  .w-h1{font-size: clamp(30px, 7vw, 44px);}
+  .w-grid{grid-template-columns: 1fr; gap: 12px;}
+  .hero{padding: 40px 20px 40px;}
+  .hero-ico{font-size: 48px;}
+  .hero-line{left: 20px; width: 50px;}
+  .pbody{padding: 36px 20px 56px;}
+  .navfoot{padding: 24px 20px 40px; gap: 12px; flex-wrap: wrap;}
+  .nbtn{padding: 10px 16px; font-size: 11px; flex: 1; justify-content: center; min-height: 42px;}
+  .ncenter{width: 100%; order: -1; margin-bottom: 12px;}
+  .cbtn{padding: 8px 16px; font-size: 10px;}
+  .pview.active{opacity: 1 !important; visibility: visible !important;}
+  main{opacity: 1 !important;}
+  .sb-item, .w-card, .nbtn, .cbtn, .sc-ref, .w-btn{-webkit-tap-highlight-color: rgba(212,175,55,0.25);}
+  .sc-verse{font-size: 16px;}
+  .sc-pts li{font-size: 14.5px;}
+  .purpose-txt{font-size: 15.5px;}
+  .def-term{font-size: 15px;}
+  .def-desc{font-size: 13.5px;}
+  .article-body{font-size: 15.5px;}
 }
-@media(max-width:768px){header{padding:0 14px;}.hprog{display:none;}.menubtn{display:flex;flex-direction:column;justify-content:center;align-items:center;}aside{transform:translateX(-100%);}aside.open{transform:translateX(0);}main{margin-left:0;width:100%;}.welcome{padding:24px 16px;}.w-cross{font-size:56px;}.w-h1{font-size:clamp(28px,8vw,40px);}.w-grid{grid-template-columns:1fr;gap:10px;}.hero{padding:28px 18px 32px;}.hero-line{left:18px;}.pbody{padding:22px 18px 44px;}.navfoot{padding:18px 14px 32px;gap:8px;flex-wrap:wrap;}.nbtn{padding:12px 12px;font-size:11px;flex:1;justify-content:center;}.ncenter{width:100%;order:-1;margin-bottom:10px;}.cbtn{padding:10px 16px;font-size:11px;}.pview.active{opacity:1 !important;visibility:visible !important;}main{opacity:1 !important;}.sb-item,.w-card,.nbtn,.cbtn,.sc-ref,.w-btn{-webkit-tap-highlight-color: rgba(212,175,55,0.3);}.sc-verse{font-size:16px;}.sc-pts li{font-size:15px;}.purpose-txt{font-size:16px;}.def-term{font-size:15px;}.def-desc{font-size:14px;}.article-body{font-size:16px;}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important;}}
 
-/* ═══════════════════════════════════════════════════════ SWIPE GESTURE ═══════════════════════════════════════════════════════ */
+/* ── SWIPE GESTURE ── */
 .swipe-area{position:fixed;inset:0;z-index:1;pointer-events:none;}
-.swipe-hint{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(212,175,55,0.2);border:1px solid rgba(212,175,55,0.4);border-radius:30px;padding:8px 16px;font-size:12px;color:var(--gold);opacity:0;transition:opacity 0.3s ease;pointer-events:none;z-index:50;}
-.swipe-hint.show{opacity:1;}
-.swipe-hint span{margin:0 8px;}
+.swipe-hint{
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold-subtle);
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 11px;
+  color: var(--gold);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 50;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.swipe-hint.show{opacity: 1;}
+.swipe-hint span{margin: 0 6px;}
 
-.reading-progress{position:fixed;top:var(--hh);left:0;height:3px;background:var(--gold);width:0%;z-index:99;transition:width 0.1s ease;}
+.reading-progress{position:fixed;top:var(--hh);left:0;height:2px;background:var(--gold);width:0%;z-index:99;transition:width 0.1s ease;}
 
-/* ═══════════════════════════════════════════════════════ BOTÓN DE BÚSQUEDA ═══════════════════════════════════════════════════════ */
+/* ── BOTÓN DE BÚSQUEDA ── */
 #searchBtn{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-width:36px;
-height:36px;
-border-radius:50%;
-border:1px solid var(--border2);
-background:rgba(255,255,255,0.05);
-cursor:pointer;
-font-size:16px;
-color:var(--cream);
-transition:all var(--t2);
-margin-right:10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--cream);
+  transition: all var(--t2);
+  margin-right: 8px;
 }
-
 #searchBtn:hover{
-background:var(--gold-subtle);
-border-color:var(--gold);
-color:var(--gold);
-transform:scale(1.1);
+  background: var(--gold-subtle);
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: translateY(-1px);
 }
 
-.top-nav{position:fixed;top:var(--hh);left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);z-index:99;padding:12px 20px;overflow-x:auto;-webkit-overflow-scrolling:touch;box-shadow:0 2px 10px rgba(0,0,0,0.3);display:flex;justify-content:center;}
-.top-nav::-webkit-scrollbar{display:none;}
-.top-nav-inner{display:flex;gap:8px;justify-content:center;max-width:900px;margin:0 auto;}
-.top-nav-btn{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--cream2);padding:8px 16px;border-radius:25px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all var(--t2);font-family:'Lato',sans-serif;}
-.top-nav-btn:hover{border-color:var(--gold);color:var(--gold);}
-.top-nav-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold3));border-color:var(--gold);color:#1a1000;font-weight:700;}
+/* ── SEARCH PANEL & RESULTS EDITORIAL ── */
+#searchBar {
+  border-bottom: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+#searchInput {
+  font-family: var(--font-sans);
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid var(--border) !important;
+  background: var(--bg3) !important;
+  color: var(--cream) !important;
+  transition: border-color var(--t1);
+}
+#searchInput:focus {
+  border-color: var(--gold) !important;
+}
+.search-result-item {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background var(--t1);
+  background: var(--bg2);
+}
+.search-result-item:hover {
+  background: var(--bg3);
+}
+.search-result-item:last-child {
+  border-bottom: none;
+}
+.search-result-type {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.search-result-title {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: var(--cream);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.search-result-text {
+  font-size: 14px;
+  color: var(--cream2);
+  line-height: 1.6;
+}
+.search-result-highlight {
+  background: rgba(212, 175, 55, 0.25);
+  color: var(--gold2);
+  font-weight: 700;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+.no-results {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+}
+.no-results span {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 12px;
+}
+.no-results p {
+  font-size: 14px;
+  font-family: var(--font-sans);
+}
 
+/* ── CLASES DE TEXTO EDITORIAL (THEME-ADAPTIVE) ── */
+.txt-gold {
+  color: var(--gold) !important;
+}
+body.light .txt-gold {
+  color: var(--gold2) !important; /* Más oscuro para contraste óptimo en claro */
+}
+.txt-gold-dark {
+  color: var(--gold3) !important;
+}
+body.light .txt-gold-dark {
+  color: var(--gold2) !important;
+}
+.txt-highlight {
+  color: var(--gold) !important;
+  background: var(--gold-subtle);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+body.light .txt-highlight {
+  color: var(--gold2) !important;
+  background: rgba(139, 105, 20, 0.05);
+  border-color: rgba(139, 105, 20, 0.15);
+}
+.txt-muted {
+  color: var(--muted) !important;
+}
 
+/* ── EMBLEMAS EDITORIALES PARA ICONOS EMOJIS ── */
+.hero-ico {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 50% !important;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  outline: 4px solid var(--bg);
+  box-shadow: var(--shadow-sm), inset 0 0 15px rgba(212, 175, 55, 0.06);
+  font-size: 38px !important;
+  margin-bottom: 24px;
+  position: relative;
+  transition: transform var(--t3), border-color var(--t3), box-shadow var(--t3);
+}
+.hero-ico::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1px dashed var(--gold);
+  opacity: 0.3;
+  pointer-events: none;
+  transition: opacity var(--t2);
+}
+.pview.active:hover .hero-ico {
+  transform: scale(1.06) rotate(3deg);
+  border-color: var(--gold);
+  box-shadow: var(--shadow-gold), var(--shadow-sm);
+}
+.pview.active:hover .hero-ico::after {
+  opacity: 0.6;
+}
 
+/* Emblemas de tarjetas de inicio */
+.w-card-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background: var(--gold-subtle);
+  border: 1px solid var(--border);
+  font-size: 18px;
+  margin-right: 12px;
+  flex-shrink: 0;
+  transition: all var(--t2);
+  box-shadow: inset 0 0 8px rgba(212, 175, 55, 0.02);
+}
+.w-card:hover .w-card-ico {
+  background: rgba(212, 175, 55, 0.08);
+  border-color: var(--gold);
+  transform: scale(1.05);
+}
+.w-ccontent {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Iconos de barra de navegación superior */
+.top-nav-ico {
+  margin-right: 8px;
+  opacity: 0.7;
+  font-size: 13px;
+  transition: opacity var(--t2), transform var(--t2);
+  display: inline-block;
+  vertical-align: middle;
+}
+.top-nav-btn:hover .top-nav-ico,
+.top-nav-btn.active .top-nav-ico {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Cruz Editorial de Inicio (SVG) */
+.w-cross-svg {
+  width: 60px;
+  height: 60px;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  fill: none;
+  margin: 0 auto 20px;
+  display: block;
+  filter: drop-shadow(0 2px 10px rgba(212, 175, 55, 0.25));
+  animation: scaleIn 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+body.light .w-cross-svg {
+  stroke: var(--gold2);
+  filter: drop-shadow(0 2px 8px rgba(139, 105, 20, 0.15));
+}
+.hcross-svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--gold);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  fill: none;
+  display: block;
+  transition: stroke var(--t2), transform var(--t2);
+}
+.hcross:hover .hcross-svg {
+  transform: scale(1.1);
+  stroke: var(--gold2);
+}
+body.light .hcross-svg {
+  stroke: var(--gold2);
+}
+body.light .hcross:hover .hcross-svg {
+  stroke: var(--gold3);
+}
+
+/* Estilo mejorado para las tarjetas de Sumario */
+.w-card {
+  box-shadow: none;
+  border-color: var(--border2);
+  transition: all var(--t3);
+}
+.w-card:hover {
+  border-color: var(--gold);
+  background: var(--bg2);
+  box-shadow: var(--shadow-sm), var(--shadow-gold);
+}
+body.light .w-card:hover {
+  background: var(--bg2);
+  box-shadow: var(--shadow-sm), var(--shadow-gold);
+}
 </style>
 
 
@@ -321,7 +1602,7 @@ transform:scale(1.1);
 
 <div class="hbrand">
 <button class="menubtn" onclick="toggleSB()" aria-label="Menú"><span></span><span></span><span></span></button>
-<div class="hcross" onclick="go(-1)">✝</div>
+<div class="hcross" onclick="go(-1)"><svg class="hcross-svg" viewBox="0 0 24 24"><path d="M12 4v16M7 8h10"/></svg></div>
 <div class="htitles">
 <div class="hsub">Iglesias Cristianas Internacionales</div>
 <div class="htitle">Principios Básicos</div>
@@ -374,7 +1655,7 @@ transform:scale(1.1);
 <main id="mainEl">
 <div class="welcome" id="welcome">
 <div class="w-inner">
-<span class="w-cross">✝</span>
+<svg class="w-cross-svg" viewBox="0 0 24 24"><path d="M12 2v20M5 8h14"/></svg>
 <div class="w-church">Iglesias Cristianas Internacionales</div>
 <h1 class="w-h1">Principios <em>Básicos</em><br>de la Biblia</h1>
 <p class="w-sub">Un curso de 10 principios fundamentales para conocer a Dios y crecer en la fe cristiana.</p>
@@ -543,12 +1824,13 @@ return '<div class="sb-item'+(done?' done':'')+(S.cur===i?' active':'')+'" id="s
 }
 function buildW(){
 document.getElementById('wGrid').innerHTML=PP.map(function(p,i){
-return '<div class="w-card" onclick="go('+i+')"><div class="w-cnum">PRINCIPIO '+p.id+'</div><div class="w-ctitle">'+p.icono+' '+p.titulo+'</div></div>';
+var formattedId = p.id < 10 ? '0' + p.id : p.id;
+return '<div class="w-card" onclick="go('+i+')"><div class="w-cnum">' + formattedId + '</div><div class="w-ccontent"><span class="w-card-ico">'+p.icono+'</span><span class="w-ctitle">'+p.titulo+'</span></div></div>';
 }).join('');
 }
 function buildTopNav(){
 document.getElementById('topNavInner').innerHTML=PP.map(function(p,i){
-return '<button class="top-nav-btn'+(S.cur===i?' active':'')+'" id="tn'+i+'" onclick="go('+i+')">'+p.icono+' '+p.titulo+'</button>';
+return '<button class="top-nav-btn'+(S.cur===i?' active':'')+'" id="tn'+i+'" onclick="go('+i+')"><span class="top-nav-ico">'+p.icono+'</span>'+p.titulo+'</button>';
 }).join('');
 }
 function buildPP(){
@@ -640,7 +1922,7 @@ document.body.style.overflow = '';
 });
 /* ── DATA ───────────────────────────────────────────────── */
 var PP = [
-{id:1,titulo:'Buscando a Dios',icono:'🔍',color:'#C9A96E',vid:'pfqrbbY-hYc',desc:'Descubriendo lo que significa buscar una relación con Dios con todo nuestro corazón.',html:`<div class="purpose"><div class="purpose-lbl">✦ Propósito</div><p class="purpose-txt">Determinar lo que significa buscar una relación con Dios con todo nuestro corazón.<br><br><strong style="font-family:'Lato',sans-serif;font-size:14px;color:#E8C98A;">Pregunta introductoria:</strong> ¿Qué buscas en la vida? ¿Qué estás buscando con todo tu corazón?</p></div>
+{id:1,titulo:'Buscando a Dios',icono:'🔍',color:'#C9A96E',vid:'pfqrbbY-hYc',desc:'Descubriendo lo que significa buscar una relación con Dios con todo nuestro corazón.',html:`<div class="purpose"><div class="purpose-lbl">✦ Propósito</div><p class="purpose-txt">Determinar lo que significa buscar una relación con Dios con todo nuestro corazón.<br><br><strong class="txt-gold" style="font-size:14px;">Pregunta introductoria:</strong> ¿Qué buscas en la vida? ¿Qué estás buscando con todo tu corazón?</p></div>
 <div class="slabel"><div class="slabel-ico">📖</div><div class="slabel-txt">Escrituras y Análisis</div><div class="sdiv"></div></div>
 <div class="sc-list">
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Salmo 119:1-2')">Salmo 119:1-2</div></div><div class="sc-body"><div class="sc-qm">"</div><p class="sc-verse">"1 Dichosos los que son intachables en su conducta, los que viven conforme a la ley del Señor. 2 Dichosos los que cumplen sus estatutos y lo buscan de todo corazón."</p><ul class="sc-pts"><li>"Dichoso" es un término que no usamos a menudo. ¿Sabes lo que significa? (¡Estar muy feliz!)</li><li>¿Qué significa ser intachable? (Ser irreprochable y hacer lo que es correcto.)</li><li class="q">En una escala del 1 (sin esfuerzo) al 10 (con todo tu corazón), ¿cómo describirías tus esfuerzos para buscar a Dios?</li><li>Para buscar a Dios, debes buscar Su Palabra (la Biblia) con todo tu corazón.</li><li>¿Cómo buscamos a Dios? (Guardando Sus estatutos.)</li><li>Cuando buscas a Dios con todo tu corazón, ¡el resultado es la felicidad!</li></ul></div></div>
@@ -648,18 +1930,18 @@ var PP = [
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Hechos 17:24-28')">Hechos 17:24-28</div></div><div class="sc-body"><ul class="sc-pts"><li class="q">¿Qué está haciendo Dios para desarrollar una relación con la gente?</li><li>¿Por qué Dios se toma tantas molestias? Para que la gente pueda buscarlo y tener una relación genuina con Él.</li><li class="q">¿Quieres una relación más profunda con Dios? Si no, ¿por qué?</li><li>Conocer a un cristiano no es una coincidencia. Dios tiene un gran plan para tu vida.</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Juan 4:23-24')">Juan 4:23-24</div></div><div class="sc-body"><ul class="sc-pts"><li class="q">¿Qué hace un verdadero adorador de Dios?</li><li>Dios está buscando a aquellos que quieren adorarlo en espíritu y en verdad.</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Jeremías 29:11-13')">Jeremías 29:11-13</div></div><div class="sc-body"><ul class="sc-pts"><li>En este pasaje, Dios comparte Su visión para Su pueblo.</li><li>Dios quiere darnos una esperanza y un futuro, pero primero debemos acercarnos a Él.</li><li>La oración es cómo buscamos a Dios.</li></ul></div></div>
-<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Hechos 8:26-39')">Hechos 8:26-39 — El eunuco etíope</div></div><div class="sc-body"><ul class="sc-pts"><li>Un estudio de caso de alguien que busca a Dios.</li><li><strong style="color:#E8C98A;">Sacrificio:</strong> Viajó 1500 millas desde Etiopía a Jerusalén.</li><li><strong style="color:#E8C98A;">Humildad:</strong> Escuchó humildemente a alguien capaz de enseñarle.</li><li><strong style="color:#E8C98A;">Obediencia:</strong> Respondió inmediatamente.</li></ul></div></div>
+<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Hechos 8:26-39')">Hechos 8:26-39 — El eunuco etíope</div></div><div class="sc-body"><ul class="sc-pts"><li>Un estudio de caso de alguien que busca a Dios.</li><li><strong class="txt-gold">Sacrificio:</strong> Viajó 1500 millas desde Etiopía a Jerusalén.</li><li><strong class="txt-gold">Humildad:</strong> Escuchó humildemente a alguien capaz de enseñarle.</li><li><strong class="txt-gold">Obediencia:</strong> Respondió inmediatamente.</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 7:7-8')">Mateo 7:7-8</div></div><div class="sc-body"><ul class="sc-pts"><li>Si buscas a Dios en oración, ¡lo encontrarás!</li></ul></div></div>
 </div>
 <div class="slabel"><div class="slabel-ico">🎯</div><div class="slabel-txt">Desafío de la Semana</div><div class="sdiv"></div></div>
 <div class="challenge reveal"><div class="challenge-h">⚡ Desafío</div><p class="challenge-t">Ora y lee la Biblia diariamente. El libro de Juan es un excelente lugar para empezar.</p></div>`},
-{id:2,titulo:'La Palabra de Dios',icono:'📖',color:'#A07856',vid:'mAtWiUAb66Y',desc:'Examinando por qué la Biblia es de Dios y por qué debe ser el estándar para nuestras vidas.',html:`<div class="purpose"><div class="purpose-lbl">✦ Propósito</div><p class="purpose-txt">Ayudarte a decidir hacer de la Biblia el estándar para tu vida.<br><br><strong style="font-family:'Lato',sans-serif;font-size:14px;color:#E8C98A;">Pregunta:</strong> ¿Crees que es la divina Palabra de Dios?</p></div>
+{id:2,titulo:'La Palabra de Dios',icono:'📖',color:'#A07856',vid:'mAtWiUAb66Y',desc:'Examinando por qué la Biblia es de Dios y por qué debe ser el estándar para nuestras vidas.',html:`<div class="purpose"><div class="purpose-lbl">✦ Propósito</div><p class="purpose-txt">Ayudarte a decidir hacer de la Biblia el estándar para tu vida.<br><br><strong class="txt-gold" style="font-size:14px;">Pregunta:</strong> ¿Crees que es la divina Palabra de Dios?</p></div>
 <div class="facts-box reveal"><h4>✦ Hechos sobre la Biblia</h4><ul><li>40 autores de 66 libros diferentes.</li><li>400 profecías acerca de Jesús cumplidas.</li><li>Más de 40,000 copias antiguas.</li></ul></div>
 <div class="slabel"><div class="slabel-ico">📖</div><div class="slabel-txt">Escrituras y Análisis</div><div class="sdiv"></div></div>
 <div class="sc-list">
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('2 Timoteo 3:16-17')">2 Timoteo 3:16-17</div></div><div class="sc-body"><p class="sc-verse">"16 Toda la Escritura es inspirada por Dios y útil para enseñar, para reprender, para corregir y para instruir en la justicia, 17 a fin de que el siervo de Dios esté enteramente capacitado para toda buena obra."</p><ul class="sc-pts"><li class="q">¿Crees que toda la Escritura proviene de Dios?</li><li>La Biblia es un estándar, ¿estás listo para convertirla en el estándar para tu vida?</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Hebreos 4:12-13')">Hebreos 4:12-13</div></div><div class="sc-body"><p class="sc-verse">"12 Porque la palabra de Dios es viva y eficaz. Más cortante que cualquier espada de dos filos, penetra hasta dividir alma y espíritu, coyunturas y médulas, y discierne los pensamientos y las intenciones del corazón. 13 No hay nada creado que pueda esconderse de Dios; al contrario, todo está desnudo y expuesto ante los ojos de aquel a quien tenemos que rendir cuentas."</p><ul class="sc-pts"><li>La Palabra de Dios expone el corazón humano.</li><li class="q">¿Estás dispuesto a permitir que la Biblia corte tu corazón para que puedas ser sanado?</li></ul></div></div>
-<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('2 Pedro 1:19-21')">2 Pedro 1:19-21 — Interpretación</div></div><div class="sc-body"><ul class="sc-pts"><li><strong style="color:#E8C98A;">1. INTERPRETACIÓN:</strong> La Biblia está destinada a ser leída y aplicada, no a ser cambiada para que se ajuste a nuestras opiniones.</li><li><strong style="color:#E8C98A;">2. EMOCIONES — <span class="sc-ref" onclick="openModal('Juan 8:31-32')">Juan 8:31-32</span>:</strong> Las emociones individuales y la racionalización de la Biblia pueden alejarte de la verdad.</li><li class="q">¿Qué Escrituras te resultan difíciles de obedecer?</li><li><strong style="color:#E8C98A;">3. TRADICIONES — <span class="sc-ref" onclick="openModal('Marcos 7:1-13')">Marcos 7:1-13</span>:</strong> Debemos tomar la decisión de seguir la verdad de la Palabra de Dios por encima de la tradición religiosa o cultural.</li><li class="q">¿Conoces algún ejemplo de tradiciones religiosas que desobedecen la Palabra de Dios?</li></ul></div></div>
+<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('2 Pedro 1:19-21')">2 Pedro 1:19-21 — Interpretación</div></div><div class="sc-body"><ul class="sc-pts"><li><strong class="txt-gold">1. INTERPRETACIÓN:</strong> La Biblia está destinada a ser leída y aplicada, no a ser cambiada para que se ajuste a nuestras opiniones.</li><li><strong class="txt-gold">2. EMOCIONES — <span class="sc-ref" onclick="openModal('Juan 8:31-32')">Juan 8:31-32</span>:</strong> Las emociones individuales y la racionalización de la Biblia pueden alejarte de la verdad.</li><li class="q">¿Qué Escrituras te resultan difíciles de obedecer?</li><li><strong class="txt-gold">3. TRADICIONES — <span class="sc-ref" onclick="openModal('Marcos 7:1-13')">Marcos 7:1-13</span>:</strong> Debemos tomar la decisión de seguir la verdad de la Palabra de Dios por encima de la tradición religiosa o cultural.</li><li class="q">¿Conoces algún ejemplo de tradiciones religiosas que desobedecen la Palabra de Dios?</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('1 Timoteo 4:16')">1 Timoteo 4:16</div></div><div class="sc-body"><ul class="sc-pts"><li class="q">¿Qué es más importante, la vida o la doctrina? Ambas son igualmente importantes.</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Hechos 17:10-11')">Hechos 17:10-11</div></div><div class="sc-body"><ul class="sc-pts"><li>¿Quieres tener un carácter noble? Entonces, ¿qué necesitas hacer?</li><li>Examinar con diligencia las Escrituras todos los días.</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Santiago 1:22-25')">Santiago 1:22-25</div></div><div class="sc-body"><ul class="sc-pts"><li>Escuchar sin intentar cambiar conduce al autoengaño.</li><li>La Palabra de Dios es un espejo: revela nuestro carácter para que podamos cambiarlo.</li><li class="q">¿Estás dispuesto a fijarte atentamente en la Biblia para que puedas cambiar?</li></ul></div></div>
@@ -667,11 +1949,11 @@ var PP = [
 </div>
 <div class="slabel"><div class="slabel-ico">🎯</div><div class="slabel-txt">Desafío de la Semana</div><div class="sdiv"></div></div>
 <div class="challenge reveal"><div class="challenge-h">⚡ Desafío</div><p class="challenge-t">¡Examina con diligencia las Escrituras todos los días para que puedas hacer de la Palabra de Dios tu estándar para la vida!</p></div>`},
-{id:3,titulo:'Discipulado',icono:'🤝',color:'#7A9E87',vid:'r0hQ7UJprfo',desc:'Definiendo bíblicamente lo que es un verdadero cristiano.',html:`<div class="purpose"><div class="purpose-lbl">✦ Propósito</div><p class="purpose-txt">Entender lo que significa ser un discípulo de Jesús.<br><br><strong style="font-family:'Lato',sans-serif;font-size:14px;color:#E8C98A;">Pregunta:</strong> ¿Qué piensas que es un discípulo? Un estudiante y un seguidor.</p></div>
+{id:3,titulo:'Discipulado',icono:'🤝',color:'#7A9E87',vid:'r0hQ7UJprfo',desc:'Definiendo bíblicamente lo que es un verdadero cristiano.',html:`<div class="purpose"><div class="purpose-lbl">✦ Propósito</div><p class="purpose-txt">Entender lo que significa ser un discípulo de Jesús.<br><br><strong class="txt-gold" style="font-size:14px;">Pregunta:</strong> ¿Qué piensas que es un discípulo? Un estudiante y un seguidor.</p></div>
 <div class="slabel"><div class="slabel-ico">📖</div><div class="slabel-txt">Escrituras y Análisis</div><div class="sdiv"></div></div>
 <div class="sc-list">
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 28:18-20')">Mateo 28:18-20</div></div><div class="sc-body"><div class="sc-qm">"</div><p class="sc-verse">"18 Jesús se acercó a ellos y les dijo: “Se me ha dado toda autoridad en el cielo y en la tierra. 19 Por tanto, vayan y hagan discípulos de todas las naciones, bautizándolos en el nombre del Padre y del Hijo y del Espíritu Santo, 20 y enseñándoles a obedecer todo lo que les he mandado a ustedes. Y recuerden: yo estoy con ustedes siempre, hasta el fin del mundo”."</p><ul class="sc-pts"><li class="q">¿Cuál es el deseo de Jesús para cada persona? Convertirse en Su discípulo.</li><li class="q">¿Ha sido tu misión de vida hacer discípulos de todas las naciones?</li><li>Necesitas ser enseñado — ser hecho discípulo.</li><li>¡Los discípulos hacen discípulos, bautizan discípulos y enseñan a otros discípulos a obedecer!</li><li class="q">¿Es así como has estado viviendo?</li></ul></div></div>
-<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Hechos 11:25-26')">Hechos 11:25-26 — Discípulos = Cristianos</div></div><div class="sc-body"><ul class="sc-pts"><li>¿Qué término es más popular — discípulo o cristiano? Jesús nunca usó el término "cristiano" para definir a Sus seguidores.</li><li><strong style="color:#E8C98A;">Discípulos de Jesús = Cristianos = Salvos.</strong></li><li>La palabra "cristiano" solo aparece tres veces en el Nuevo Testamento.</li><li>La palabra "discípulo" aparece más de 270 veces en el Nuevo Testamento.</li></ul></div></div>
+<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Hechos 11:25-26')">Hechos 11:25-26 — Discípulos = Cristianos</div></div><div class="sc-body"><ul class="sc-pts"><li>¿Qué término es más popular — discípulo o cristiano? Jesús nunca usó el término "cristiano" para definir a Sus seguidores.</li><li><strong class="txt-gold">Discípulos de Jesús = Cristianos = Salvos.</strong></li><li>La palabra "cristiano" solo aparece tres veces en el Nuevo Testamento.</li><li>La palabra "discípulo" aparece más de 270 veces en el Nuevo Testamento.</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Marcos 1:14-18')">Marcos 1:14-18</div></div><div class="sc-body"><ul class="sc-pts"><li>Este es el llamado de los primeros discípulos.</li><li>¡Los discípulos responden inmediatamente cuando son llamados!</li><li>El llamado de un discípulo fue sacrificial — dejaron caer sus "redes."</li><li class="q">¿Es así como has estado viviendo?</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Lucas 9:23-26')">Lucas 9:23-26</div></div><div class="sc-body"><ul class="sc-pts"><li>El llamado para todas las personas es poner la voluntad de Dios por encima de la suya.</li><li>Un discípulo "se niega a sí mismo" y toma su cruz cada día.</li><li class="q">¿Es así como has estado viviendo?</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Lucas 14:25-33')">Lucas 14:25-33</div></div><div class="sc-body"><ul class="sc-pts"><li>No podemos servir a dos señores — Dios debe ser claramente el primero.</li><li>¿Puedes pagar el costo para ser un discípulo?</li><li class="q">¿Es así como has estado viviendo?</li></ul></div></div>
@@ -687,13 +1969,13 @@ var PP = [
 <div class="slabel"><div class="slabel-ico">📖</div><div class="slabel-txt">Predicciones del Antiguo Testamento sobre el Reino</div><div class="sdiv"></div></div>
 <div class="sc-list">
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Isaías 2:1-4')">Isaías 2:1-4 (750 A.C.)</div></div><div class="sc-body"><ul class="sc-pts"><li>En los últimos días, el "monte del templo del Señor" será establecido.</li><li>Todas las naciones irán a él.</li><li>La gente será instruida en Sus caminos.</li><li>La palabra del Señor saldrá de Jerusalén.</li></ul></div></div>
-<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Daniel 2:31-45')">Daniel 2:31-45 (550 A.C.)</div></div><div class="sc-body"><ul class="sc-pts"><li>Gran estatua — representa una línea de tiempo de eventos:</li><li><strong style="color:#E8C98A;">Cabeza de oro:</strong> Babilonios (605 A.C. a 539 A.C.)</li><li><strong style="color:#E8C98A;">Pecho y brazos de plata:</strong> Medo-Persas (539 A.C. a 331 A.C.)</li><li><strong style="color:#E8C98A;">Vientre y muslos de bronce:</strong> Griegos (331 A.C. a 63 A.C.)</li><li><strong style="color:#E8C98A;">Piernas de hierro y pies de barro:</strong> Romanos (63 A.C. a 476 D.C.)</li><li>Una roca golpea la estatua en los pies de hierro y barro — durante el último tiempo del dominio romano.</li><li class="q">¿Cuándo exactamente crees que vino el reino de Dios?</li></ul></div></div>
+<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Daniel 2:31-45')">Daniel 2:31-45 (550 A.C.)</div></div><div class="sc-body"><ul class="sc-pts"><li>Gran estatua — representa una línea de tiempo de eventos:</li><li><strong class="txt-gold">Cabeza de oro:</strong> Babilonios (605 A.C. a 539 A.C.)</li><li><strong class="txt-gold">Pecho y brazos de plata:</strong> Medo-Persas (539 A.C. a 331 A.C.)</li><li><strong class="txt-gold">Vientre y muslos de bronce:</strong> Griegos (331 A.C. a 63 A.C.)</li><li><strong class="txt-gold">Piernas de hierro y pies de barro:</strong> Romanos (63 A.C. a 476 D.C.)</li><li>Una roca golpea la estatua en los pies de hierro y barro — durante el último tiempo del dominio romano.</li><li class="q">¿Cuándo exactamente crees que vino el reino de Dios?</li></ul></div></div>
 </div>
 <div class="slabel"><div class="slabel-ico">📖</div><div class="slabel-txt">Predicciones del Nuevo Testamento sobre el Reino</div><div class="sdiv"></div></div>
 <div class="sc-list">
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 3:1-2')">Mateo 3:1-2 (25 D.C.)</div></div><div class="sc-body"><ul class="sc-pts"><li>Juan el Bautista declara que el reino está cerca.</li><li>Jesús ya había nacido (Juan el Bautista era seis meses mayor).</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 4:17')">Mateo 4:17 (27 D.C.)</div></div><div class="sc-body"><ul class="sc-pts"><li>Jesús comienza su ministerio y declara que el reino está cerca.</li></ul></div></div>
-<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 16:13-19')">Mateo 16:13-19</div></div><div class="sc-body"><ul class="sc-pts"><li>Pedro recibe las llaves del reino de Dios.</li><li>"Pedro" en griego es petros, que significa "piedra pequeña."</li><li>"Roca" en griego es petra, que significa "gran roca fundamental."</li><li>¿A qué se refiere la "roca" en este pasaje? ¡Jesús!</li><li><strong style="color:#E8C98A;">¡La iglesia es el reino de Dios en la tierra! Reino = Iglesia.</strong></li></ul></div></div>
+<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 16:13-19')">Mateo 16:13-19</div></div><div class="sc-body"><ul class="sc-pts"><li>Pedro recibe las llaves del reino de Dios.</li><li>"Pedro" en griego es petros, que significa "piedra pequeña."</li><li>"Roca" en griego es petra, que significa "gran roca fundamental."</li><li>¿A qué se refiere la "roca" en este pasaje? ¡Jesús!</li><li><strong class="txt-gold">¡La iglesia es el reino de Dios en la tierra! Reino = Iglesia.</strong></li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Marcos 9:1')">Marcos 9:1</div></div><div class="sc-body"><ul class="sc-pts"><li>Algunos no "sufrirán la muerte" — o morirán — antes de que venga el reino de Dios.</li><li>El reino vendrá "con poder."</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Juan 3:1-7')">Juan 3:1-7</div></div><div class="sc-body"><ul class="sc-pts"><li>Para entrar en el reino, debemos "nacer del agua y del Espíritu."</li><li>¿Qué significa "nacer de nuevo"?</li><li>¿Ha venido ya el reino?</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Lucas 23:50-51')">Lucas 23:50-51</div></div><div class="sc-body"><ul class="sc-pts"><li>Jesús ha muerto, pero el reino aún no había venido.</li></ul></div></div>
@@ -713,26 +1995,26 @@ var PP = [
 {id:5,titulo:'Pecado y Arrepentimiento',icono:'⚖️',color:'#A07060',vid:'V6ZsKYtx_D8',desc:'Examinando qué es el pecado, cómo daña a Dios y cómo desarrollar el dolor piadoso para arrepentirse por completo.',html:`<div class="purpose"><div class="purpose-lbl">✦ Propósito</div><p class="purpose-txt">Demostrar nuestro amor a Dios entendiendo por qué necesitamos odiar el pecado y arrepentirnos de él.</p></div>
 <div class="slabel"><div class="slabel-ico">📖</div><div class="slabel-txt">El Pecado</div><div class="sdiv"></div></div>
 <div class="sc-list">
-<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Isaías 59:1-2')">Isaías 59:1-2</div></div><div class="sc-body"><ul class="sc-pts"><li>Pecado es un término que proviene del tiro con arco y significa <strong style="color:#F0EAD6;">"errar el blanco"</strong>.</li><li>El pecado nos separa de Dios.</li><li class="q">¿Estás en la oscuridad o en la luz en este momento? ¿Cómo lo sabes?</li></ul></div></div>
+<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Isaías 59:1-2')">Isaías 59:1-2</div></div><div class="sc-body"><ul class="sc-pts"><li>Pecado es un término que proviene del tiro con arco y significa <strong class="txt-highlight">"errar el blanco"</strong>.</li><li>El pecado nos separa de Dios.</li><li class="q">¿Estás en la oscuridad o en la luz en este momento? ¿Cómo lo sabes?</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Romanos 3:23')">Romanos 3:23</div></div><div class="sc-body"><ul class="sc-pts"><li>Todos han pecado y están privados de la gloria de Dios.</li><li>¿Quiénes han pecado contra Dios? Todos, sin importar cuán "pequeño" pueda parecer un pecado.</li><li class="q">¿Qué persona está más lejos de Dios: una persona que peca un poco o mucho?</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Gálatas 5:19-21')">Gálatas 5:19-21</div></div><div class="sc-body"><ul class="sc-pts"><li>Pecado significa "errar el blanco". Los pecados de la naturaleza pecaminosa son obvios.</li><li class="q">¿De cuáles de estos pecados necesitas arrepentirte hoy?</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('2 Timoteo 3:1-5')">2 Timoteo 3:1-5</div></div><div class="sc-body"><ul class="sc-pts"><li>Estos son pecados del corazón. Algunos pecados son descarados; otros son más engañosos.</li><li class="q">¿De cuáles de estos pecados necesitas arrepentirte?</li></ul></div></div>
-<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Santiago 4:17')">Santiago 4:17</div></div><div class="sc-body"><ul class="sc-pts"><li>Saber lo que es correcto y no hacerlo también es pecado: <strong style="color:#F0EAD6;">el pecado de omisión</strong>.</li><li class="q">¿Necesitas arrepentirte de esto?</li></ul></div></div>
+<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Santiago 4:17')">Santiago 4:17</div></div><div class="sc-body"><ul class="sc-pts"><li>Saber lo que es correcto y no hacerlo también es pecado: <strong class="txt-highlight">el pecado de omisión</strong>.</li><li class="q">¿Necesitas arrepentirte de esto?</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Santiago 5:16')">Santiago 5:16</div></div><div class="sc-body"><ul class="sc-pts"><li>Estamos llamados a confesar nuestros pecados unos a otros.</li><li>La oración es poderosa y efectiva.</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Romanos 6:23')">Romanos 6:23</div></div><div class="sc-body"><div class="sc-qm">"</div><p class="sc-verse">"23 Porque la paga del pecado es muerte, mas la dádiva de Dios es vida eterna en Cristo Jesús Señor nuestro."</p><ul class="sc-pts"><li>Cuando pecamos, ganamos la muerte eterna.</li><li>¿Qué quiere darte Dios? ¡El regalo de la vida eterna!</li></ul></div></div>
 </div>
 <div class="slabel"><div class="slabel-ico">🔄</div><div class="slabel-txt">El Arrepentimiento</div><div class="sdiv"></div></div>
 <div class="sc-list">
-<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('2 Corintios 7:8-11')">2 Corintios 7:8-11</div></div><div class="sc-body"><ul class="sc-pts"><li>No puedes arrepentirte sin tener un <strong style="color:#F0EAD6;">dolor piadoso</strong>.</li><li>La respuesta al pecado es el arrepentimiento. (Griego — "metanoia" — cambio de mente)</li><li>Un cambio de mente debe conducir a un cambio en las acciones.</li></ul></div></div>
+<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('2 Corintios 7:8-11')">2 Corintios 7:8-11</div></div><div class="sc-body"><ul class="sc-pts"><li>No puedes arrepentirte sin tener un <strong class="txt-highlight">dolor piadoso</strong>.</li><li>La respuesta al pecado es el arrepentimiento. (Griego — "metanoia" — cambio de mente)</li><li>Un cambio de mente debe conducir a un cambio en las acciones.</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Lucas 13:1-5')">Lucas 13:1-5</div></div><div class="sc-body"><ul class="sc-pts"><li>A menos que una persona se arrepienta, corre peligro de condenación eterna.</li><li>¡Debemos arrepentirnos, o pereceremos!</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Colosenses 3:5-10')">Colosenses 3:5-10</div></div><div class="sc-body"><ul class="sc-pts"><li class="q">¿Estás listo para matar estos pecados de una vez por todas?</li><li>La ira de Dios se acerca, ¡así que libérate de la esclavitud del pecado!</li></ul></div></div>
-<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 5:27-30')">Mateo 5:27-30</div></div><div class="sc-body"><ul class="sc-pts"><li>Debemos ser radicales al eliminar las cosas que nos hacen pecar.</li><li>El objetivo es una <strong style="color:#F0EAD6;">transformación del corazón</strong>.</li></ul></div></div>
+<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 5:27-30')">Mateo 5:27-30</div></div><div class="sc-body"><ul class="sc-pts"><li>Debemos ser radicales al eliminar las cosas que nos hacen pecar.</li><li>El objetivo es una <strong class="txt-highlight">transformación del corazón</strong>.</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Hechos 26:20')">Hechos 26:20</div></div><div class="sc-body"><ul class="sc-pts"><li>¡Demostramos nuestro arrepentimiento con nuestras obras!</li><li class="q">¿Cuál es tu plan para arrepentirte de los pecados en tu vida?</li></ul></div></div>
 </div>
 <div class="slabel"><div class="slabel-ico">🎯</div><div class="slabel-txt">Desafío de la Semana</div><div class="sdiv"></div></div>
 <div class="challenge reveal"><div class="challenge-h">⚡ Desafío</div><p class="challenge-t">Ten un plan claro de arrepentimiento, que aborde tanto los pecados de comisión como los de omisión.</p></div>`},
-{id:6,titulo:'Luz y Oscuridad',icono:'🌗',color:'#5B7A9A',vid:'y5a5tM9iBgY',desc:'Un estudio exhaustivo de lo que significa pasar de la oscuridad del pecado a la luz de la salvación.',html:`<div class="purpose"><div class="purpose-lbl">✦ Propósito</div><p class="purpose-txt">Entender cómo ser salvo.<br><br><strong style="font-family:'Lato',sans-serif;font-size:14px;color:#E8C98A;">Preguntas:</strong> ¿Cuándo crees que fuiste salvo? ¿Cuándo recibiste el Espíritu Santo?</p></div>
-<div class="facts-box reveal"><h4>✦ Oscuridad vs. Luz — <span class="sc-ref" onclick="openModal('1 Pedro 2:9-10')">1 Pedro 2:9-10</span></h4><ul><li><strong style="color:#888;">OSCURIDAD:</strong> No Pueblo de Dios · Sin Misericordia · Perdido</li><li><strong style="color:#C9A96E;">LUZ:</strong> Pueblo de Dios · Misericordia · Salvo · Cristiano · Discípulo</li><li>Cada persona está ya sea en la oscuridad o en la luz. <strong style="color:#F0EAD6;">No existe una zona intermedia.</strong></li></ul></div>
+{id:6,titulo:'Luz y Oscuridad',icono:'🌗',color:'#5B7A9A',vid:'y5a5tM9iBgY',desc:'Un estudio exhaustivo de lo que significa pasar de la oscuridad del pecado a la luz de la salvación.',html:`<div class="purpose"><div class="purpose-lbl">✦ Propósito</div><p class="purpose-txt">Entender cómo ser salvo.<br><br><strong class="txt-gold" style="font-size:14px;">Preguntas:</strong> ¿Cuándo crees que fuiste salvo? ¿Cuándo recibiste el Espíritu Santo?</p></div>
+<div class="facts-box reveal"><h4>✦ Oscuridad vs. Luz — <span class="sc-ref" onclick="openModal('1 Pedro 2:9-10')">1 Pedro 2:9-10</span></h4><ul><li><strong class="txt-muted">OSCURIDAD:</strong> No Pueblo de Dios · Sin Misericordia · Perdido</li><li><strong class="txt-gold-dark">LUZ:</strong> Pueblo de Dios · Misericordia · Salvo · Cristiano · Discípulo</li><li>Cada persona está ya sea en la oscuridad o en la luz. <strong class="txt-highlight">No existe una zona intermedia.</strong></li></ul></div>
 <div class="slabel"><div class="slabel-ico">📖</div><div class="slabel-txt">Escrituras y Análisis</div><div class="sdiv"></div></div>
 <div class="sc-list">
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Juan 3:1-7')">Juan 3:1-7</div></div><div class="sc-body"><ul class="sc-pts"><li>Debemos nacer de nuevo del agua y del Espíritu.</li><li>Esta es una decisión personal como adulto.</li></ul></div></div>
@@ -741,7 +2023,7 @@ var PP = [
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Hechos 2:38-42')">Hechos 2:38-42</div></div><div class="sc-body"><ul class="sc-pts"><li><strong>Una vez que la gente creyó, ¿qué hicieron?</strong></li><li>Arrepentirse (volverse a Dios).</li><li>Ser bautizados (ser sumergidos en agua).</li><li>Sus pecados fueron perdonados. <strong>Este es el momento en que una persona es salva.</strong></li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Romanos 6:1-8')">Romanos 6:1-8</div></div><div class="sc-body"><ul class="sc-pts"><li>El bautismo es la participación en la muerte, sepultura y resurrección de Cristo.</li><li>Este es el momento en que somos liberados del pecado y unidos con Cristo.</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Colosenses 2:11-12')">Colosenses 2:11-12</div></div><div class="sc-body"><ul class="sc-pts"><li>¿Qué activa el poder de Dios en el bautismo? ¡Nuestra fe!</li><li>Somos salvos por fe en el momento del bautismo.</li></ul></div></div>
-<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 15:6-9')">Mateo 15:6-9 — Falsas doctrinas</div></div><div class="sc-body"><ul class="sc-pts"><li>Las falsas doctrinas a menudo surgen de la tradición religiosa.</li><li><strong style="color:#E8C98A;">Ejemplos:</strong> Bautismo de infantes, Orar a Jesús para que entre en tu corazón.</li></ul></div></div>
+<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 15:6-9')">Mateo 15:6-9 — Falsas doctrinas</div></div><div class="sc-body"><ul class="sc-pts"><li>Las falsas doctrinas a menudo surgen de la tradición religiosa.</li><li><strong class="txt-gold">Ejemplos:</strong> Bautismo de infantes, Orar a Jesús para que entre en tu corazón.</li></ul></div></div>
 <div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('1 Pedro 3:18-22')">1 Pedro 3:18-22</div></div><div class="sc-body"><ul class="sc-pts"><li>¿Qué representa el agua en este pasaje? El diluvio de Noé.</li><li>El bautismo "ahora los salva" — confirma que el bautismo no es meramente simbólico.</li></ul></div></div>
 <div class="sc-card reveal" style="border-color:rgba(201,169,110,0.35)"><div class="sc-refbar" style="background:rgba(201,169,110,0.12)"><div class="sc-ref">⚠️ Revisa tu Línea de Tiempo</div></div><div class="sc-body"><ul class="sc-pts"><li>¿Tu línea de tiempo espiritual se alinea con el proceso bíblico de salvación?</li><li>Si no, ¡ahora es el momento de arrepentirse y ser bautizado!</li></ul></div></div>
 </div>
@@ -754,9 +2036,9 @@ var PP = [
 </div>
 <div class="slabel"><div class="slabel-ico">📖</div><div class="slabel-txt">Tres Respuestas a la Cruz</div><div class="sdiv"></div></div>
 <div class="sc-list">
-<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 26:69-75')">Mateo 26:69-75 — Pedro</div></div><div class="sc-body"><ul class="sc-pts"><li>Pedro niega a Jesús, tal como Jesús lo había profetizado.</li><li>El pecado de la <strong style="color:#F0EAD6;">cobardía</strong>.</li><li>Estaba quebrantado "a nivel del corazón" e incluso lloró amargamente.</li></ul></div></div>
-<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 27:1-10')">Mateo 27:1-10 — Judas</div></div><div class="sc-body"><ul class="sc-pts"><li>Jesús es entregado a Pilato, el gobernador romano.</li><li>El pecado de la <strong style="color:#F0EAD6;">traición</strong>.</li><li>Judas cedió a su tristeza mundana y se quitó la vida.</li></ul></div></div>
-<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 27:11-26')">Mateo 27:11-26 — Pilato</div></div><div class="sc-body"><ul class="sc-pts"><li>El pecado de la <strong style="color:#F0EAD6;">indecisión (omisión)</strong>.</li><li>Todos somos Barrabás y merecemos ser crucificados por nuestros pecados.</li></ul></div></div>
+<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 26:69-75')">Mateo 26:69-75 — Pedro</div></div><div class="sc-body"><ul class="sc-pts"><li>Pedro niega a Jesús, tal como Jesús lo había profetizado.</li><li>El pecado de la <strong class="txt-highlight">cobardía</strong>.</li><li>Estaba quebrantado "a nivel del corazón" e incluso lloró amargamente.</li></ul></div></div>
+<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 27:1-10')">Mateo 27:1-10 — Judas</div></div><div class="sc-body"><ul class="sc-pts"><li>Jesús es entregado a Pilato, el gobernador romano.</li><li>El pecado de la <strong class="txt-highlight">traición</strong>.</li><li>Judas cedió a su tristeza mundana y se quitó la vida.</li></ul></div></div>
+<div class="sc-card reveal"><div class="sc-refbar"><div class="sc-ref" onclick="openModal('Mateo 27:11-26')">Mateo 27:11-26 — Pilato</div></div><div class="sc-body"><ul class="sc-pts"><li>El pecado de la <strong class="txt-highlight">indecisión (omisión)</strong>.</li><li>Todos somos Barrabás y merecemos ser crucificados por nuestros pecados.</li></ul></div></div>
 </div>
 <div class="slabel"><div class="slabel-ico">📖</div><div class="slabel-txt">La Pasión — Parte Dos</div><div class="sdiv"></div></div>
 <div class="sc-list">
