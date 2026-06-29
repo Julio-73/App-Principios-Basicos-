@@ -1,9 +1,13 @@
 /* ═══════════════════════════════════════════════════════ SERVICE WORKER - APP OFFLINE ═══════════════════════════════════════════════════════ */
 
-const CACHE_NAME = 'principios-basicos-v1';
+const CACHE_NAME = 'principios-basicos-v2';
 const urlsToCache = [
   './',
-  './index.html'
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
+  'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap'
 ];
 
 // Instalar Service Worker
@@ -12,7 +16,9 @@ self.addEventListener('install', function(event) {
     caches.open(CACHE_NAME)
       .then(function(cache) {
         console.log('Cache abierto:', CACHE_NAME);
-        return cache.addAll(urlsToCache);
+        return cache.addAll(urlsToCache).catch(function(err) {
+          console.warn('Error cacheando recursos:', err);
+        });
       })
       .then(function() {
         return self.skipWaiting();
@@ -38,15 +44,36 @@ self.addEventListener('activate', function(event) {
   );
 });
 
-// Interceptar peticiones (CACHE-FIRST)
+// Interceptar peticiones (CACHE-FIRST con red como respaldo)
 self.addEventListener('fetch', function(event) {
   if (event.request.method !== 'GET') return;
+
+  // Para Google Fonts, usar estrategia Stale-While-Revalidate
+  if (event.request.url.indexOf('fonts.googleapis.com') !== -1 ||
+      event.request.url.indexOf('fonts.gstatic.com') !== -1) {
+    event.respondWith(
+      caches.match(event.request).then(function(cached) {
+        var fetchPromise = fetch(event.request).then(function(response) {
+          if (response && response.ok) {
+            var copy = response.clone();
+            caches.open(CACHE_NAME).then(function(cache) {
+              cache.put(event.request, copy);
+            });
+          }
+          return response;
+        }).catch(function() {
+          return cached;
+        });
+        return cached || fetchPromise;
+      })
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request)
       .then(function(response) {
         if (response) {
-          console.log('Sirviendo desde cache:', event.request.url);
           return response;
         }
         
@@ -66,14 +93,10 @@ self.addEventListener('fetch', function(event) {
           })
           .catch(function(error) {
             console.log('Error fetching:', error);
-            if (event.request.url.endsWith('/') || event.request.url.endsWith('index.html')) {
+            if (event.request.destination === 'document') {
               return caches.match('./index.html');
             }
           });
       })
   );
 });
-
-
-
-

@@ -73,8 +73,88 @@ body{
 @keyframes scaleIn{from{opacity:0;transform:scale(0.98);}to{opacity:1;transform:scale(1);}}
 @keyframes shimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
 @keyframes pulse{0%,100%{opacity:0.5;transform:scale(1);}50%{opacity:0.8;transform:scale(1.03);}}
+@keyframes gradShift{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+@keyframes preloaderPulse{0%,100%{opacity:0.3;transform:scale(1);}50%{opacity:1;transform:scale(1.12);}}
+@keyframes preloaderFade{to{opacity:0;visibility:hidden;}}
+@keyframes patternFloat{0%{transform:translateY(0);}100%{transform:translateY(-50px);}}
 .reveal{opacity:0;transform:translateY(15px);transition:opacity 0.7s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);}
 .reveal.visible{opacity:1;transform:translateY(0);}
+
+/* ── PRELOADER ── */
+#preloader{
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 24px;
+  animation: preloaderFade .6s ease 1.2s forwards;
+  pointer-events: none;
+}
+#preloader .pl-cross{
+  font-family: var(--font-serif); font-size: 48px;
+  color: var(--gold);
+  filter: drop-shadow(0 0 20px rgba(212,175,55,0.4));
+  animation: preloaderPulse 1.2s ease-in-out infinite;
+}
+#preloader .pl-bar{
+  width: 120px; height: 2px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden; border-radius: 1px;
+}
+#preloader .pl-fill{
+  height: 100%; width: 0%;
+  background: var(--gold);
+  border-radius: 1px;
+  animation: plLoad 1s ease forwards;
+  box-shadow: 0 0 12px rgba(212,175,55,0.5);
+}
+@keyframes plLoad{to{width:100%;}}
+
+/* ── BACKGROUND PATTERN SUTIL ── */
+body::before{
+  content: ''; position: fixed; inset: 0;
+  pointer-events: none; z-index: -1;
+  background-image: radial-gradient(rgba(212,175,55,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+  animation: patternFloat 60s linear infinite;
+}
+body.light::before{
+  background-image: radial-gradient(rgba(139,105,20,0.04) 1px, transparent 1px);
+}
+
+/* ── TEXTO CON GRADIENTE ANIMADO ── */
+.txt-grad-anim{
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 30%, var(--gold) 60%, var(--gold2) 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradShift 4s ease infinite;
+}
+
+/* ── MICRO-INTERACCIONES EN ICONOS ── */
+.hero-ico, .w-card-ico, .top-nav-ico, .slabel-ico, .sb-desc-ico{
+  transition: transform var(--t2), filter var(--t2);
+}
+.hero-ico:hover{transform:scale(1.12) rotate(-6deg);filter:drop-shadow(0 0 20px rgba(212,175,55,0.4));}
+.w-card-ico:hover{transform:scale(1.18) rotate(8deg);}
+.top-nav-ico:hover{transform:scale(1.25) translateY(-2px);}
+.slabel-ico:hover{transform:scale(1.15) rotate(10deg);}
+.sb-desc-ico:hover{transform:scale(1.2);}
+.sc-ref{transition:all var(--t2);}
+.sc-ref:hover{letter-spacing:1.2px;filter:drop-shadow(0 0 8px rgba(212,175,55,0.3));}
+.cbtn{transition:all var(--t2);}
+.cbtn:hover{transform:scale(1.04);letter-spacing:1.5px;}
+
+/* ── HERO GRADIENTE ANIMADO ── */
+.hero-grad{
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, transparent 30%, rgba(212,175,55,0.02) 60%, transparent 100%);
+  background-size: 200% 200%;
+  animation: gradShift 8s ease infinite;
+}
+body.light .hero-grad{
+  background: linear-gradient(135deg, rgba(139,105,20,0.04) 0%, transparent 30%, rgba(139,105,20,0.02) 60%, transparent 100%);
+  background-size: 200% 200%;
+}
 
 /* ── HEADER EDITORIAL ── */
 header{
@@ -187,7 +267,7 @@ header{
 .menubtn.active span:nth-child(2){opacity:0; transform: scale(0);}
 .menubtn.active span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg); background: var(--gold);}
 
-#themeBtn{
+#themeBtn, #focusBtn{
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -202,11 +282,27 @@ header{
   touch-action: manipulation;
   color: var(--gold);
 }
-#themeBtn:hover{
+#themeBtn:hover, #focusBtn:hover{
   background: var(--gold-subtle);
   border-color: var(--gold);
   transform: translateY(-1px) rotate(15deg);
   box-shadow: var(--shadow-gold);
+}
+
+/* ── MODO LECTURA / FOCO ── */
+body.focus-mode aside{display:none !important;}
+body.focus-mode main{margin-left:0 !important;max-width:100% !important;}
+body.focus-mode .layout{justify-content:center !important;}
+body.focus-mode .top-nav{display:none !important;}
+body.focus-mode .hprog, body.focus-mode .menubtn, body.focus-mode #searchBtn{display:none !important;}
+body.focus-mode header{justify-content:center !important;}
+body.focus-mode #focusBtn{color:var(--gold2);border-color:var(--gold);background:var(--gold-subtle);transform:rotate(15deg);}
+body.focus-mode .hero{padding-top:60px;}
+body.focus-mode .pbody{padding-top:40px;}
+body.light.focus-mode #focusBtn{color:var(--gold2);}
+@media(max-width:768px){
+  body.focus-mode .hbrand{justify-content:center;width:100%;}
+  body.focus-mode #themeBtn, body.focus-mode #focusBtn{display:none;}
 }
 
 .layout{
@@ -1021,19 +1117,6 @@ main{
   opacity: 1;
   visibility: visible;
 }
-.modal-content{
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  max-width: 600px;
-  width: 100%;
-  max-height: 80vh;
-  overflow-y: auto;
-  box-shadow: var(--shadow-lg);
-  transform: scale(0.97);
-  transition: transform var(--t3);
-  -webkit-overflow-scrolling: touch;
-}
 .modal-overlay.active .modal-content{
   transform: scale(1);
 }
@@ -1300,7 +1383,7 @@ body.light .nbtn{background: var(--bg2);}
   .htitles{text-align: center;}
   .menubtn{display: none !important;}
   .hprog{position: absolute; right: 24px;}
-  #searchBtn, #themeBtn{
+  #searchBtn, #themeBtn, #focusBtn{
     margin-left: 0;
     padding: 0;
     width: 32px;
@@ -1308,6 +1391,7 @@ body.light .nbtn{background: var(--bg2);}
     font-size: 13px;
   }
   #themeBtn{margin-left: 8px;}
+  #focusBtn{margin-left: 8px;}
 }
 @media(max-width:768px){
   .top-nav{display: none !important;}
@@ -1560,7 +1644,7 @@ body.light .nbtn{background: var(--bg2);}
   .def-desc{font-size: 13.5px;}
   .article-body{font-size: 15.5px;}
 }
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important;}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important;}#preloader{display:none;}body::before{animation:none;}}
 
 /* ── SWIPE GESTURE ── */
 .swipe-area{position:fixed;inset:0;z-index:1;pointer-events:none;}
@@ -1611,10 +1695,6 @@ body.light .nbtn{background: var(--bg2);}
 }
 
 /* ── SEARCH PANEL & RESULTS EDITORIAL ── */
-#searchBar {
-  border-bottom: 1px solid var(--border) !important;
-  box-shadow: var(--shadow-md) !important;
-}
 #searchInput {
   font-family: var(--font-sans);
   border-radius: var(--radius-sm) !important;
@@ -1625,19 +1705,6 @@ body.light .nbtn{background: var(--bg2);}
 }
 #searchInput:focus {
   border-color: var(--gold) !important;
-}
-.search-result-item {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  transition: background var(--t1);
-  background: var(--bg2);
-}
-.search-result-item:hover {
-  background: var(--bg3);
-}
-.search-result-item:last-child {
-  border-bottom: none;
 }
 .search-result-type {
   font-size: 10px;
@@ -1844,6 +1911,19 @@ body.light .w-card:hover {
   box-shadow: var(--shadow-sm), var(--shadow-gold);
 }
 
+/* ── TILT 3D EN CARDS DE INICIO ── */
+.w-card{
+  transform-style: preserve-3d;
+  transition: transform .4s cubic-bezier(.22,1,.36,1), border-color var(--t3), box-shadow var(--t3), background var(--t3);
+  will-change: transform;
+}
+.w-card .w-cnum, .w-card .w-ccontent{
+  transition: transform .3s cubic-bezier(.22,1,.36,1);
+  transform-style: preserve-3d;
+}
+.w-card:hover .w-cnum{transform:translateZ(20px);}
+.w-card:hover .w-ccontent{transform:translateZ(12px);}
+
 /* ── MICRO-ANIMACIONES DE DESPLAZAMIENTO (FLECHAS) ── */
 .arrow-l, .arrow-r {
   display: inline-block;
@@ -1900,6 +1980,8 @@ body.light #searchBar {
   max-width: 600px;
   width: 100%;
   max-height: 85vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   box-shadow: var(--shadow-lg), var(--shadow-gold) !important;
   transform: scale(0.97);
   transition: transform var(--t3);
@@ -1932,6 +2014,10 @@ body.light .modal-content {
 
 </head>
 <body>
+<div id="preloader">
+  <div class="pl-cross">✝</div>
+  <div class="pl-bar"><div class="pl-fill"></div></div>
+</div>
 <header>
 
 <div class="reading-progress" id="readProgress"></div>
@@ -1949,6 +2035,7 @@ body.light .modal-content {
 <button id="searchBtn" onclick="toggleSearch()" aria-label="Buscar" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);background:rgba(255,255,255,0.05);cursor:pointer;font-size:16px;color:var(--cream);transition:all var(--t2);margin-right:10px;">🔍</button>
 
 <button id="themeBtn" onclick="toggleTheme()" aria-label="Cambiar modo">🌙</button>
+<button id="focusBtn" onclick="toggleFocus()" aria-label="Modo lectura" title="Modo lectura">👓</button>
 <div class="hprog">
 <span class="hprog-lbl" id="hLbl">0 / 10</span>
 <div class="hprog-bar"><div class="hprog-fill" id="hFill"></div></div>
@@ -2140,7 +2227,7 @@ if (e && e.target !== e.currentTarget) return;
 document.getElementById('verseModal').classList.remove('active');
 document.body.style.overflow = '';
 }
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
 /* ── SCROLL REVEAL ────────────────────────────────────── */
 function initReveal() {
 var observer = new IntersectionObserver(function(entries) {
@@ -2191,6 +2278,7 @@ document.getElementById('welcome').style.display='flex';
 S.cur=-1;
 var siHome=document.getElementById('si_home');
 if(siHome)siHome.classList.add('active');
+setTimeout(initTilt,100);
 } else {
 var v=document.getElementById('pv'+idx);
 if(v){v.classList.add('active');S.cur=idx;setTimeout(initReveal,100);}
@@ -2249,6 +2337,30 @@ function toggleTheme(){
 }
 
 
+/* ── MODO LECTURA / FOCO ───────────────────────────── */
+function toggleFocus(){
+  document.body.classList.toggle('focus-mode');
+  var btn=document.getElementById('focusBtn');
+  if(btn)btn.textContent=document.body.classList.contains('focus-mode')?'📖':'👓';
+  try{localStorage.setItem('ici_focus',document.body.classList.contains('focus-mode')?'on':'off');}catch(e){}
+}
+
+/* ── TILT 3D ──────────────────────────────────────────── */
+function initTilt(){
+  if(window.innerWidth<769)return;
+  document.querySelectorAll('.w-card').forEach(function(card){
+    card.addEventListener('mousemove',function(e){
+      var r=card.getBoundingClientRect();
+      var px=(e.clientX-r.left)/r.width-0.5;
+      var py=(e.clientY-r.top)/r.height-0.5;
+      card.style.transform='perspective(800px) rotateX('+(-py*5)+'deg) rotateY('+(px*5)+'deg) translateY(-4px)';
+    });
+    card.addEventListener('mouseleave',function(){
+      card.style.transform='';
+    });
+  });
+}
+
 /* ── PWA ──────────────────────────────────────────────── */
 var deferredPrompt=null,installBanner=document.getElementById('installBanner');
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;if(installBanner)setTimeout(function(){installBanner.classList.add('show');},3000);});
@@ -2256,14 +2368,15 @@ window.installApp=function(){if(deferredPrompt){deferredPrompt.prompt();deferred
 window.closeInstallBanner=function(){if(installBanner)installBanner.classList.remove('show');};
 var offBar=document.getElementById('offlineBar');
 function checkOnline(){if(offBar)offBar.classList.toggle('show',!navigator.onLine);}
-window.addEventListener('online',checkOnline);window.addEventListener('offline',checkOnline);
+window.addEventListener('online',checkOnline);window.addEventListener('offline',checkOnline);checkOnline();
 /* ── INIT ───────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded',function(){
 buildSB();buildW();buildPP();updProg();
 var saved;try{saved=localStorage.getItem('ici_theme');}catch(e){}if(saved==='light'){document.body.classList.add('light');var btn=document.getElementById('themeBtn');if(btn)btn.textContent='☀️';}
+var fSaved;try{fSaved=localStorage.getItem('ici_focus');}catch(e){}if(fSaved==='on'){document.body.classList.add('focus-mode');var fBtn=document.getElementById('focusBtn');if(fBtn)fBtn.textContent='📖';}
 document.getElementById('overlay').classList.remove('active');
 document.querySelector('.menubtn').classList.remove('active');
-setTimeout(function(){buildTopNav();},100);
+setTimeout(function(){buildTopNav();initTilt();},100);
 });
 window.addEventListener('resize', function(){
 if(window.innerWidth >= 768){
@@ -2563,14 +2676,20 @@ document.getElementById('readProgress').style.width = scrolled + '%';
 /* ═══════════════════════════════════════════════════════ BUSCADOR PROFESIONAL ═══════════════════════════════════════════════════════ */
 function toggleSearch() {
 var bar = document.getElementById('searchBar');
+if (!bar) return;
 bar.style.display = bar.style.display === 'none' ? 'block' : 'none';
 if (bar.style.display === 'block') {
-setTimeout(() => document.getElementById('searchInput').focus(), 100);
-document.getElementById('searchResults').innerHTML = '';
+var input = document.getElementById('searchInput');
+if (input) setTimeout(function() { input.focus(); }, 100);
+var results = document.getElementById('searchResults');
+if (results) results.innerHTML = '';
 }
 }
 
 
+function escapeRegex(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 function searchContent() {
 var query = document.getElementById('searchInput').value.toLowerCase().trim();
 var results = document.getElementById('searchResults');
@@ -2644,7 +2763,7 @@ if (allResults.length === 0) {
 results.innerHTML = '<div class="no-results"><span>😕</span><p>No se encontraron resultados para "<strong>' + query + '</strong>"</p></div>';
 } else {
 results.innerHTML = allResults.map(function(r) {
-var highlightedText = r.text.replace(new RegExp(query, 'gi'), function(match) {
+var highlightedText = r.text.replace(new RegExp(escapeRegex(query), 'gi'), function(match) {
 return '<span class="search-result-highlight">' + match + '</span>';
 });
 return '<div class="search-result-item" onclick="' + r.action + ';toggleSearch();"><div class="search-result-type">' + r.type + '</div><div class="search-result-title">' + r.title + '</div><div class="search-result-text">' + highlightedText + '</div></div>';
@@ -2655,11 +2774,14 @@ return '<div class="search-result-item" onclick="' + r.action + ';toggleSearch()
 
 
 
-// Cerrar búsqueda con Escape
+// Cerrar con Escape: modal y búsqueda
 document.addEventListener('keydown', function(e) {
-if (e.key === 'Escape') {
-document.getElementById('searchBar').style.display = 'none';
-}
+  if (e.key === 'Escape') {
+    var modal = document.getElementById('verseModal');
+    if (modal && modal.classList.contains('active')) { closeModal(); return; }
+    var searchBar = document.getElementById('searchBar');
+    if (searchBar && searchBar.style.display === 'block') { searchBar.style.display = 'none'; }
+  }
 });
 
 
