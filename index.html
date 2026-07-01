@@ -630,7 +630,7 @@ font-size:18px;line-height:1.7;transition:background var(--t3),color var(--t3);
 
 
 
-@keyframes slideInRight{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+@keyframes slideInRight{from{opacity:0;transform:perspective(1200px) rotateY(-5deg) translateX(40px) scale(0.97);}to{opacity:1;transform:perspective(1200px) rotateY(0deg) translateX(0) scale(1);}}
 
 
 
@@ -638,7 +638,7 @@ font-size:18px;line-height:1.7;transition:background var(--t3),color var(--t3);
 
 
 
-@keyframes slideInLeft{from{opacity:0;transform:translateX(-30px);}to{opacity:1;transform:translateX(0);}}
+@keyframes slideInLeft{from{opacity:0;transform:perspective(1200px) rotateY(5deg) translateX(-40px) scale(0.97);}to{opacity:1;transform:perspective(1200px) rotateY(0deg) translateX(0) scale(1);}}
 
 
 
@@ -646,7 +646,10 @@ font-size:18px;line-height:1.7;transition:background var(--t3),color var(--t3);
 
 
 
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes cubeRight{from{opacity:0;transform:perspective(1200px) rotateY(-12deg) translateX(60px) scale(0.93);}to{opacity:1;transform:perspective(1200px) rotateY(0deg) translateX(0) scale(1);}}
+@keyframes cubeLeft{from{opacity:0;transform:perspective(1200px) rotateY(12deg) translateX(-60px) scale(0.93);}to{opacity:1;transform:perspective(1200px) rotateY(0deg) translateX(0) scale(1);}}
+@keyframes heroParallax{0%{transform:translateY(0);}100%{transform:translateY(-8px);}}
 
 
 
@@ -1952,7 +1955,8 @@ main{margin-left:var(--sw);flex:1;min-height:calc(100vh - var(--hh));}
 
 
 
-.pview{display:none;}
+#pCont{perspective:1200px;}
+.pview{display:none;transform-style:preserve-3d;backface-visibility:hidden;}
 
 
 
@@ -1976,7 +1980,9 @@ main{margin-left:var(--sw);flex:1;min-height:calc(100vh - var(--hh));}
 
 
 
-.pview.active.slide-in-right{animation:slideInRight 0.4s cubic-bezier(0.16,1,0.3,1) forwards;}
+.pview.active.slide-in-right{animation:slideInRight 0.45s cubic-bezier(0.16,1,0.3,1) forwards;}
+.pview.active.cube-right{animation:cubeRight 0.5s cubic-bezier(0.16,1,0.3,1) forwards;}
+.pview.active.cube-left{animation:cubeLeft 0.5s cubic-bezier(0.16,1,0.3,1) forwards;}
 
 
 
@@ -2152,6 +2158,7 @@ main{margin-left:var(--sw);flex:1;min-height:calc(100vh - var(--hh));}
 
 
 
+.hero-particles{position:absolute;inset:0;pointer-events:none;width:100%;height:100%;opacity:0.5;}
 .hero-line{position:absolute;bottom:0;left:52px;width:80px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--gold),transparent);}
 
 
@@ -4974,7 +4981,10 @@ transform:scale(1.1);
 
 
 
-.top-nav-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold3));border-color:var(--gold);color:#1a1000;font-weight:700;}
+.top-nav-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold3));border-color:var(--gold);color:#1a1000;font-weight:700;}
+.top-nav-spotlight{position:absolute;bottom:2px;height:3px;border-radius:3px;background:var(--gold);box-shadow:0 0 12px var(--gold),0 0 24px rgba(212,175,55,0.3);transition:left 0.35s cubic-bezier(0.22,1,0.36,1),width 0.35s cubic-bezier(0.22,1,0.36,1);pointer-events:none;opacity:0;}
+.top-nav-spotlight.visible{opacity:1;}
+.top-nav-inner{position:relative;}
 
 
 
@@ -10263,7 +10273,7 @@ if (!actionsEl) {
   var closeBtn = headerEl.querySelector('.modal-close');
   headerEl.insertBefore(actionsEl, closeBtn);
 }
-actionsEl.innerHTML = '<button class="modal-act-btn share-btn" onclick="shareVerse(\''+ref.replace(/'/g,"\\'")+'\')" title="Compartir">📤</button><button class="modal-act-btn fav-btn'+(isFav(ref)?' fav-active':'')+'" data-fav="'+ref.replace(/"/g,'&quot;')+'" onclick="toggleFav(\''+ref.replace(/'/g,"\\'")+'\')" title="Favorito">'+(isFav(ref)?'★':'☆')+'</button>';
+actionsEl.innerHTML = '<button class="modal-act-btn share-btn" onclick="shareVerse(\''+ref.replace(/'/g,"\\'")+'\')" title="Compartir">📤</button><button class="modal-act-btn" onclick="generateVerseCard(\''+ref.replace(/'/g,"\\'")+'\')" title="Generar imagen">🖼️</button><button class="modal-act-btn fav-btn'+(isFav(ref)?' fav-active':'')+'" data-fav="'+ref.replace(/"/g,'&quot;')+'" onclick="toggleFav(\''+ref.replace(/'/g,"\\'")+'\')" title="Favorito">'+(isFav(ref)?'★':'☆')+'</button>';
 
 
 
@@ -10410,6 +10420,137 @@ function addFavBadges() {
     badge.onclick = function(e){ e.stopPropagation(); toggleFav(ref); };
     el.parentNode.insertBefore(badge, el.nextSibling);
   });
+}
+var particleAnimId = null;
+function startParticles(heroEl) {
+  if (!heroEl || window.innerWidth < 769) return;
+  if (particleAnimId) { cancelAnimationFrame(particleAnimId); particleAnimId = null; }
+  var existing = heroEl.querySelector('.hero-particles');
+  if (existing) existing.remove();
+  var canvas = document.createElement('canvas');
+  canvas.className = 'hero-particles';
+  canvas.width = heroEl.offsetWidth;
+  canvas.height = heroEl.offsetHeight;
+  heroEl.insertBefore(canvas, heroEl.firstChild);
+  var ctx = canvas.getContext('2d');
+  var particles = [];
+  var count = Math.min(60, Math.floor((canvas.width * canvas.height) / 12000));
+  for (var i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.25,
+      vy: -(Math.random() * 0.3 + 0.1),
+      size: Math.random() * 2 + 1,
+      alpha: Math.random() * 0.5 + 0.15,
+      shape: Math.random() > 0.5 ? 'circle' : 'cross'
+    });
+  }
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(function(p){
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.y < -10) { p.y = canvas.height + 10; p.x = Math.random() * canvas.width; }
+      if (p.x < -10) p.x = canvas.width + 10;
+      if (p.x > canvas.width + 10) p.x = -10;
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = '#d4af37';
+      ctx.strokeStyle = '#d4af37';
+      ctx.lineWidth = 0.8;
+      if (p.shape === 'circle') {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(p.x - p.size, p.y);
+        ctx.lineTo(p.x + p.size, p.y);
+        ctx.moveTo(p.x, p.y - p.size);
+        ctx.lineTo(p.x, p.y + p.size);
+        ctx.stroke();
+      }
+    });
+    particleAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+}
+function stopParticles() {
+  if (particleAnimId) { cancelAnimationFrame(particleAnimId); particleAnimId = null; }
+  var c = document.querySelector('.pview.active .hero-particles');
+  if (c) c.remove();
+}
+function generateVerseCard(ref) {
+  var text = verses[ref];
+  if (!text) { alert('Versículo no disponible offline'); return; }
+  var c = document.createElement('canvas');
+  c.width = 600;
+  c.height = 400;
+  var ctx = c.getContext('2d');
+  var grad = ctx.createLinearGradient(0, 0, c.width, c.height);
+  grad.addColorStop(0, '#1a1a2e');
+  grad.addColorStop(0.5, '#16213e');
+  grad.addColorStop(1, '#0f3460');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, c.width, c.height);
+  ctx.fillStyle = 'rgba(212,175,55,0.06)';
+  ctx.fillRect(0, 0, c.width, 3);
+  ctx.fillRect(0, c.height - 3, c.width, 3);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#d4af37';
+  ctx.font = 'bold 24px Georgia, serif';
+  ctx.fillText(ref, c.width / 2, 55);
+  ctx.fillStyle = 'rgba(212,175,55,0.3)';
+  ctx.font = '16px Georgia, serif';
+  ctx.fillText('"', c.width / 2, 90);
+  ctx.fillStyle = '#f0ead6';
+  ctx.font = '18px Georgia, serif';
+  var words = text.split(' ');
+  var lines = [];
+  var line = '';
+  words.forEach(function(w){
+    var test = line ? line + ' ' + w : w;
+    if (ctx.measureText(test).width > 480) { lines.push(line); line = w; }
+    else { line = test; }
+  });
+  if (line) lines.push(line);
+  var sy = 120;
+  lines.forEach(function(l){
+    ctx.fillText(l, c.width / 2, sy);
+    sy += 30;
+  });
+  ctx.fillStyle = 'rgba(212,175,55,0.3)';
+  ctx.font = '16px Georgia, serif';
+  ctx.fillText('"', c.width / 2, sy + 10);
+  ctx.fillStyle = 'rgba(240,234,214,0.4)';
+  ctx.font = '12px Georgia, serif';
+  ctx.fillText('App Principios Básicos', c.width / 2, c.height - 30);
+  c.toBlob(function(blob){
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = ref.replace(/[:\s]+/g,'_') + '.png';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+}
+function initSpotlight() {
+  var inner = document.querySelector('.top-nav-inner');
+  if (!inner || inner.querySelector('.top-nav-spotlight')) return;
+  var sp = document.createElement('div');
+  sp.className = 'top-nav-spotlight';
+  inner.appendChild(sp);
+  updateSpotlight();
+}
+function updateSpotlight() {
+  var sp = document.querySelector('.top-nav-spotlight');
+  var active = document.querySelector('.top-nav-btn.active');
+  if (!sp || !active) { if (sp) sp.classList.remove('visible'); return; }
+  var inner = document.querySelector('.top-nav-inner');
+  var ir = inner.getBoundingClientRect();
+  var ar = active.getBoundingClientRect();
+  sp.style.left = (ar.left - ir.left) + 'px';
+  sp.style.width = ar.width + 'px';
+  sp.classList.add('visible');
 }
 function closeModal(e) {
 
@@ -11099,7 +11240,7 @@ function go(idx){
 
 
 
-    transitionClass = idx > S.cur ? 'slide-in-right' : 'slide-in-left';
+    transitionClass = idx > S.cur ? 'cube-right' : 'cube-left';
 
 
 
@@ -11127,7 +11268,8 @@ function go(idx){
 
 
 
-    v.classList.remove('active', 'slide-in-right', 'slide-in-left', 'fade-in');
+    stopParticles();
+    v.classList.remove('active', 'slide-in-right', 'slide-in-left', 'cube-right', 'cube-left', 'fade-in');
 
 
 
@@ -11187,11 +11329,11 @@ function go(idx){
 
 
 
-    v.classList.add('active', transitionClass);
-
-
-
-    S.cur=idx;
+    v.classList.add('active', transitionClass);
+    startParticles(v.querySelector('.hero'));
+
+
+    S.cur=idx;
 
 
 
@@ -11207,7 +11349,8 @@ function go(idx){
 
 
 
-  if(si)si.classList.add('active');
+  if(si)si.classList.add('active');
+  updateSpotlight();
 
 
 
@@ -12013,7 +12156,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 
 
-buildSB();buildW();buildPP();updProg();loadNotes();addFavBadges();
+buildSB();buildW();buildPP();updProg();loadNotes();addFavBadges();initSpotlight();
 
 
 
