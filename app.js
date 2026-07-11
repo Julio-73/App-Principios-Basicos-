@@ -501,6 +501,9 @@ var AudioPlayer = {
   start: function(text) {
     this.init();
     
+    // Limpiar referencias globales previas
+    window._activeUtterances = [];
+    
     // Descongelar síntesis antes de cancelar y vaciar manejadores
     if (this.utterance) {
       this.utterance.onend = null;
@@ -527,7 +530,7 @@ var AudioPlayer = {
       return;
     }
     
-    // Unstick global Synthesis en navegadores basados en Chromium
+    // Asegurar que la cola de reproducción no se duerma
     window.speechSynthesis.resume();
     
     var self = this;
@@ -540,9 +543,21 @@ var AudioPlayer = {
     } else {
       this.utterance.lang = 'es-MX';
     }
+    
     this.utterance.rate = this.rate;
+    this.utterance.volume = 1.0;
+    this.utterance.pitch = 1.0;
+    
+    // Evitar que el Garbage Collector recolecte el objeto en Chromium
+    window._activeUtterances = window._activeUtterances || [];
+    window._activeUtterances.push(this.utterance);
+    
+    var activeRef = this.utterance;
     
     this.utterance.onend = function() {
+      var idx = window._activeUtterances.indexOf(activeRef);
+      if (idx > -1) window._activeUtterances.splice(idx, 1);
+      
       if (self.isPlaying) {
         self.currentIdx++;
         self.playCurrent();
@@ -552,6 +567,9 @@ var AudioPlayer = {
     
     this.utterance.onerror = function(e) {
       console.warn('TTS skipped sentence error:', e);
+      var idx = window._activeUtterances.indexOf(activeRef);
+      if (idx > -1) window._activeUtterances.splice(idx, 1);
+      
       if (self.isPlaying) {
         self.currentIdx++;
         self.playCurrent();
@@ -562,7 +580,7 @@ var AudioPlayer = {
     // Retardo de 50ms para permitir que cancelaciones previas sean procesadas por el sistema operativo
     setTimeout(function() {
       if (self.isPlaying) {
-        window.speechSynthesis.speak(self.utterance);
+        window.speechSynthesis.speak(activeRef);
       }
     }, 50);
   },
@@ -573,6 +591,7 @@ var AudioPlayer = {
       this.utterance.onend = null;
       this.utterance.onerror = null;
     }
+    window._activeUtterances = [];
     window.speechSynthesis.cancel();
     this.updateUI();
   },
@@ -589,6 +608,7 @@ var AudioPlayer = {
       this.utterance.onend = null;
       this.utterance.onerror = null;
     }
+    window._activeUtterances = [];
     window.speechSynthesis.cancel();
     this.currentIdx = 0;
     this.updateUI();
