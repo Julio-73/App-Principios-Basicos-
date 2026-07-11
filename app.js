@@ -534,7 +534,12 @@ var AudioPlayer = {
     var sentence = this.sentences[this.currentIdx];
     
     this.utterance = new SpeechSynthesisUtterance(sentence);
-    if (this.voice) this.utterance.voice = this.voice;
+    if (this.voice) {
+      this.utterance.voice = this.voice;
+      this.utterance.lang = this.voice.lang;
+    } else {
+      this.utterance.lang = 'es-MX';
+    }
     this.utterance.rate = this.rate;
     
     this.utterance.onend = function() {
@@ -554,7 +559,12 @@ var AudioPlayer = {
       }
     };
     
-    window.speechSynthesis.speak(this.utterance);
+    // Retardo de 50ms para permitir que cancelaciones previas sean procesadas por el sistema operativo
+    setTimeout(function() {
+      if (self.isPlaying) {
+        window.speechSynthesis.speak(self.utterance);
+      }
+    }, 50);
   },
   
   pause: function() {
