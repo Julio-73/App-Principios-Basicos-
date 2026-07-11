@@ -910,3 +910,176 @@ body.light.focus-mode #focusBtn{color:var(--gold2);}
 .sb-fav-del:hover {
   color: #ff4a4a;
 }
+
+/* ── REPRODUCTOR DE AUDIO FLOTANTE ── */
+.audio-player {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(150px);
+  width: 90%;
+  max-width: 480px;
+  background: rgba(20, 20, 23, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  transition: transform var(--t3);
+  padding: 16px;
+  touch-action: manipulation;
+}
+.audio-player.active {
+  transform: translateX(-50%) translateY(0);
+}
+.ap-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ap-close {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+}
+.ap-close:hover {
+  color: var(--cream);
+}
+.ap-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ap-icon {
+  font-size: 24px;
+  animation: apPulse 2s infinite;
+}
+@keyframes apPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.ap-txt {
+  display: flex;
+  flex-direction: column;
+}
+.ap-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cream);
+}
+.ap-sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+.ap-progress-container {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+.ap-progress-bar {
+  height: 100%;
+  background: var(--gold);
+  width: 0;
+  transition: width 0.1s linear;
+}
+.ap-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.ap-voice-select {
+  flex: 1;
+  max-width: 150px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--cream2);
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  outline: none;
+  cursor: pointer;
+}
+.ap-rate-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--cream2);
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  outline: none;
+  cursor: pointer;
+}
+.ap-center-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.ap-btn {
+  background: none;
+  border: none;
+  color: var(--cream);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--t1);
+}
+.ap-btn:hover {
+  color: var(--gold);
+  transform: scale(1.1);
+}
+.ap-btn.play {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--bg);
+  font-size: 14px;
+  padding-left: 6px;
+}
+.ap-btn.play.paused {
+  padding-left: 4px;
+}
+.ap-btn.play:hover {
+  background: var(--gold-hover);
+  color: var(--bg);
+}
+
+/* Modo claro para reproductor de audio */
+body.light .audio-player {
+  background: rgba(245, 245, 247, 0.85);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+body.light .ap-title {
+  color: var(--bg);
+}
+body.light .ap-btn {
+  color: var(--bg);
+}
+body.light .ap-btn:hover {
+  color: var(--gold);
+}
+body.light .ap-btn.play {
+  background: var(--gold);
+  color: #fff;
+}
+body.light .ap-voice-select, body.light .ap-rate-select {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: var(--bg);
+}

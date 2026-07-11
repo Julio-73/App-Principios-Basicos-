@@ -384,6 +384,216 @@ function exportNotes(idx) {
   URL.revokeObjectURL(url);
 }
 
+function getSpeakableText(idx) {
+  var view = document.getElementById('pv' + idx);
+  if (!view) return '';
+  var parts = [];
+  var n = view.querySelector('.hero-n'); if (n) parts.push(n.textContent);
+  var h = view.querySelector('.hero-h'); if (h) parts.push(h.textContent);
+  var d = view.querySelector('.hero-d'); if (d) parts.push(d.textContent);
+  var body = view.querySelector('.pbody');
+  if (body) {
+    var clone = body.cloneNode(true);
+    var toRemove = clone.querySelectorAll('.lesson-actions, .note-export-btn, .video-outer, .slabel, button, script, iframe, .notes-section, .notes-saved');
+    toRemove.forEach(function(el) { el.remove(); });
+    var noteBoxes = clone.querySelectorAll('.note-box');
+    noteBoxes.forEach(function(el) { el.remove(); });
+    parts.push(clone.textContent);
+  }
+  return parts.join('\n\n').replace(/\s+/g, ' ').trim();
+}
+
+function startAudio(idx) {
+  var p = PP[idx];
+  var text = getSpeakableText(idx);
+  if (!text) return;
+  var title = document.getElementById('audioPlayerTitle');
+  if (title) title.textContent = 'Lección ' + p.id + ': ' + p.titulo;
+  var player = document.getElementById('audioPlayer');
+  if (player) player.classList.add('active');
+  AudioPlayer.start(text);
+}
+
+function toggleAudioPlayPause() {
+  if (AudioPlayer.isPlaying) {
+    AudioPlayer.pause();
+  } else {
+    AudioPlayer.resume();
+  }
+}
+
+var AudioPlayer = {
+  sentences: [],
+  currentIdx: 0,
+  isPlaying: false,
+  utterance: null,
+  voice: null,
+  rate: 1.0,
+  initialized: false,
+  
+  init: function() {
+    if (this.initialized) return;
+    this.loadVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = this.loadVoices.bind(this);
+    }
+    this.initialized = true;
+  },
+  
+  loadVoices: function() {
+    var voices = window.speechSynthesis.getVoices();
+    var esVoices = voices.filter(function(v) {
+      return v.lang.startsWith('es');
+    });
+    
+    esVoices.sort(function(a, b) {
+      var aLat = a.lang.includes('MX') || a.lang.includes('US') || a.lang.includes('CO') || a.lang.includes('419');
+      var bLat = b.lang.includes('MX') || b.lang.includes('US') || b.lang.includes('CO') || b.lang.includes('419');
+      if (aLat && !bLat) return -1;
+      if (!aLat && bLat) return 1;
+      
+      var aGoogle = a.name.toLowerCase().includes('google') || a.name.toLowerCase().includes('natural');
+      var bGoogle = b.name.toLowerCase().includes('google') || b.name.toLowerCase().includes('natural');
+      if (aGoogle && !bGoogle) return -1;
+      if (!aGoogle && bGoogle) return 1;
+      
+      return 0;
+    });
+    
+    var select = document.getElementById('audioVoiceSelect');
+    if (select) {
+      select.innerHTML = esVoices.map(function(v) {
+        return '<option value="' + v.name + '">' + v.name + ' (' + v.lang + ')</option>';
+      }).join('');
+      
+      if (esVoices.length > 0 && !this.voice) {
+        this.voice = esVoices[0];
+        select.value = esVoices[0].name;
+      }
+    }
+  },
+  
+  handleVoiceChange: function() {
+    var select = document.getElementById('audioVoiceSelect');
+    if (!select) return;
+    var voices = window.speechSynthesis.getVoices();
+    var selected = voices.find(function(v) { return v.name === select.value; });
+    if (selected) {
+      this.voice = selected;
+      if (this.isPlaying) {
+        this.pause();
+        this.resume();
+      }
+    }
+  },
+  
+  start: function(text) {
+    this.init();
+    window.speechSynthesis.cancel();
+    
+    this.sentences = text.split(/[.!?¡¿]\s+/).map(function(s) {
+      return s.trim();
+    }).filter(function(s) {
+      return s.length > 0;
+    });
+    
+    this.currentIdx = 0;
+    this.isPlaying = true;
+    this.playCurrent();
+    this.updateUI();
+  },
+  
+  playCurrent: function() {
+    if (this.currentIdx >= this.sentences.length) {
+      this.stop();
+      return;
+    }
+    
+    var self = this;
+    var sentence = this.sentences[this.currentIdx];
+    
+    this.utterance = new SpeechSynthesisUtterance(sentence);
+    if (this.voice) this.utterance.voice = this.voice;
+    this.utterance.rate = this.rate;
+    
+    this.utterance.onend = function() {
+      if (self.isPlaying) {
+        self.currentIdx++;
+        self.playCurrent();
+        self.updateUI();
+      }
+    };
+    
+    this.utterance.onerror = function(e) {
+      console.warn('TTS onend skip:', e);
+      if (self.isPlaying) {
+        self.currentIdx++;
+        self.playCurrent();
+        self.updateUI();
+      }
+    };
+    
+    window.speechSynthesis.speak(this.utterance);
+  },
+  
+  pause: function() {
+    this.isPlaying = false;
+    window.speechSynthesis.cancel();
+    this.updateUI();
+  },
+  
+  resume: function() {
+    this.isPlaying = true;
+    this.playCurrent();
+    this.updateUI();
+  },
+  
+  stop: function() {
+    this.isPlaying = false;
+    window.speechSynthesis.cancel();
+    this.currentIdx = 0;
+    this.updateUI();
+    
+    var player = document.getElementById('audioPlayer');
+    if (player) player.classList.remove('active');
+  },
+  
+  setRate: function(rate) {
+    this.rate = rate;
+    if (this.isPlaying) {
+      this.pause();
+      this.resume();
+    }
+  },
+  
+  updateUI: function() {
+    var playBtn = document.getElementById('audioPlayPauseBtn');
+    if (playBtn) {
+      if (this.isPlaying) {
+        playBtn.innerHTML = '⏸';
+        playBtn.classList.remove('paused');
+      } else {
+        playBtn.innerHTML = '▶';
+        playBtn.classList.add('paused');
+      }
+    }
+    
+    var progress = document.getElementById('audioProgress');
+    if (progress && this.sentences.length > 0) {
+      var pct = (this.currentIdx / this.sentences.length) * 100;
+      progress.style.width = pct + '%';
+    }
+    
+    var indexText = document.getElementById('audioIndexText');
+    if (indexText) {
+      indexText.textContent = (this.currentIdx + 1) + ' / ' + this.sentences.length;
+    }
+  }
+};
+
+window.addEventListener('beforeunload', function() { window.speechSynthesis.cancel(); });
+
+
 function shareVerse(ref) {
   var text = ref + ' - ' + (verses[ref] || '');
   if (navigator.share) {
@@ -643,7 +853,7 @@ var vid=p.vid?'<div class="video-outer"><div class="video-wrap"><iframe src="htt
 
 var done=S.done.indexOf(p.id)!==-1;
 
-return '<div class="pview" id="pv'+i+'"><div class="hero"><div class="hero-glow" style="background:radial-gradient(ellipse at 72% 50%,'+p.color+'18 0%,transparent 65%);"></div><div class="hero-grad"></div><div class="hero-n">✦ Principio '+p.id+' de '+PP.length+'</div><span class="hero-ico">'+ICONS[p.icono]+'</span><h1 class="hero-h">'+p.titulo+'</h1><p class="hero-d">'+p.desc+'</p><div class="hero-line" style="background:'+p.color+';"></div></div><div class="pbody">'+p.html+'<div class="slabel"><div class="slabel-ico">'+ICONS.video+'</div><div class="slabel-txt">Video Tutorial</div><div class="sdiv"></div></div>'+vid+'<div class="notes-section" id="notes-'+p.id+'"><h3>📝 Notas personales</h3><textarea class="notes-textarea" id="nt-'+p.id+'" placeholder="Escribe tus notas sobre este principio..."></textarea><button class="notes-btn" onclick="saveNotes('+p.id+')">💾 Guardar</button><span class="notes-saved" id="ns-'+p.id+'">✓ Guardado</span></div></div><div class="navfoot"><button class="nbtn" onclick="go('+(i-1)+')"'+(i===0?' disabled':'')+'>← Anterior</button><div class="ncenter"><button class="cbtn'+(done?' done':'')+'" id="cb'+i+'" onclick="markDone('+p.id+','+i+')">'+(done?'✓ Completado':'Marcar completado')+'</button></div><button class="nbtn primary" onclick="'+(i<PP.length-1?'go('+(i+1)+')':'go(-1)')+'">'+(i<PP.length-1?'Siguiente →':'Inicio')+'</button></div></div>';
+return '<div class="pview" id="pv'+i+'"><div class="hero"><div class="hero-glow" style="background:radial-gradient(ellipse at 72% 50%,'+p.color+'18 0%,transparent 65%);"></div><div class="hero-grad"></div><div class="hero-n">✦ Principio '+p.id+' de '+PP.length+'</div><span class="hero-ico">'+ICONS[p.icono]+'</span><h1 class="hero-h">'+p.titulo+'</h1><p class="hero-d">'+p.desc+'</p><div class="hero-line" style="background:'+p.color+';"></div></div><div class="pbody">'+p.html+'<div class="lesson-actions" style="margin-top:20px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;"><button class="note-export-btn" onclick="startAudio('+i+')" style="background:var(--gold-subtle);border-color:var(--gold);color:var(--gold);margin-top:0;"><span style="font-size:14px;margin-right:4px;">🔊</span> Escuchar Lección</button><button class="note-export-btn" onclick="exportNotes('+i+')" style="margin-top:0;"><span style="font-size:14px;margin-right:4px;">📥</span> Exportar mis notas</button></div><div class="slabel"><div class="slabel-ico">'+ICONS.video+'</div><div class="slabel-txt">Video Tutorial</div><div class="sdiv"></div></div>'+vid+'<div class="notes-section" id="notes-'+p.id+'"><h3>📝 Notas personales</h3><textarea class="notes-textarea" id="nt-'+p.id+'" placeholder="Escribe tus notas sobre este principio..."></textarea><button class="notes-btn" onclick="saveNotes('+p.id+')">💾 Guardar</button><span class="notes-saved" id="ns-'+p.id+'">✓ Guardado</span></div></div><div class="navfoot"><button class="nbtn" onclick="go('+(i-1)+')"'+(i===0?' disabled':'')+'>← Anterior</button><div class="ncenter"><button class="cbtn'+(done?' done':'')+'" id="cb'+i+'" onclick="markDone('+p.id+','+i+')">'+(done?'✓ Completado':'Marcar completado')+'</button></div><button class="nbtn primary" onclick="'+(i<PP.length-1?'go('+(i+1)+')':'go(-1)')+'">'+(i<PP.length-1?'Siguiente →':'Inicio')+'</button></div></div>';
 
 }).join('');
 
@@ -652,7 +862,7 @@ return '<div class="pview" id="pv'+i+'"><div class="hero"><div class="hero-glow"
 /* ── NAVIGATION ───────────────────────────────────────── */
 
 function go(idx){
-
+  if (typeof AudioPlayer !== 'undefined') AudioPlayer.stop();
   var welcome = document.getElementById('welcome');
 
   var transitionClass = 'fade-in';
@@ -818,7 +1028,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 buildSB();buildW();buildPP();updProg();
 for(var i=0; i<PP.length; i++){ initNotes(i); }
-buildFavs();loadNotes();addFavBadges();initSpotlight();
+buildFavs();loadNotes();addFavBadges();initSpotlight();if(typeof AudioPlayer!=='undefined')AudioPlayer.init();
 
 var saved;try{saved=localStorage.getItem('ici_theme');}catch(e){}if(saved==='light'){document.body.classList.add('light');}
 
