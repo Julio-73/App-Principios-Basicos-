@@ -1059,17 +1059,20 @@ body.light.focus-mode #focusBtn{color:var(--gold2);}
   color: var(--bg);
 }
 
-/* Modo claro para reproductor de audio */
+/* Modo claro para reproductor de audio y componentes */
 body.light .audio-player {
-  background: rgba(245, 245, 247, 0.85);
+  background: rgba(255, 255, 255, 0.92);
   border-color: rgba(0, 0, 0, 0.08);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
 }
 body.light .ap-title {
-  color: var(--bg);
+  color: var(--cream);
+}
+body.light .ap-sub {
+  color: var(--muted);
 }
 body.light .ap-btn {
-  color: var(--bg);
+  color: var(--cream);
 }
 body.light .ap-btn:hover {
   color: var(--gold);
@@ -1081,5 +1084,61 @@ body.light .ap-btn.play {
 body.light .ap-voice-select, body.light .ap-rate-select {
   background: rgba(0, 0, 0, 0.03);
   border-color: rgba(0, 0, 0, 0.1);
-  color: var(--bg);
+  color: var(--cream);
+}
+body.light .w-card {
+  background: var(--bg2);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+body.light .w-card:hover {
+  background: var(--bg2);
+  border-color: var(--gold3);
+  box-shadow: var(--shadow-md), var(--shadow-gold);
+}
+body.light .sc-card {
+  background: var(--bg2);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+body.light .sc-card:hover {
+  border-color: rgba(139, 105, 20, 0.25);
+  box-shadow: var(--shadow-md);
+}
+body.light .note-box textarea {
+  background: #FAF9F6;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: var(--cream);
+}
+body.light .note-box textarea:focus {
+  background: #FFFFFF;
+  border-color: var(--gold);
+  box-shadow: 0 0 10px rgba(139, 105, 20, 0.1);
+}
+body.light .note-export-btn {
+  border-color: rgba(0, 0, 0, 0.12);
+  color: var(--cream2);
+}
+body.light .note-export-btn:hover {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+body.light .modal-content {
+  border-color: var(--border);
+}
+body.light .modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+body.light .modal-close:hover, 
+body.light .modal-act-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--cream);
+}
+body.light .sb-item:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+body.light .sc-qm {
+  opacity: .08;
 }
