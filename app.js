@@ -446,7 +446,18 @@ var AudioPlayer = {
       return v.lang.startsWith('es');
     });
     
+    var isEdge = window.navigator.userAgent.includes("Edg");
+    
     esVoices.sort(function(a, b) {
+      // Si no es Microsoft Edge, despriorizar las voces Online de Microsoft (tienden a fallar en Chrome/Firefox)
+      var aOnline = a.name.toLowerCase().includes('online');
+      var bOnline = b.name.toLowerCase().includes('online');
+      if (!isEdge) {
+        if (aOnline && !bOnline) return 1;
+        if (!aOnline && bOnline) return -1;
+      }
+      
+      // Priorizar voces locales de español latino (México, Colombia, US, 419)
       var aLat = a.lang.includes('MX') || a.lang.includes('US') || a.lang.includes('CO') || a.lang.includes('419');
       var bLat = b.lang.includes('MX') || b.lang.includes('US') || b.lang.includes('CO') || b.lang.includes('419');
       if (aLat && !bLat) return -1;
@@ -489,6 +500,13 @@ var AudioPlayer = {
   
   start: function(text) {
     this.init();
+    
+    // Descongelar síntesis antes de cancelar y vaciar manejadores
+    if (this.utterance) {
+      this.utterance.onend = null;
+      this.utterance.onerror = null;
+    }
+    window.speechSynthesis.resume();
     window.speechSynthesis.cancel();
     
     this.sentences = text.split(/[.!?¡¿]\s+/).map(function(s) {
@@ -509,6 +527,9 @@ var AudioPlayer = {
       return;
     }
     
+    // Unstick global Synthesis en navegadores basados en Chromium
+    window.speechSynthesis.resume();
+    
     var self = this;
     var sentence = this.sentences[this.currentIdx];
     
@@ -525,7 +546,7 @@ var AudioPlayer = {
     };
     
     this.utterance.onerror = function(e) {
-      console.warn('TTS onend skip:', e);
+      console.warn('TTS skipped sentence error:', e);
       if (self.isPlaying) {
         self.currentIdx++;
         self.playCurrent();
@@ -538,6 +559,10 @@ var AudioPlayer = {
   
   pause: function() {
     this.isPlaying = false;
+    if (this.utterance) {
+      this.utterance.onend = null;
+      this.utterance.onerror = null;
+    }
     window.speechSynthesis.cancel();
     this.updateUI();
   },
@@ -550,6 +575,10 @@ var AudioPlayer = {
   
   stop: function() {
     this.isPlaying = false;
+    if (this.utterance) {
+      this.utterance.onend = null;
+      this.utterance.onerror = null;
+    }
     window.speechSynthesis.cancel();
     this.currentIdx = 0;
     this.updateUI();
