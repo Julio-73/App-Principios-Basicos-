@@ -1143,3 +1143,300 @@ body.light .sb-item:hover {
 body.light .sc-qm {
   opacity: .08;
 }
+
+/* ═══════════════════════════════════════════════════════ CARD GENERATOR FOR BIBLE VERSES ═══════════════════════════════════════════════════════ */
+.modal-actions-bar {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  justify-content: center;
+}
+.modal-act-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--cream);
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--t2);
+  font-family: 'Outfit', sans-serif;
+  user-select: none;
+}
+.modal-act-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold-subtle);
+}
+.modal-act-btn.primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold3));
+  border-color: var(--gold);
+  color: #1a1000;
+}
+.modal-act-btn.primary:hover {
+  box-shadow: var(--shadow-gold);
+  transform: translateY(-1px);
+}
+
+.verse-card-generator {
+  margin-top: 24px;
+  animation: fadeIn 0.4s ease forwards;
+}
+.v-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 20px;
+}
+.generator-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gold2);
+  margin-bottom: 16px;
+  text-align: center;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.card-preview-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.card-preview {
+  width: 100%;
+  max-width: 380px;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  padding: 36px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background var(--t2), border-color var(--t2);
+}
+.card-preview-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.card-preview-cross {
+  font-size: 24px;
+  color: var(--gold);
+  margin-bottom: 16px;
+  z-index: 2;
+}
+.card-preview-text {
+  font-size: 17px;
+  line-height: 1.6;
+  text-align: center;
+  margin-bottom: 16px;
+  z-index: 2;
+  font-weight: 400;
+}
+.card-preview-ref {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 28px;
+  z-index: 2;
+}
+.card-preview-footer {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: auto;
+  z-index: 2;
+}
+
+/* Card preview themes */
+.card-preview.font-serif .card-preview-text {
+  font-family: 'Playfair Display', serif;
+}
+.card-preview.font-sans .card-preview-text {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+}
+.card-preview.text-light .card-preview-text {
+  color: var(--cream);
+}
+.card-preview.text-light .card-preview-footer {
+  color: rgba(255, 255, 255, 0.4);
+}
+.card-preview.text-dark .card-preview-text {
+  color: #1a1a1e;
+}
+.card-preview.text-dark .card-preview-footer {
+  color: rgba(0, 0, 0, 0.5);
+}
+.card-preview.text-dark .card-preview-cross,
+.card-preview.text-dark .card-preview-ref {
+  color: #b8941f;
+}
+
+/* Card BG classes (only for preview representation) */
+.card-preview.style-obsidian {
+  background: #141417;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+.card-preview.style-sunset {
+  background: linear-gradient(135deg, #ff7e5f, #feb47b);
+}
+.card-preview.style-aurora {
+  background: linear-gradient(135deg, #028090, #007f5f);
+}
+.card-preview.style-starry {
+  background: radial-gradient(circle at center, #1b2030, #0d0e15);
+}
+.card-preview.style-forest {
+  background: linear-gradient(135deg, #134e5e, #71b280);
+}
+.card-preview.style-sunrise {
+  background: linear-gradient(135deg, #f5af19, #f12711);
+}
+
+.generator-controls {
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 12px;
+}
+.control-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--cream2);
+  margin-bottom: 10px;
+  display: block;
+}
+.bg-selector {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.bg-option {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--t1);
+  flex-shrink: 0;
+}
+.bg-option:hover {
+  transform: scale(1.15);
+}
+.bg-option.active {
+  transform: scale(1.15);
+  border-color: #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.style-toggle-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--cream);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.style-toggle-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.generator-actions {
+  display: flex;
+  gap: 12px;
+}
+.gen-action-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--t2);
+  font-family: 'Outfit', sans-serif;
+  border: 1px solid var(--border);
+}
+.gen-action-btn.share-img {
+  background: linear-gradient(135deg, var(--gold), var(--gold3));
+  border-color: var(--gold);
+  color: #1a1000;
+}
+.gen-action-btn.share-img:hover {
+  box-shadow: var(--shadow-gold);
+  transform: translateY(-1px);
+}
+.gen-action-btn.download-img {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--cream);
+}
+.gen-action-btn.download-img:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold-subtle);
+}
+
+/* Light mode adjustments */
+body.light .modal-actions-bar .modal-act-btn {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #1a1a1e;
+}
+body.light .modal-actions-bar .modal-act-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold-subtle);
+}
+body.light .modal-actions-bar .modal-act-btn.primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold3));
+  border-color: var(--gold);
+  color: #1a1000;
+}
+body.light .verse-card-generator .generator-controls {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+body.light .verse-card-generator .control-label {
+  color: #5c5854;
+}
+body.light .verse-card-generator .style-toggle-btn {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #1a1a1e;
+}
+body.light .verse-card-generator .style-toggle-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+body.light .verse-card-generator .gen-action-btn.download-img {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #1a1a1e;
+}
+body.light .verse-card-generator .gen-action-btn.download-img:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold-subtle);
+}

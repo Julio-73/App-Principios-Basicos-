@@ -178,6 +178,71 @@
 
 <div class="modal-verse" id="modalVerse"></div>
 
+<!-- Botones de Acción Rápida -->
+<div class="modal-actions-bar" id="modalActionBar">
+  <button class="modal-act-btn" onclick="copyVerseText()" id="copyTextBtn">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+    Copiar Texto
+  </button>
+  <button class="modal-act-btn primary" onclick="toggleGenerator()" id="toggleGenBtn">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path><path d="M12 8V16"></path><path d="M8 12H16"></path></svg>
+    Diseñar Imagen
+  </button>
+</div>
+
+<!-- Panel del Creador de Imágenes (Inicialmente oculto) -->
+<div class="verse-card-generator" id="cardGenerator" style="display:none;">
+  <div class="v-divider"></div>
+  <div class="generator-title">Personalizar Imagen</div>
+  
+  <!-- Vista Previa de la Tarjeta -->
+  <div class="card-preview-container">
+    <div class="card-preview style-obsidian font-serif text-light" id="cardPreview">
+      <div class="card-preview-overlay" id="cardPreviewOverlay"></div>
+      <div class="card-preview-cross" id="cardPreviewCross">✝</div>
+      <div class="card-preview-text" id="previewText">"Porque de tal manera amó Dios al mundo..."</div>
+      <div class="card-preview-ref" id="previewRef">Juan 3:16</div>
+      <div class="card-preview-footer">Principios Básicos de la Biblia</div>
+    </div>
+  </div>
+  
+  <!-- Controles -->
+  <div class="generator-controls">
+    <div class="control-label">Fondo de Tarjeta:</div>
+    <div class="bg-selector" id="bgSelector">
+      <button class="bg-option active" onclick="changeCardBackground('obsidian')" title="Obsidian" style="background:#141417;border-color:var(--gold);"></button>
+      <button class="bg-option" onclick="changeCardBackground('sunset')" title="Atardecer" style="background:linear-gradient(135deg,#ff7e5f,#feb47b);"></button>
+      <button class="bg-option" onclick="changeCardBackground('aurora')" title="Aurora" style="background:linear-gradient(135deg,#00c6ff,#0072ff);"></button>
+      <button class="bg-option" onclick="changeCardBackground('starry')" title="Estelar" style="background:radial-gradient(circle,#1a1c29,#090a10);"></button>
+      <button class="bg-option" onclick="changeCardBackground('forest')" title="Bosque" style="background:linear-gradient(135deg,#134e5e,#71b280);"></button>
+      <button class="bg-option" onclick="changeCardBackground('sunrise')" title="Amanecer" style="background:linear-gradient(135deg,#f5af19,#f12711);"></button>
+    </div>
+    
+    <div style="display:flex;gap:12px;margin-top:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="control-label" style="margin-bottom:0;">Fuente:</span>
+        <button class="style-toggle-btn" id="fontToggleBtn" onclick="toggleCardFont()">Serif</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="control-label" style="margin-bottom:0;">Texto:</span>
+        <button class="style-toggle-btn" id="textColorBtn" onclick="toggleCardTextColor()">Claro</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Acciones -->
+  <div class="generator-actions">
+    <button class="gen-action-btn share-img" onclick="generateAndShareCard()">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+      Compartir
+    </button>
+    <button class="gen-action-btn download-img" onclick="generateAndDownloadCard()">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      Descargar
+    </button>
+  </div>
+</div>
+
 </div>
 
 </div>
