@@ -1133,7 +1133,7 @@ body.light .modal-overlay {
   backdrop-filter: blur(4px);
 }
 body.light .modal-close:hover, 
-body.light .modal-act-btn:hover {
+body.light .card-gen-btn:hover {
   background: rgba(0, 0, 0, 0.05);
   color: var(--cream);
 }
@@ -1151,7 +1151,7 @@ body.light .sc-qm {
   margin-top: 20px;
   justify-content: center;
 }
-.modal-act-btn {
+.card-gen-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1167,17 +1167,17 @@ body.light .sc-qm {
   font-family: 'Outfit', sans-serif;
   user-select: none;
 }
-.modal-act-btn:hover {
+.card-gen-btn:hover {
   border-color: var(--gold);
   color: var(--gold);
   background: var(--gold-subtle);
 }
-.modal-act-btn.primary {
+.card-gen-btn.primary {
   background: linear-gradient(135deg, var(--gold), var(--gold3));
   border-color: var(--gold);
   color: #1a1000;
 }
-.modal-act-btn.primary:hover {
+.card-gen-btn.primary:hover {
   box-shadow: var(--shadow-gold);
   transform: translateY(-1px);
 }
@@ -1399,17 +1399,17 @@ body.light .sc-qm {
 }
 
 /* Light mode adjustments */
-body.light .modal-actions-bar .modal-act-btn {
+body.light .modal-actions-bar .card-gen-btn {
   background: rgba(0, 0, 0, 0.03);
   border-color: rgba(0, 0, 0, 0.1);
   color: #1a1a1e;
 }
-body.light .modal-actions-bar .modal-act-btn:hover {
+body.light .modal-actions-bar .card-gen-btn:hover {
   border-color: var(--gold);
   color: var(--gold);
   background: var(--gold-subtle);
 }
-body.light .modal-actions-bar .modal-act-btn.primary {
+body.light .modal-actions-bar .card-gen-btn.primary {
   background: linear-gradient(135deg, var(--gold), var(--gold3));
   border-color: var(--gold);
   color: #1a1000;
