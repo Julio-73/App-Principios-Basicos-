@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════ SERVICE WORKER - APP OFFLINE ═══════════════════════════════════════════════════════ */
 
-const CACHE_NAME = 'principios-basicos-v14';
+const CACHE_NAME = 'principios-basicos-v15';
 const urlsToCache = [
   './',
   './index.html',
@@ -47,19 +47,11 @@ self.addEventListener('activate', function(event) {
   );
 });
 
-<<<<<<< Updated upstream
-// Interceptar peticiones (CACHE-FIRST con red como respaldo)
-self.addEventListener('fetch', function(event) {
-  if (event.request.method !== 'GET') return;
-
-  // Para Google Fonts, usar estrategia Stale-While-Revalidate
-=======
 // Interceptar peticiones (CACHE-FIRST con estrategia específica para fonts)
 self.addEventListener('fetch', function(event) {
   if (event.request.method !== 'GET') return;
 
   // Google Fonts: stale-while-revalidate
->>>>>>> Stashed changes
   if (event.request.url.indexOf('fonts.googleapis.com') !== -1 ||
       event.request.url.indexOf('fonts.gstatic.com') !== -1) {
     event.respondWith(
