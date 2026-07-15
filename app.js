@@ -234,58 +234,63 @@ var verses = {
 
 /* ── MODAL SYSTEM ───────────────────────────────── */
 
-function openModal(ref) {
-
-  S.curVerseRef = ref;
-
-  var modal = document.getElementById('verseModal');
-
-  var title = document.getElementById('modalTitle');
-
-  var verse = document.getElementById('modalVerse');
-
-  var favBtn = document.getElementById('modalFavBtn');
-
-  var favs = sGet('ici_favs', []);
-
-  if (favBtn) {
-
-    if (favs.indexOf(ref) !== -1) {
-
-      favBtn.classList.add('active');
-
-    } else {
-
-      favBtn.classList.remove('active');
-
-    }
-
-  }
-
-  title.textContent = ref;
-
-  verse.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);">Cargando...</div>';
-
-  modal.classList.add('active');
-
-  document.body.style.overflow = 'hidden';
-
-  setTimeout(function(){
-
-    if (verses[ref]) {
-
-      verse.textContent = verses[ref];
-
-    } else {
-
-      verse.innerHTML = '<p style="color:var(--muted);text-align:center;font-style:normal;">Versículo no disponible offline.<br><br><a href="https://www.biblegateway.com/passage/?search=' + encodeURIComponent(ref) + '&version=NVI" target="_blank" style="color:var(--gold);text-decoration:underline;">Leer ' + ref + ' en Bible Gateway (NVI) →</a></p>';
-
-    }
-
-  }, 150);
-
-}
-
+function openModal(ref) {
+
+  S.curVerseRef = ref;
+
+  var modal = document.getElementById('verseModal');
+
+  var title = document.getElementById('modalTitle');
+
+  var verse = document.getElementById('modalVerse');
+
+  var favBtn = document.getElementById('modalFavBtn');
+
+  var favs = sGet('ici_favs', []);
+
+  if (favBtn) {
+
+    if (favs.indexOf(ref) !== -1) {
+
+      favBtn.classList.add('active');
+
+    } else {
+
+      favBtn.classList.remove('active');
+
+    }
+
+  }
+
+  title.textContent = ref;
+
+  verse.innerHTML = '<div class="skeleton-container">' +
+    '<div class="skeleton-line" style="width: 90%;"></div>' +
+    '<div class="skeleton-line" style="width: 95%;"></div>' +
+    '<div class="skeleton-line" style="width: 80%;"></div>' +
+    '<div class="skeleton-line" style="width: 65%;"></div>' +
+    '</div>';
+
+  modal.classList.add('active');
+
+  document.body.style.overflow = 'hidden';
+
+  setTimeout(function(){
+
+    if (verses[ref]) {
+
+      verse.textContent = verses[ref];
+
+    } else {
+
+      verse.innerHTML = '<p style="color:var(--muted);text-align:center;font-style:normal;">Versículo no disponible offline.<br><br><a href="https://www.biblegateway.com/passage/?search=' + encodeURIComponent(ref) + '&version=NVI" target="_blank" style="color:var(--gold);text-decoration:underline;">Leer ' + ref + ' en Bible Gateway (NVI) →</a></p>';
+
+    }
+
+  }, 450);
+
+}
+
 function toggleFavorite() {
 
   var ref = S.curVerseRef;
@@ -558,26 +563,90 @@ function getSpeakableText(idx) {
 
 }
 
-function startAudio(idx) {
-
-  var p = PP[idx];
-
-  var text = getSpeakableText(idx);
-
-  if (!text) return;
-
-  var title = document.getElementById('audioPlayerTitle');
-
-  if (title) title.textContent = 'Lección ' + p.id + ': ' + p.titulo;
-
-  var player = document.getElementById('audioPlayer');
-
-  if (player) player.classList.add('active');
-
-  AudioPlayer.start(text);
-
-}
-
+var sentenceCounter = 0;
+
+function wrapSentencesInElement(element) {
+  if (element.classList && (
+    element.classList.contains('note-box') || 
+    element.classList.contains('notes-section') || 
+    element.classList.contains('lesson-actions') || 
+    element.classList.contains('video-outer') || 
+    element.tagName === 'BUTTON' || 
+    element.tagName === 'TEXTAREA' || 
+    element.tagName === 'IFRAME' || 
+    element.tagName === 'SCRIPT'
+  )) {
+    return;
+  }
+  
+  var childNodes = Array.from(element.childNodes);
+  childNodes.forEach(function(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      var text = node.nodeValue;
+      if (text.trim().length === 0) return;
+      
+      var regex = /([^.!?¡¿]+[.!?¡¿]*)/g;
+      var matches = text.match(regex);
+      
+      if (matches && matches.length > 0) {
+        var fragment = document.createDocumentFragment();
+        matches.forEach(function(match) {
+          var cleanMatch = match.trim();
+          if (cleanMatch.length === 0) {
+            fragment.appendChild(document.createTextNode(match));
+            return;
+          }
+          
+          var span = document.createElement('span');
+          span.className = 'audio-sentence-span';
+          span.dataset.sentenceIdx = sentenceCounter++;
+          span.textContent = match;
+          fragment.appendChild(span);
+        });
+        element.replaceChild(fragment, node);
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      wrapSentencesInElement(node);
+    }
+  });
+}
+
+function startAudio(idx) {
+
+  var p = PP[idx];
+
+  // Wrap sentences for highlighting (Karaoke mode)
+  var pView = document.getElementById('pv' + idx);
+  if (pView) {
+    var pBody = pView.querySelector('.pbody');
+    if (pBody && !pBody.dataset.sentencesWrapped) {
+      sentenceCounter = 0;
+      wrapSentencesInElement(pBody);
+      pBody.dataset.sentencesWrapped = "true";
+    }
+  }
+
+  var text = getSpeakableText(idx);
+
+  if (!text) return;
+
+  var title = document.getElementById('audioPlayerTitle');
+
+  if (title) title.textContent = 'Lección ' + p.id + ': ' + p.titulo;
+
+  var player = document.getElementById('audioPlayer');
+
+  if (player) {
+    player.classList.add('active');
+    player.classList.add('compact'); // start as compact Dynamic Island
+    var icon = document.getElementById('apExpandIcon');
+    if (icon) icon.style.transform = 'rotate(0deg)';
+  }
+
+  AudioPlayer.start(text);
+
+}
+
 function toggleAudioPlayPause() {
 
   if (AudioPlayer.isPlaying) {
@@ -998,54 +1067,67 @@ var AudioPlayer = {
 
   
 
-  updateUI: function() {
-
-    var playBtn = document.getElementById('audioPlayPauseBtn');
-
-    if (playBtn) {
-
-      if (this.isPlaying) {
-
-        playBtn.innerHTML = '⏸';
-
-        playBtn.classList.remove('paused');
-
-      } else {
-
-        playBtn.innerHTML = '▶';
-
-        playBtn.classList.add('paused');
-
-      }
-
-    }
-
-    
-
-    var progress = document.getElementById('audioProgress');
-
-    if (progress && this.sentences.length > 0) {
-
-      var pct = (this.currentIdx / this.sentences.length) * 100;
-
-      progress.style.width = pct + '%';
-
-    }
-
-    
-
-    var indexText = document.getElementById('audioIndexText');
-
-    if (indexText) {
-
-      indexText.textContent = (this.currentIdx + 1) + ' / ' + this.sentences.length;
-
-    }
-
-  }
-
-};
-
+updateUI: function() {
+
+    var playBtn = document.getElementById('audioPlayPauseBtn');
+
+    if (playBtn) {
+
+      if (this.isPlaying) {
+
+        playBtn.innerHTML = '⏸';
+
+        playBtn.classList.remove('paused');
+
+      } else {
+
+        playBtn.innerHTML = '▶';
+
+        playBtn.classList.add('paused');
+
+      }
+
+    }
+
+    
+
+    var progress = document.getElementById('audioProgress');
+
+    if (progress && this.sentences.length > 0) {
+
+      var pct = (this.currentIdx / this.sentences.length) * 100;
+
+      progress.style.width = pct + '%';
+
+    }
+
+    
+
+    var indexText = document.getElementById('audioIndexText');
+
+    if (indexText) {
+
+      indexText.textContent = (this.currentIdx + 1) + ' / ' + this.sentences.length;
+
+    }
+
+    // Actualizar Karaoke highlights en pantalla
+    document.querySelectorAll('.audio-sentence-span').forEach(function(s) {
+      s.classList.remove('active-audio-sentence');
+    });
+
+    if (this.isPlaying && this.sentences.length > 0) {
+      var activeSpan = document.querySelector('#pv' + S.cur + ' .audio-sentence-span[data-sentence-idx="' + this.currentIdx + '"]');
+      if (activeSpan) {
+        activeSpan.classList.add('active-audio-sentence');
+        activeSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+  }
+
+};
+
 window.addEventListener('beforeunload', function() { window.speechSynthesis.cancel(); });
 
 function shareVerse(ref) {
@@ -2282,170 +2364,253 @@ document.getElementById('readProgress').style.width = scrolled + '%';
 
 /* ═══════════════════════════════════════════════════════ BUSCADOR PROFESIONAL ═══════════════════════════════════════════════════════ */
 
-function escapeRegex(s){return s.replace(/[.*+?^${}()|[\]\\]/g,"\\function toggleSearch() {");}
-
-function toggleSearch() {
-
-var bar = document.getElementById('searchBar');
-
-bar.style.display = bar.style.display === 'none' ? 'block' : 'none';
-
-if (bar.style.display === 'block') {
-
-setTimeout(() => document.getElementById('searchInput').focus(), 100);
-
-document.getElementById('searchResults').innerHTML = '';
-
-}
-
-}
-
-function searchContent() {
-
-var query = document.getElementById('searchInput').value.toLowerCase().trim();
-
-var results = document.getElementById('searchResults');
-
-if (query.length < 3) {
-
-results.innerHTML = '<div class="no-results"><span style="display:inline-flex;color:var(--muted);">' + ICONS.search + '</span><p>Escribe al menos 3 caracteres para buscar</p></div>';
-
-return;
-
-}
-
-var allResults = [];
-
-var exactVerseFound = false;
-
-// 1️⃣ Buscar COINCIDENCIA EXACTA de versículo primero
-
-for (var ref in verses) {
-
-if (ref.toLowerCase() === query || ref.toLowerCase().includes(query)) {
-
-exactVerseFound = true;
-
-allResults.unshift({
-
-type: '<span class="search-result-type-ico">' + ICONS.book + '</span> Versículo',
-
-title: ref,
-
-text: verses[ref].substring(0, 150) + '...',
-
-action: 'openModal(\'' + ref + '\')',
-
-priority: 1
-
-});
-
-}
-
-}
-
-// 2️⃣ Buscar en versículos (parcial)
-
-if (!exactVerseFound) {
-
-for (var ref in verses) {
-
-if (verses[ref].toLowerCase().includes(query)) {
-
-allResults.push({
-
-type: '<span class="search-result-type-ico">' + ICONS.book + '</span> Versículo',
-
-title: ref,
-
-text: verses[ref].substring(0, 150) + '...',
-
-action: 'openModal(\'' + ref + '\')',
-
-priority: 2
-
-});
-
-}
-
-}
-
-}
-
-// 3️⃣ Buscar en principios
-
-PP.forEach(function(p, i) {
-
-if (p.titulo.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query)) {
-
-allResults.push({
-
-type: '✦ Principio ' + p.id,
-
-title: p.titulo,
-
-text: p.desc,
-
-action: 'go(' + i + ')',
-
-priority: 3
-
-});
-
-}
-
-if (p.html && p.html.toLowerCase().includes(query)) {
-
-allResults.push({
-
-type: '✦ Principio ' + p.id + ' (contenido)',
-
-title: p.titulo,
-
-text: 'Contiene: ' + query,
-
-action: 'go(' + i + ')',
-
-priority: 3
-
-});
-
-}
-
-});
-
-// 4️⃣ Ordenar resultados (versículos primero)
-
-allResults.sort(function(a, b) {
-
-return a.priority - b.priority;
-
-});
-
-// 5️⃣ Mostrar resultados
-
-if (allResults.length === 0) {
-
-results.innerHTML = '<div class="no-results"><span style="display:inline-flex;color:var(--muted);">' + ICONS.alert + '</span><p>No se encontraron resultados para "<strong>' + query + '</strong>"</p></div>';
-
-} else {
-
-results.innerHTML = allResults.map(function(r) {
-
-var highlightedText = r.text.replace(new RegExp(escapeRegex(query), 'gi'), function(match) {
-
-return '<span class="search-result-highlight">' + match + '</span>';
-
-});
-
-return '<div class="search-result-item" onclick="' + r.action + ';toggleSearch();"><div class="search-result-type">' + r.type + '</div><div class="search-result-title">' + r.title + '</div><div class="search-result-text">' + highlightedText + '</div></div>';
-
-}).join('');
-
-}
-
-}
-
+function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+// HELPER FUNCTIONS FOR FUZZY SEARCH
+function normalizeText(str) {
+  return str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : "";
+}
+
+function getLevenshteinDistance(s1, s2) {
+  var m = s1.length;
+  var n = s2.length;
+  var d = [];
+  for (var i = 0; i <= m; i++) d[i] = [i];
+  for (var j = 0; j <= n; j++) d[0][j] = j;
+  for (var j = 1; j <= n; j++) {
+    for (var i = 1; i <= m; i++) {
+      if (s1[i - 1] === s2[j - 1]) {
+        d[i][j] = d[i - 1][j - 1];
+      } else {
+        d[i][j] = Math.min(
+          d[i - 1][j] + 1, // deletion
+          d[i][j - 1] + 1, // insertion
+          d[i - 1][j - 1] + 1 // substitution
+        );
+      }
+    }
+  }
+  return d[m][n];
+}
+
+function fuzzyMatches(qNorm, targetNorm) {
+  if (targetNorm.indexOf(qNorm) !== -1) return true;
+  
+  var qWords = qNorm.split(/\s+/).filter(w => w.length >= 3);
+  var tWords = targetNorm.split(/[^a-z0-9]+/);
+  
+  if (qWords.length === 0) return false;
+  
+  if (qWords.length === 1) {
+    var qw = qWords[0];
+    for (var i = 0; i < tWords.length; i++) {
+      var tw = tWords[i];
+      if (tw.length < 3) continue;
+      var maxDist = qw.length > 5 ? 2 : 1;
+      if (Math.abs(tw.length - qw.length) <= maxDist) {
+        if (getLevenshteinDistance(qw, tw) <= maxDist) {
+          return true;
+        }
+      }
+    }
+  } else {
+    var matchCount = 0;
+    for (var j = 0; j < qWords.length; j++) {
+      var qw = qWords[j];
+      var found = false;
+      for (var i = 0; i < tWords.length; i++) {
+        var tw = tWords[i];
+        if (tw.indexOf(qw) !== -1) {
+          found = true;
+          break;
+        }
+        var maxDist = qw.length > 5 ? 2 : 1;
+        if (Math.abs(tw.length - qw.length) <= maxDist && getLevenshteinDistance(qw, tw) <= maxDist) {
+          found = true;
+          break;
+        }
+      }
+      if (found) matchCount++;
+    }
+    if (matchCount === qWords.length) return true;
+  }
+  return false;
+}
+
+function highlightTextFuzzy(text, query) {
+  var qNorm = normalizeText(query);
+  var qWords = qNorm.split(/\s+/).filter(function(w) { return w.length >= 3; });
+  if (qWords.length === 0) return text;
+  
+  var words = text.split(/(\s+|[.,:;?!()\-"])/);
+  return words.map(function(word) {
+    var wNorm = normalizeText(word);
+    if (!wNorm) return word;
+    
+    var matches = false;
+    for (var i = 0; i < qWords.length; i++) {
+      var qw = qWords[i];
+      if (wNorm.indexOf(qw) !== -1) {
+        matches = true;
+        break;
+      }
+      var maxDist = qw.length > 5 ? 2 : 1;
+      if (Math.abs(wNorm.length - qw.length) <= maxDist && getLevenshteinDistance(qw, wNorm) <= maxDist) {
+        matches = true;
+        break;
+      }
+    }
+    
+    if (matches) {
+      return '<span class="search-result-highlight">' + word + '</span>';
+    }
+    return word;
+  }).join('');
+}
+
+function toggleSearch() {
+
+  var bar = document.getElementById('searchBar');
+
+  bar.style.display = bar.style.display === 'none' ? 'block' : 'none';
+
+  if (bar.style.display === 'block') {
+
+    setTimeout(() => document.getElementById('searchInput').focus(), 100);
+
+    document.getElementById('searchResults').innerHTML = '';
+
+  }
+
+}
+
+function searchContent() {
+
+  var query = document.getElementById('searchInput').value.trim();
+  var qNorm = normalizeText(query);
+
+  var results = document.getElementById('searchResults');
+
+  if (qNorm.length < 3) {
+
+    results.innerHTML = '<div class="no-results"><span style="display:inline-flex;color:var(--muted);">' + ICONS.search + '</span><p>Escribe al menos 3 caracteres para buscar</p></div>';
+
+    return;
+
+  }
+
+  var allResults = [];
+
+  var exactVerseFound = false;
+
+  // 1️⃣ Buscar coincidencia de versículos (Fuzzy / Normalizado)
+
+  for (var ref in verses) {
+    var refNorm = normalizeText(ref);
+    var textNorm = normalizeText(verses[ref]);
+
+    if (refNorm.indexOf(qNorm) !== -1 || qNorm.indexOf(refNorm) !== -1) {
+
+      exactVerseFound = true;
+
+      allResults.push({
+
+        type: '<span class="search-result-type-ico">' + ICONS.book + '</span> Versículo',
+
+        title: ref,
+
+        text: verses[ref].substring(0, 150) + '...',
+
+        action: 'openModal(\'' + ref + '\')',
+
+        priority: 1
+
+      });
+
+    } else if (textNorm.indexOf(qNorm) !== -1 || fuzzyMatches(qNorm, textNorm)) {
+      allResults.push({
+        type: '<span class="search-result-type-ico">' + ICONS.book + '</span> Versículo',
+        title: ref,
+        text: verses[ref].substring(0, 150) + '...',
+        action: 'openModal(\'' + ref + '\')',
+        priority: 2
+      });
+    }
+
+  }
+
+  // 2️⃣ Buscar en principios
+
+  PP.forEach(function(p, i) {
+    var tNorm = normalizeText(p.titulo);
+    var dNorm = normalizeText(p.desc);
+    var hNorm = normalizeText(p.html);
+
+    if (tNorm.indexOf(qNorm) !== -1 || dNorm.indexOf(qNorm) !== -1 || fuzzyMatches(qNorm, tNorm) || fuzzyMatches(qNorm, dNorm)) {
+
+      allResults.push({
+
+        type: '✦ Principio ' + p.id,
+
+        title: p.titulo,
+
+        text: p.desc,
+
+        action: 'go(' + i + ')',
+
+        priority: 3
+
+      });
+
+    } else if (hNorm.indexOf(qNorm) !== -1) {
+
+      allResults.push({
+
+        type: '✦ Principio ' + p.id + ' (contenido)',
+
+        title: p.titulo,
+
+        text: 'Contiene: ' + query,
+
+        action: 'go(' + i + ')',
+
+        priority: 3
+
+      });
+
+    }
+
+  });
+
+  // Ordenar resultados (versículos primero)
+
+  allResults.sort(function(a, b) {
+
+    return a.priority - b.priority;
+
+  });
+
+  // Mostrar resultados
+
+  if (allResults.length === 0) {
+
+    results.innerHTML = '<div class="no-results"><span style="display:inline-flex;color:var(--muted);">' + ICONS.alert + '</span><p>No se encontraron resultados para "<strong>' + query + '</strong>"</p></div>';
+
+  } else {
+
+    results.innerHTML = allResults.map(function(r) {
+
+      var highlightedText = highlightTextFuzzy(r.text, query);
+      var highlightedTitle = highlightTextFuzzy(r.title, query);
+
+      return '<div class="search-result-item" onclick="' + r.action + ';toggleSearch();"><div class="search-result-type">' + r.type + '</div><div class="search-result-title">' + highlightedTitle + '</div><div class="search-result-text">' + highlightedText + '</div></div>';
+
+    }).join('');
+
+  }
+
+}
+
 // Cerrar búsqueda con Escape
 
 document.addEventListener('keydown', function(e) {
@@ -2482,140 +2647,241 @@ if (topNavEl) {
 
 // Estado del generador
 
-var cardState = {
-
-  bg: 'obsidian', // obsidian, sunset, aurora, starry, forest, sunrise
-
-  font: 'serif',  // serif, sans
-
-  textLight: true
-
-};
-
-// Función para copiar texto del versículo
-
-function copyVerseText() {
-
-  var ref = S.curVerseRef;
-
-  if (!ref) return;
-
-  var text = verses[ref];
-
-  if (!text) return;
-
-  var shareText = '✝️ *' + ref + '*\n\n"' + text + '"\n\nEstudia los Principios Básicos de la Biblia en:\nhttps://julio-73.github.io/App-Principios-Basicos-/';
-
-  
-
-  navigator.clipboard.writeText(shareText).then(function() {
-
-    var btn = document.getElementById('copyTextBtn');
-
-    var originalHTML = btn.innerHTML;
-
-    btn.innerHTML = '✓ Copiado';
-
-    btn.style.borderColor = 'var(--gold)';
-
-    btn.style.color = 'var(--gold)';
-
-    setTimeout(function() {
-
-      btn.innerHTML = originalHTML;
-
-      btn.style.borderColor = '';
-
-      btn.style.color = '';
-
-    }, 2000);
-
-  }).catch(function() {
-
-    alert('No se pudo copiar automáticamente.');
-
-  });
-
-}
-
-// Función para alternar el generador
-
-function toggleGenerator() {
-
-  var gen = document.getElementById('cardGenerator');
-
-  var btn = document.getElementById('toggleGenBtn');
-
-  var ref = S.curVerseRef;
-
-  if (!ref) return;
-
-  var text = verses[ref];
-
-  if (!text) return;
-
-  if (gen.style.display === 'none') {
-
-    gen.style.display = 'block';
-
-    btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Ocultar Diseñador';
-
-    
-
-    // Rellenar datos
-
-    var previewTextEl = document.getElementById('previewText');
-
-    previewTextEl.textContent = '"' + text + '"';
-
-    document.getElementById('previewRef').textContent = ref;
-
-    
-
-    // Ajustar tamaño del texto de la vista previa según la longitud para evitar desbordes en el HTML
-
-    var textLen = text.length;
-
-    if (textLen > 400) {
-
-      previewTextEl.style.fontSize = '10px';
-
-      previewTextEl.style.lineHeight = '1.35';
-
-    } else if (textLen > 250) {
-
-      previewTextEl.style.fontSize = '12px';
-
-      previewTextEl.style.lineHeight = '1.4';
-
-    } else if (textLen > 150) {
-
-      previewTextEl.style.fontSize = '14px';
-
-      previewTextEl.style.lineHeight = '1.45';
-
-    } else {
-
-      previewTextEl.style.fontSize = ''; // Usa el valor CSS por defecto (17px)
-
-      previewTextEl.style.lineHeight = '';
-
-    }
-
-    
-
-    updateCardPreviewClasses();
-
-  } else {
-
-    gen.style.display = 'none';
-
-    btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path><path d="M12 8V16"></path><path d="M8 12H16"></path></svg> Diseñar Imagen';
-
-  }
-
-}
-
+var cardState = {
+
+  bg: 'obsidian', // obsidian, sunset, aurora, starry, forest, sunrise
+
+  font: 'serif',  // serif, sans
+
+  textLight: true,
+
+  offset: 0,
+
+  fontSize: 17
+
+};
+
+function toggleAudioExpansion() {
+  var player = document.getElementById('audioPlayer');
+  var icon = document.getElementById('apExpandIcon');
+  if (player) {
+    if (player.classList.contains('compact')) {
+      player.classList.remove('compact');
+      if (icon) icon.style.transform = 'rotate(180deg)';
+    } else {
+      player.classList.add('compact');
+      if (icon) icon.style.transform = 'rotate(0deg)';
+    }
+  }
+}
+
+function adjustCardFontSize(val) {
+  cardState.fontSize = parseInt(val);
+  var previewText = document.getElementById('previewText');
+  if (previewText) {
+    previewText.style.fontSize = val + 'px';
+  }
+  var valEl = document.getElementById('valCardFontSize');
+  if (valEl) valEl.textContent = val + 'px';
+  var slider = document.getElementById('cardFontSizeSlider');
+  if (slider) slider.value = val;
+}
+
+function adjustCardPos(val) {
+  cardState.offset = parseInt(val);
+  var previewText = document.getElementById('previewText');
+  if (previewText) {
+    previewText.style.transform = 'translateY(' + val + 'px)';
+  }
+  var valEl = document.getElementById('valCardPosOffset');
+  if (valEl) valEl.textContent = val + 'px';
+  var slider = document.getElementById('cardPosSlider');
+  if (slider) slider.value = val;
+}
+
+function resetCardText() {
+  adjustCardFontSize(17);
+  adjustCardPos(0);
+}
+
+// Drag & drop logic for previewText
+(function() {
+  var isDragging = false;
+  var startY = 0;
+  var startOffset = 0;
+
+  function initDrag() {
+    var previewText = document.getElementById('previewText');
+    if (!previewText) return;
+    
+    previewText.addEventListener('mousedown', function(e) {
+      isDragging = true;
+      startY = e.clientY;
+      startOffset = cardState.offset;
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', function(e) {
+      if (!isDragging) return;
+      var deltaY = e.clientY - startY;
+      var newOffset = Math.max(-120, Math.min(120, startOffset + deltaY));
+      adjustCardPos(newOffset);
+    });
+
+    document.addEventListener('mouseup', function() {
+      isDragging = false;
+    });
+
+    previewText.addEventListener('touchstart', function(e) {
+      isDragging = true;
+      startY = e.touches[0].clientY;
+      startOffset = cardState.offset;
+      e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('touchmove', function(e) {
+      if (!isDragging) return;
+      var deltaY = e.touches[0].clientY - startY;
+      var newOffset = Math.max(-120, Math.min(120, startOffset + deltaY));
+      adjustCardPos(newOffset);
+    }, { passive: false });
+
+    document.addEventListener('touchend', function() {
+      isDragging = false;
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDrag);
+  } else {
+    initDrag();
+  }
+})();
+
+// Función para copiar texto del versículo
+
+function copyVerseText() {
+
+  var ref = S.curVerseRef;
+
+  if (!ref) return;
+
+  var text = verses[ref];
+
+  if (!text) return;
+
+  var shareText = '✝️ *' + ref + '*\n\n"' + text + '"\n\nEstudia los Principios Básicos de la Biblia en:\nhttps://julio-73.github.io/App-Principios-Basicos-/';
+
+  
+
+  navigator.clipboard.writeText(shareText).then(function() {
+
+    var btn = document.getElementById('copyTextBtn');
+
+    var originalHTML = btn.innerHTML;
+
+    btn.innerHTML = '✓ Copiado';
+
+    btn.style.borderColor = 'var(--gold)';
+
+    btn.style.color = 'var(--gold)';
+
+    setTimeout(function() {
+
+      btn.innerHTML = originalHTML;
+
+      btn.style.borderColor = '';
+
+      btn.style.color = '';
+
+    }, 2000);
+
+  }).catch(function() {
+
+    alert('No se pudo copiar automáticamente.');
+
+  });
+
+}
+
+// Función para alternar el generador
+
+function toggleGenerator() {
+
+  var gen = document.getElementById('cardGenerator');
+
+  var btn = document.getElementById('toggleGenBtn');
+
+  var ref = S.curVerseRef;
+
+  if (!ref) return;
+
+  var text = verses[ref];
+
+  if (!text) return;
+
+  if (gen.style.display === 'none') {
+
+    gen.style.display = 'block';
+
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Ocultar Diseñador';
+
+    
+
+    // Rellenar datos
+
+    var previewTextEl = document.getElementById('previewText');
+
+    previewTextEl.textContent = '"' + text + '"';
+
+    document.getElementById('previewRef').textContent = ref;
+
+    
+
+    // Ajustar tamaño del texto de la vista previa según la longitud para evitar desbordes en el HTML
+
+    var textLen = text.length;
+
+    if (textLen > 400) {
+
+      previewTextEl.style.fontSize = '10px';
+
+      previewTextEl.style.lineHeight = '1.35';
+
+    } else if (textLen > 250) {
+
+      previewTextEl.style.fontSize = '12px';
+
+      previewTextEl.style.lineHeight = '1.4';
+
+    } else if (textLen > 150) {
+
+      previewTextEl.style.fontSize = '14px';
+
+      previewTextEl.style.lineHeight = '1.45';
+
+    } else {
+
+      previewTextEl.style.fontSize = ''; // Usa el valor CSS por defecto (17px)
+
+      previewTextEl.style.lineHeight = '';
+
+    }
+
+    resetCardText();
+
+    updateCardPreviewClasses();
+
+  } else {
+
+    gen.style.display = 'none';
+
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path><path d="M12 8V16"></path><path d="M8 12H16"></path></svg> Diseñar Imagen';
+
+  }
+
+}
+
 function updateCardPreviewClasses() {
 
   var preview = document.getElementById('cardPreview');
@@ -2696,446 +2962,471 @@ function toggleCardTextColor() {
 
 // Dibujar en Canvas con alta resolución (1200 x 1200 px)
 
-function drawCanvasCard(callback) {
-
-  var ref = S.curVerseRef;
-
-  var text = '"' + (verses[ref] || '') + '"';
-
-  
-
-  var canvas = document.createElement('canvas');
-
-  canvas.width = 1200;
-
-  canvas.height = 1200;
-
-  var ctx = canvas.getContext('2d');
-
-  
-
-  // 1. Dibujar Fondos (Matemáticos y Vectoriales)
-
-  if (cardState.bg === 'obsidian') {
-
-    ctx.fillStyle = '#0D0D0F';
-
-    ctx.fillRect(0, 0, 1200, 1200);
-
-    
-
-    var rad = ctx.createRadialGradient(600, 600, 100, 600, 600, 800);
-
-    rad.addColorStop(0, '#1E1E24');
-
-    rad.addColorStop(1, '#0D0D0F');
-
-    ctx.fillStyle = rad;
-
-    ctx.fillRect(0, 0, 1200, 1200);
-
-    
-
-    ctx.strokeStyle = '#D4AF37';
-
-    ctx.lineWidth = 4;
-
-    ctx.strokeRect(30, 30, 1140, 1140);
-
-    
-
-    ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
-
-    ctx.lineWidth = 1;
-
-    ctx.strokeRect(40, 40, 1120, 1120);
-
-    
-
-  } else if (cardState.bg === 'sunset') {
-
-    var grad = ctx.createLinearGradient(0, 0, 1200, 1200);
-
-    grad.addColorStop(0, '#4a0e4e');
-
-    grad.addColorStop(0.5, '#b43a55');
-
-    grad.addColorStop(1, '#f67062');
-
-    ctx.fillStyle = grad;
-
-    ctx.fillRect(0, 0, 1200, 1200);
-
-    
-
-    var solGrad = ctx.createRadialGradient(600, 750, 50, 600, 750, 350);
-
-    solGrad.addColorStop(0, 'rgba(254, 180, 123, 0.45)');
-
-    solGrad.addColorStop(1, 'rgba(254, 180, 123, 0)');
-
-    ctx.fillStyle = solGrad;
-
-    ctx.beginPath();
-
-    ctx.arc(600, 750, 350, 0, Math.PI * 2);
-
-    ctx.fill();
-
-    
-
-    drawMountainRange(ctx, [
-
-      {x: 0, y: 950}, {x: 300, y: 800}, {x: 600, y: 880}, {x: 900, y: 760}, {x: 1200, y: 920}
-
-    ], 'rgba(56, 13, 62, 0.4)');
-
-    
-
-    drawMountainRange(ctx, [
-
-      {x: 0, y: 1050}, {x: 250, y: 920}, {x: 550, y: 980}, {x: 850, y: 850}, {x: 1200, y: 1000}
-
-    ], 'rgba(36, 6, 41, 0.75)');
-
-    
-
-    drawMountainRange(ctx, [
-
-      {x: 0, y: 1150}, {x: 400, y: 1040}, {x: 800, y: 1080}, {x: 1200, y: 1120}
-
-    ], '#1d0222');
-
-    
-
-  } else if (cardState.bg === 'aurora') {
-
-    var grad = ctx.createLinearGradient(0, 0, 1200, 1200);
-
-    grad.addColorStop(0, '#001a1a');
-
-    grad.addColorStop(0.6, '#004d40');
-
-    grad.addColorStop(1, '#00bfa5');
-
-    ctx.fillStyle = grad;
-
-    ctx.fillRect(0, 0, 1200, 1200);
-
-    
-
-    ctx.fillStyle = 'rgba(0, 255, 150, 0.08)';
-
-    ctx.beginPath();
-
-    ctx.moveTo(0, 400);
-
-    ctx.bezierCurveTo(300, 200, 900, 600, 1200, 300);
-
-    ctx.lineTo(1200, 900);
-
-    ctx.bezierCurveTo(900, 800, 300, 1000, 0, 900);
-
-    ctx.closePath();
-
-    ctx.fill();
-
-    
-
-    ctx.fillStyle = 'rgba(0, 180, 255, 0.06)';
-
-    ctx.beginPath();
-
-    ctx.moveTo(0, 300);
-
-    ctx.bezierCurveTo(400, 500, 800, 100, 1200, 450);
-
-    ctx.lineTo(1200, 1000);
-
-    ctx.bezierCurveTo(800, 700, 400, 950, 0, 850);
-
-    ctx.closePath();
-
-    ctx.fill();
-
-    
-
-  } else if (cardState.bg === 'starry') {
-
-    ctx.fillStyle = '#06060c';
-
-    ctx.fillRect(0, 0, 1200, 1200);
-
-    
-
-    var rad = ctx.createRadialGradient(600, 600, 100, 600, 600, 800);
-
-    rad.addColorStop(0, '#111728');
-
-    rad.addColorStop(1, '#050508');
-
-    ctx.fillStyle = rad;
-
-    ctx.fillRect(0, 0, 1200, 1200);
-
-    
-
-    var neb = ctx.createRadialGradient(800, 400, 50, 800, 400, 400);
-
-    neb.addColorStop(0, 'rgba(156, 39, 176, 0.12)');
-
-    neb.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-    ctx.fillStyle = neb;
-
-    ctx.beginPath();
-
-    ctx.arc(800, 400, 400, 0, Math.PI * 2);
-
-    ctx.fill();
-
-    
-
-    ctx.fillStyle = '#ffffff';
-
-    for (var i = 0; i < 80; i++) {
-
-      var sx = (Math.sin(i * 927.53) * 0.5 + 0.5) * 1200;
-
-      var sy = (Math.cos(i * 123.45) * 0.5 + 0.5) * 1200;
-
-      var sr = (Math.sin(i * 456.78) * 0.5 + 0.5) * 2 + 0.5;
-
-      var opacity = Math.sin(i * 321.09) * 0.4 + 0.6;
-
-      ctx.fillStyle = 'rgba(255, 255, 255, ' + opacity + ')';
-
-      ctx.beginPath();
-
-      ctx.arc(sx, sy, sr, 0, Math.PI * 2);
-
-      ctx.fill();
-
-    }
-
-    
-
-  } else if (cardState.bg === 'forest') {
-
-    var grad = ctx.createLinearGradient(0, 0, 0, 1200);
-
-    grad.addColorStop(0, '#0f2027');
-
-    grad.addColorStop(0.5, '#203a43');
-
-    grad.addColorStop(1, '#2c5364');
-
-    ctx.fillStyle = grad;
-
-    ctx.fillRect(0, 0, 1200, 1200);
-
-    
-
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
-
-    ctx.fillRect(0, 500, 1200, 400);
-
-    
-
-    drawPineTrees(ctx, 150, 950, 160, 'rgba(10, 24, 30, 0.4)');
-
-    drawPineTrees(ctx, 450, 900, 180, 'rgba(10, 24, 30, 0.4)');
-
-    drawPineTrees(ctx, 750, 930, 170, 'rgba(10, 24, 30, 0.4)');
-
-    drawPineTrees(ctx, 1050, 910, 190, 'rgba(10, 24, 30, 0.4)');
-
-    
-
-    var mist = ctx.createLinearGradient(0, 800, 0, 1200);
-
-    mist.addColorStop(0, 'rgba(44, 83, 100, 0)');
-
-    mist.addColorStop(0.8, 'rgba(44, 83, 100, 0.25)');
-
-    ctx.fillStyle = mist;
-
-    ctx.fillRect(0, 800, 1200, 400);
-
-    
-
-    drawPineTrees(ctx, 300, 1020, 220, 'rgba(5, 12, 16, 0.85)');
-
-    drawPineTrees(ctx, 800, 990, 240, 'rgba(5, 12, 16, 0.85)');
-
-    
-
-  } else if (cardState.bg === 'sunrise') {
-
-    var grad = ctx.createLinearGradient(0, 0, 0, 1200);
-
-    grad.addColorStop(0, '#f9d423');
-
-    grad.addColorStop(1, '#ff4e50');
-
-    ctx.fillStyle = grad;
-
-    ctx.fillRect(0, 0, 1200, 1200);
-
-    
-
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-
-    ctx.beginPath();
-
-    ctx.arc(200, 200, 150, 0, Math.PI * 2);
-
-    ctx.arc(350, 230, 180, 0, Math.PI * 2);
-
-    ctx.arc(900, 180, 140, 0, Math.PI * 2);
-
-    ctx.arc(1050, 220, 160, 0, Math.PI * 2);
-
-    ctx.fill();
-
-  }
-
-  
-
-  var textColor = cardState.textLight ? '#F5F5F7' : '#1A1A1E';
-
-  var goldColor = cardState.textLight ? '#D4AF37' : '#B8941F';
-
-  var footerColor = cardState.textLight ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.5)';
-
-  
-
-  var fontName = (cardState.font === 'serif') ? 'Playfair Display' : 'Outfit';
-
-  var fontWeight = (cardState.font === 'serif') ? '400' : '500';
-
-  var maxTextWidth = 900;
-
-  
-
-  // Algoritmo de Ajuste Dinámico de Fuente para Versículos Largos
-
-  var fontSize = 44;
-
-  var lineHeight = 64;
-
-  var maxTextHeight = 650; // Altura máxima permitida para el bloque de texto
-
-  var wrappedLines = [];
-
-  
-
-  while (fontSize > 18) {
-
-    ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontName + ', sans-serif';
-
-    wrappedLines = wrapText(ctx, text, maxTextWidth);
-
-    var totalTextHeight = wrappedLines.length * lineHeight;
-
-    if (totalTextHeight <= maxTextHeight) {
-
-      break;
-
-    }
-
-    fontSize -= 2;
-
-    lineHeight = Math.round(fontSize * 1.45); // Escalar interlineado de forma proporcional
-
-  }
-
-  
-
-  // Cálculo del Centrado Vertical del Bloque Completo
-
-  var crossHeight = 60;
-
-  var refHeight = 40;
-
-  var gap = 40;
-
-  var blockHeight = crossHeight + gap + totalTextHeight + gap + refHeight;
-
-  
-
-  var blockStartY = (1200 - blockHeight) / 2;
-
-  
-
-  // 1. Dibujar Cruz ✝
-
-  ctx.fillStyle = goldColor;
-
-  ctx.font = 'normal 56px Outfit, sans-serif';
-
-  ctx.textAlign = 'center';
-
-  ctx.textBaseline = 'middle';
-
-  var crossY = blockStartY + (crossHeight / 2);
-
-  ctx.fillText('✝', 600, crossY);
-
-  
-
-  // 2. Dibujar Texto del Versículo
-
-  ctx.fillStyle = textColor;
-
-  ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontName + ', sans-serif';
-
-  ctx.textAlign = 'center';
-
-  ctx.textBaseline = 'middle';
-
-  
-
-  var startY = blockStartY + crossHeight + gap + (lineHeight / 2);
-
-  for (var k = 0; k < wrappedLines.length; k++) {
-
-    ctx.fillText(wrappedLines[k], 600, startY + (k * lineHeight));
-
-  }
-
-  
-
-  // 3. Dibujar Referencia Bíblica
-
-  ctx.fillStyle = goldColor;
-
-  ctx.font = 'bold 36px Outfit, sans-serif';
-
-  var refY = blockStartY + crossHeight + gap + totalTextHeight + gap + (refHeight / 2);
-
-  ctx.fillText(ref, 600, refY);
-
-  
-
-  // 4. Dibujar Firma/Footer
-
-  ctx.fillStyle = footerColor;
-
-  ctx.font = 'bold 22px Outfit, sans-serif';
-
-  ctx.fillText('PRINCIPIOS BÁSICOS DE LA BIBLIA', 600, 1100);
-
-  
-
-  document.fonts.ready.then(function() {
-
-    callback(canvas);
-
-  });
-
-}
-
+function drawCanvasCard(callback) {
+
+  var ref = S.curVerseRef;
+
+  var text = '"' + (verses[ref] || '') + '"';
+
+  
+
+  var canvas = document.createElement('canvas');
+
+  canvas.width = 1200;
+
+  canvas.height = 1200;
+
+  var ctx = canvas.getContext('2d');
+
+  
+
+  // 1. Dibujar Fondos (Matemáticos y Vectoriales)
+
+  if (cardState.bg === 'obsidian') {
+
+    ctx.fillStyle = '#0D0D0F';
+
+    ctx.fillRect(0, 0, 1200, 1200);
+
+    
+
+    var rad = ctx.createRadialGradient(600, 600, 100, 600, 600, 800);
+
+    rad.addColorStop(0, '#1E1E24');
+
+    rad.addColorStop(1, '#0D0D0F');
+
+    ctx.fillStyle = rad;
+
+    ctx.fillRect(0, 0, 1200, 1200);
+
+    
+
+    ctx.strokeStyle = '#D4AF37';
+
+    ctx.lineWidth = 4;
+
+    ctx.strokeRect(30, 30, 1140, 1140);
+
+    
+
+    ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
+
+    ctx.lineWidth = 1;
+
+    ctx.strokeRect(40, 40, 1120, 1120);
+
+    
+    // DIBUJAR LÍNEAS DE DISEÑO DORADAS DE CRUCE (GRID)
+    ctx.strokeStyle = 'rgba(212, 175, 55, 0.08)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(600, 45);
+    ctx.lineTo(600, 1155);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(45, 600);
+    ctx.lineTo(1155, 600);
+    ctx.stroke();
+
+  } else if (cardState.bg === 'sunset') {
+
+    var grad = ctx.createLinearGradient(0, 0, 1200, 1200);
+
+    grad.addColorStop(0, '#4a0e4e');
+
+    grad.addColorStop(0.5, '#b43a55');
+
+    grad.addColorStop(1, '#f67062');
+
+    ctx.fillStyle = grad;
+
+    ctx.fillRect(0, 0, 1200, 1200);
+
+    
+
+    var solGrad = ctx.createRadialGradient(600, 750, 50, 600, 750, 350);
+
+    solGrad.addColorStop(0, 'rgba(254, 180, 123, 0.45)');
+
+    solGrad.addColorStop(1, 'rgba(254, 180, 123, 0)');
+
+    ctx.fillStyle = solGrad;
+
+    ctx.beginPath();
+
+    ctx.arc(600, 750, 350, 0, Math.PI * 2);
+
+    ctx.fill();
+
+    
+
+    drawMountainRange(ctx, [
+
+      {x: 0, y: 950}, {x: 300, y: 800}, {x: 600, y: 880}, {x: 900, y: 760}, {x: 1200, y: 920}
+
+    ], 'rgba(56, 13, 62, 0.4)');
+
+    
+
+    drawMountainRange(ctx, [
+
+      {x: 0, y: 1050}, {x: 250, y: 920}, {x: 550, y: 980}, {x: 850, y: 850}, {x: 1200, y: 1000}
+
+    ], 'rgba(36, 6, 41, 0.75)');
+
+    
+
+    drawMountainRange(ctx, [
+
+      {x: 0, y: 1150}, {x: 400, y: 1040}, {x: 800, y: 1080}, {x: 1200, y: 1120}
+
+    ], '#1d0222');
+
+    
+
+  } else if (cardState.bg === 'aurora') {
+
+    var grad = ctx.createLinearGradient(0, 0, 1200, 1200);
+
+    grad.addColorStop(0, '#001a1a');
+
+    grad.addColorStop(0.6, '#004d40');
+
+    grad.addColorStop(1, '#00bfa5');
+
+    ctx.fillStyle = grad;
+
+    ctx.fillRect(0, 0, 1200, 1200);
+
+    
+
+    ctx.fillStyle = 'rgba(0, 255, 150, 0.08)';
+
+    ctx.beginPath();
+
+    ctx.moveTo(0, 400);
+
+    ctx.bezierCurveTo(300, 200, 900, 600, 1200, 300);
+
+    ctx.lineTo(1200, 900);
+
+    ctx.bezierCurveTo(900, 800, 300, 1000, 0, 900);
+
+    ctx.closePath();
+
+    ctx.fill();
+
+    
+
+    ctx.fillStyle = 'rgba(0, 180, 255, 0.06)';
+
+    ctx.beginPath();
+
+    ctx.moveTo(0, 300);
+
+    ctx.bezierCurveTo(400, 500, 800, 100, 1200, 450);
+
+    ctx.lineTo(1200, 1000);
+
+    ctx.bezierCurveTo(800, 700, 400, 950, 0, 850);
+
+    ctx.closePath();
+
+    ctx.fill();
+
+    
+
+  } else if (cardState.bg === 'starry') {
+
+    ctx.fillStyle = '#06060c';
+
+    ctx.fillRect(0, 0, 1200, 1200);
+
+    
+
+    var rad = ctx.createRadialGradient(600, 600, 100, 600, 600, 800);
+
+    rad.addColorStop(0, '#111728');
+
+    rad.addColorStop(1, '#050508');
+
+    ctx.fillStyle = rad;
+
+    ctx.fillRect(0, 0, 1200, 1200);
+
+    
+
+    var neb = ctx.createRadialGradient(800, 400, 50, 800, 400, 400);
+
+    neb.addColorStop(0, 'rgba(156, 39, 176, 0.12)');
+
+    neb.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+    ctx.fillStyle = neb;
+
+    ctx.beginPath();
+
+    ctx.arc(800, 400, 400, 0, Math.PI * 2);
+
+    ctx.fill();
+
+    
+
+    ctx.fillStyle = '#ffffff';
+
+    for (var i = 0; i < 80; i++) {
+
+      var sx = (Math.sin(i * 927.53) * 0.5 + 0.5) * 1200;
+
+      var sy = (Math.cos(i * 123.45) * 0.5 + 0.5) * 1200;
+
+      var sr = (Math.sin(i * 456.78) * 0.5 + 0.5) * 2 + 0.5;
+
+      var opacity = Math.sin(i * 321.09) * 0.4 + 0.6;
+
+      ctx.fillStyle = 'rgba(255, 255, 255, ' + opacity + ')';
+
+      ctx.beginPath();
+
+      ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+
+      ctx.fill();
+
+    }
+
+    
+
+  } else if (cardState.bg === 'forest') {
+
+    var grad = ctx.createLinearGradient(0, 0, 0, 1200);
+
+    grad.addColorStop(0, '#0f2027');
+
+    grad.addColorStop(0.5, '#203a43');
+
+    grad.addColorStop(1, '#2c5364');
+
+    ctx.fillStyle = grad;
+
+    ctx.fillRect(0, 0, 1200, 1200);
+
+    
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+
+    ctx.fillRect(0, 500, 1200, 400);
+
+    
+
+    drawPineTrees(ctx, 150, 950, 160, 'rgba(10, 24, 30, 0.4)');
+
+    drawPineTrees(ctx, 450, 900, 180, 'rgba(10, 24, 30, 0.4)');
+
+    drawPineTrees(ctx, 750, 930, 170, 'rgba(10, 24, 30, 0.4)');
+
+    drawPineTrees(ctx, 1050, 910, 190, 'rgba(10, 24, 30, 0.4)');
+
+    
+
+    var mist = ctx.createLinearGradient(0, 800, 0, 1200);
+
+    mist.addColorStop(0, 'rgba(44, 83, 100, 0)');
+
+    mist.addColorStop(0.8, 'rgba(44, 83, 100, 0.25)');
+
+    ctx.fillStyle = mist;
+
+    ctx.fillRect(0, 800, 1200, 400);
+
+    
+
+    drawPineTrees(ctx, 300, 1020, 220, 'rgba(5, 12, 16, 0.85)');
+
+    drawPineTrees(ctx, 800, 990, 240, 'rgba(5, 12, 16, 0.85)');
+
+    
+
+  } else if (cardState.bg === 'sunrise') {
+
+    var grad = ctx.createLinearGradient(0, 0, 0, 1200);
+
+    grad.addColorStop(0, '#f9d423');
+
+    grad.addColorStop(1, '#ff4e50');
+
+    ctx.fillStyle = grad;
+
+    ctx.fillRect(0, 0, 1200, 1200);
+
+    
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+
+    ctx.beginPath();
+
+    ctx.arc(200, 200, 150, 0, Math.PI * 2);
+
+    ctx.arc(350, 230, 180, 0, Math.PI * 2);
+
+    ctx.arc(900, 180, 140, 0, Math.PI * 2);
+
+    ctx.arc(1050, 220, 160, 0, Math.PI * 2);
+
+    ctx.fill();
+
+  }
+
+  
+
+  var textColor = cardState.textLight ? '#F5F5F7' : '#1A1A1E';
+
+  var goldColor = cardState.textLight ? '#D4AF37' : '#B8941F';
+
+  var footerColor = cardState.textLight ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.5)';
+
+  
+
+  var fontName = (cardState.font === 'serif') ? 'Playfair Display' : 'Outfit';
+
+  var fontWeight = (cardState.font === 'serif') ? '400' : '500';
+
+  var maxTextWidth = 900;
+
+  
+
+  // AJUSTE DINÁMICO DE FUENTE BASADO EN TAMAÑO DE LA INTERFAZ
+  var scaleFactor = 1200 / 380; // ~3.158
+  var fontSize = Math.round(cardState.fontSize * scaleFactor);
+
+  var lineHeight = Math.round(fontSize * 1.45);
+
+  var maxTextHeight = 650; // Altura máxima permitida para el bloque de texto
+
+  var wrappedLines = [];
+
+  
+
+  while (fontSize > 18) {
+
+    ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontName + ', sans-serif';
+
+    wrappedLines = wrapText(ctx, text, maxTextWidth);
+
+    var totalTextHeight = wrappedLines.length * lineHeight;
+
+    if (totalTextHeight <= maxTextHeight) {
+
+      break;
+
+    }
+
+    fontSize -= 2;
+
+    lineHeight = Math.round(fontSize * 1.45); // Escalar interlineado de forma proporcional
+
+  }
+
+  
+
+  // Cálculo del Centrado Vertical del Bloque Completo con Offset
+  var crossHeight = 60;
+
+  var refHeight = 40;
+
+  var gap = 40;
+
+  var blockHeight = crossHeight + gap + totalTextHeight + gap + refHeight;
+
+  
+
+  var canvasOffset = cardState.offset * scaleFactor;
+  var blockStartY = ((1200 - blockHeight) / 2) + canvasOffset;
+
+  
+
+  // 1. Dibujar Cruz ✝
+
+  ctx.fillStyle = goldColor;
+
+  ctx.font = 'normal 56px Outfit, sans-serif';
+
+  ctx.textAlign = 'center';
+
+  ctx.textBaseline = 'middle';
+
+  var crossY = blockStartY + (crossHeight / 2);
+
+  ctx.fillText('✝', 600, crossY);
+
+  
+
+  // 2. Dibujar Texto del Versículo
+
+  ctx.fillStyle = textColor;
+
+  ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontName + ', sans-serif';
+
+  ctx.textAlign = 'center';
+
+  ctx.textBaseline = 'middle';
+
+  
+
+  var startY = blockStartY + crossHeight + gap + (lineHeight / 2);
+
+  for (var k = 0; k < wrappedLines.length; k++) {
+
+    ctx.fillText(wrappedLines[k], 600, startY + (k * lineHeight));
+
+  }
+
+  
+
+  // 3. Dibujar Referencia Bíblica
+
+  ctx.fillStyle = goldColor;
+
+  ctx.font = 'bold 36px Outfit, sans-serif';
+
+  var refY = blockStartY + crossHeight + gap + totalTextHeight + gap + (refHeight / 2);
+
+  ctx.fillText(ref, 600, refY);
+
+  
+
+  // 4. Dibujar Firma/Footer
+
+  ctx.fillStyle = footerColor;
+
+  ctx.font = 'bold 22px Outfit, sans-serif';
+
+  ctx.fillText('PRINCIPIOS BÁSICOS DE LA BIBLIA', 600, 1100);
+
+  
+  // APLICAR FILTRO DE GRANO/RUIDO ANALÓGICO SUTIL
+  try {
+    var imgData = ctx.getImageData(0, 0, 1200, 1200);
+    var data = imgData.data;
+    for (var i = 0; i < data.length; i += 4) {
+      var noise = (Math.random() - 0.5) * 12; // sutil
+      data[i] = Math.min(255, Math.max(0, data[i] + noise));
+      data[i+1] = Math.min(255, Math.max(0, data[i+1] + noise));
+      data[i+2] = Math.min(255, Math.max(0, data[i+2] + noise));
+    }
+    ctx.putImageData(imgData, 0, 0);
+  } catch (e) {
+    console.warn("Filtro de textura omitido por seguridad de origen cruzado de Canvas:", e);
+  }
+
+  document.fonts.ready.then(function() {
+
+    callback(canvas);
+
+  });
+
+}
+
 function drawMountainRange(ctx, points, color) {
 
   ctx.fillStyle = color;
