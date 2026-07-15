@@ -1384,23 +1384,110 @@ body.light .sc-qm {
 
 /* Card BG classes (only for preview representation) */
 .card-preview.style-obsidian {
-  background: #141417;
+  background: radial-gradient(circle at 50% 50%, #1e1e24 0%, #0d0d0f 100%);
   border: 1px solid rgba(212, 175, 55, 0.2);
 }
+.card-preview.style-obsidian::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: 
+    linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center;
+  pointer-events: none;
+  z-index: 1;
+}
 .card-preview.style-sunset {
-  background: linear-gradient(135deg, #ff7e5f, #feb47b);
+  background: linear-gradient(135deg, #4a0e4e, #b43a55, #f67062);
+  background-size: 200% 200%;
+  animation: luxuryGradient 8s ease infinite;
 }
 .card-preview.style-aurora {
-  background: linear-gradient(135deg, #028090, #007f5f);
+  background: linear-gradient(135deg, #001a1a, #004d40, #00bfa5);
+  background-size: 200% 200%;
+  animation: luxuryGradient 10s ease infinite;
 }
 .card-preview.style-starry {
   background: radial-gradient(circle at center, #1b2030, #0d0e15);
 }
+.card-preview.style-starry::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: 
+    radial-gradient(1px 1px at 25px 35px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 60px 85px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 120px 40px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 180px 150px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 240px 95px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 310px 200px, #fff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 160px 160px;
+  opacity: 0.6;
+  animation: starryTwinkle 4s infinite linear;
+  pointer-events: none;
+}
 .card-preview.style-forest {
-  background: linear-gradient(135deg, #134e5e, #71b280);
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  background-size: 200% 200%;
+  animation: luxuryGradient 12s ease infinite;
 }
 .card-preview.style-sunrise {
-  background: linear-gradient(135deg, #f5af19, #f12711);
+  background: linear-gradient(135deg, #f9d423, #ff4e50);
+  background-size: 200% 200%;
+  animation: luxuryGradient 6s ease infinite;
+}
+
+@keyframes luxuryGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes starryTwinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+/* Button Confetti Particles & Loader */
+.btn-particle {
+  position: fixed;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe699 0%, #D4AF37 100%);
+  pointer-events: none;
+  z-index: 9999;
+  animation: particleFadeFly 0.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+@keyframes particleFadeFly {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0.3);
+    opacity: 0;
+  }
+}
+.btn-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: btnSpinnerRotate 0.8s infinite linear;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+@keyframes btnSpinnerRotate {
+  to { transform: rotate(360deg); }
+}
+.gen-action-btn.download-img.loading {
+  background: rgba(212, 175, 55, 0.15) !important;
+  border-color: var(--gold) !important;
+  color: var(--gold) !important;
+  pointer-events: none;
 }
 
 .generator-controls {
