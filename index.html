@@ -134,7 +134,10 @@
 <nav class="sb-list" id="sbList"></nav>
 <div class="sb-divider" style="height:1px;background:var(--border);margin:16px 20px;"></div>
 <div class="sb-sec-heading" style="font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;font-weight:700;margin:0 20px 10px;"><span style="color:var(--gold);margin-right:6px;">★</span> Guardados</div>
-<div class="sb-fav-list" id="sbFavList" style="display:flex;flex-direction:column;gap:8px;padding:0 20px 20px;"></div>
+<div class="sb-fav-list" id="sbFavList" style="display:flex;flex-direction:column;gap:8px;padding:0 20px 12px;"></div>
+<div class="sb-divider" style="height:1px;background:var(--border);margin:12px 20px;"></div>
+<div class="sb-sec-heading" style="font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;font-weight:700;margin:0 20px 10px;"><span style="color:var(--gold);margin-right:6px;">🖍</span> Resaltados</div>
+<div class="sb-hl-list" id="sbHlList" style="display:flex;flex-direction:column;gap:8px;padding:0 20px 20px;"></div>
 
 </aside>
 
@@ -182,6 +185,16 @@
 <div class="modal-body">
 
 <div class="modal-verse" id="modalVerse"></div>
+<div class="modal-highlight-bar" id="modalHighlightBar">
+  <span class="hl-bar-label">Resaltar:</span>
+  <button class="hl-dot hl-yellow" onclick="highlightCurrentVerse('yellow')" aria-label="Resaltar amarillo"></button>
+  <button class="hl-dot hl-green" onclick="highlightCurrentVerse('green')" aria-label="Resaltar verde"></button>
+  <button class="hl-dot hl-blue" onclick="highlightCurrentVerse('blue')" aria-label="Resaltar azul"></button>
+  <button class="hl-dot hl-pink" onclick="highlightCurrentVerse('pink')" aria-label="Resaltar rosa"></button>
+  <button class="hl-dot hl-clear" onclick="highlightCurrentVerse('clear')" aria-label="Quitar resaltado">
+    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  </button>
+</div>
 
 <!-- Botones de Acción Rápida -->
 <div class="modal-actions-bar" id="modalActionBar">

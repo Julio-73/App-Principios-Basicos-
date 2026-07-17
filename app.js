@@ -262,6 +262,24 @@ function openModal(ref) {
 
   }
 
+  // Highlights state
+  var highlights = sGet('ici_highlights', {});
+  var activeColor = highlights[ref];
+  
+  if (verse) {
+    verse.className = 'modal-verse';
+    if (activeColor) {
+      verse.classList.add('hl-text-' + activeColor);
+    }
+  }
+  
+  document.querySelectorAll('#modalHighlightBar .hl-dot').forEach(function(dot) {
+    dot.classList.remove('active');
+    if (activeColor && dot.classList.contains('hl-' + activeColor)) {
+      dot.classList.add('active');
+    }
+  });
+
   title.textContent = ref;
 
   verse.innerHTML = '<div class="skeleton-container">' +
@@ -373,6 +391,76 @@ function buildFavs() {
 
   }).join('');
 
+}
+
+function buildHighlights() {
+  var hlList = document.getElementById('sbHlList');
+  if (!hlList) return;
+  
+  var highlights = sGet('ici_highlights', {});
+  var keys = Object.keys(highlights);
+  
+  if (keys.length === 0) {
+    hlList.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px 0;">Ningún versículo resaltado</div>';
+    return;
+  }
+  
+  hlList.innerHTML = keys.map(function(ref) {
+    var color = highlights[ref];
+    var colorName = color === 'yellow' ? 'Amarillo' : color === 'green' ? 'Verde' : color === 'blue' ? 'Azul' : 'Rosa';
+    return '<div class="sb-hl-item hl-item-' + color + '" onclick="openModal(\'' + ref + '\')"><span>📖 ' + ref + '</span><span class="sb-hl-dot-indicator color-' + color + '"></span></div>';
+  }).join('');
+}
+
+function applyCardHighlights() {
+  var highlights = sGet('ici_highlights', {});
+  
+  document.querySelectorAll('.sc-card').forEach(function(card) {
+    card.classList.remove('hl-card-yellow', 'hl-card-green', 'hl-card-blue', 'hl-card-pink');
+  });
+  
+  document.querySelectorAll('.sc-card').forEach(function(card) {
+    var refEl = card.querySelector('.sc-ref');
+    if (refEl) {
+      var refText = refEl.textContent.trim();
+      var baseRef = refText.split(' — ')[0].trim();
+      
+      if (highlights[baseRef]) {
+        card.classList.add('hl-card-' + highlights[baseRef]);
+      }
+    }
+  });
+}
+
+function highlightCurrentVerse(color) {
+  var ref = S.curVerseRef;
+  if (!ref) return;
+  
+  var highlights = sGet('ici_highlights', {});
+  var modalVerse = document.getElementById('modalVerse');
+  
+  document.querySelectorAll('#modalHighlightBar .hl-dot').forEach(function(dot) {
+    dot.classList.remove('active');
+  });
+  
+  if (modalVerse) {
+    modalVerse.className = 'modal-verse';
+  }
+  
+  if (color === 'clear') {
+    delete highlights[ref];
+  } else {
+    highlights[ref] = color;
+    if (modalVerse) {
+      modalVerse.classList.add('hl-text-' + color);
+    }
+    var activeDot = document.querySelector('#modalHighlightBar .hl-dot.hl-' + color);
+    if (activeDot) activeDot.classList.add('active');
+  }
+  
+  sSet('ici_highlights', highlights);
+  buildHighlights();
+  applyCardHighlights();
 }
 
 function shareVerse() {
@@ -1644,6 +1732,8 @@ function go(idx){
 
   updateSpotlight();
 
+  applyCardHighlights();
+
   window.scrollTo(0,0);
 
   if(window.innerWidth<768){
@@ -1780,7 +1870,7 @@ buildSB();buildW();buildPP();updProg();
 
 for(var i=0; i<PP.length; i++){ initNotes(i); }
 
-buildFavs();loadNotes();addFavBadges();initSpotlight();if(typeof AudioPlayer!=='undefined')AudioPlayer.init();
+buildFavs();buildHighlights();loadNotes();addFavBadges();applyCardHighlights();initSpotlight();if(typeof AudioPlayer!=='undefined')AudioPlayer.init();
 
 var saved;try{saved=localStorage.getItem('ici_theme');}catch(e){}if(saved==='light'){document.body.classList.add('light');}
 
