@@ -1805,28 +1805,40 @@ function checkOnline(){if(offBar)offBar.classList.toggle('show',!navigator.onLin
 
 window.addEventListener('online',checkOnline);window.addEventListener('offline',checkOnline);checkOnline();
 
-// Registro de Service Worker para soporte Offline PWA
-
 if ('serviceWorker' in navigator) {
-
   window.addEventListener('load', function() {
-
     navigator.serviceWorker.register('./sw.js')
-
       .then(function(reg) {
-
         console.log('Service Worker registrado con éxito:', reg.scope);
+        // Fuerza la comprobación de actualizaciones de inmediato
+        reg.update();
 
+        reg.onupdatefound = function() {
+          var installingWorker = reg.installing;
+          if (installingWorker) {
+            installingWorker.onstatechange = function() {
+              if (installingWorker.state === 'installed') {
+                if (navigator.serviceWorker.controller) {
+                  console.log('Nueva actualización detectada en GitHub. Aplicando cambios...');
+                }
+              }
+            };
+          }
+        };
       })
-
       .catch(function(err) {
-
         console.error('Error al registrar el Service Worker:', err);
-
       });
-
   });
 
+  // Escucha cambios en el Service Worker y recarga la página al instante para activar los cambios
+  var refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
+  });
 }
 
 /* ── INIT ───────────────────────────────────────────── */
