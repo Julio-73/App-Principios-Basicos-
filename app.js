@@ -2967,18 +2967,12 @@ function changeCardBackground(bgType) {
 
   
 
-  if (bgType === 'sunrise') {
-
+  if (bgType === 'sunrise' || bgType === 'linen' || bgType === 'marble' || bgType === 'lavender') {
     cardState.textLight = false;
-
     document.getElementById('textColorBtn').textContent = 'Oscuro';
-
   } else {
-
     cardState.textLight = true;
-
     document.getElementById('textColorBtn').textContent = 'Claro';
-
   }
 
   
@@ -3317,33 +3311,107 @@ function drawCanvasCard(callback) {
     
 
   } else if (cardState.bg === 'sunrise') {
-
     var grad = ctx.createLinearGradient(0, 0, 0, 1200);
-
     grad.addColorStop(0, '#f9d423');
-
     grad.addColorStop(1, '#ff4e50');
-
     ctx.fillStyle = grad;
-
     ctx.fillRect(0, 0, 1200, 1200);
 
-    
-
     ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-
     ctx.beginPath();
-
     ctx.arc(200, 200, 150, 0, Math.PI * 2);
-
     ctx.arc(350, 230, 180, 0, Math.PI * 2);
-
     ctx.arc(900, 180, 140, 0, Math.PI * 2);
-
     ctx.arc(1050, 220, 160, 0, Math.PI * 2);
-
     ctx.fill();
+  } else if (cardState.bg === 'linen') {
+    ctx.fillStyle = '#FAF9F6';
+    ctx.fillRect(0, 0, 1200, 1200);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.015)';
+    ctx.lineWidth = 1.5;
+    for (var i = 0; i < 1200; i += 8) {
+      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 1200); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(1200, i); ctx.stroke();
+    }
+    ctx.strokeStyle = 'rgba(184, 148, 31, 0.15)';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(30, 30, 1140, 1140);
+  } else if (cardState.bg === 'marble') {
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, 1200, 1200);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.025)';
+    ctx.lineWidth = 12;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(100, 0);
+    ctx.bezierCurveTo(400, 300, 200, 800, 850, 1200);
+    ctx.stroke();
 
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.018)';
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.moveTo(1100, 0);
+    ctx.bezierCurveTo(900, 400, 1100, 700, 750, 1200);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.012)';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(0, 400);
+    ctx.bezierCurveTo(300, 500, 600, 200, 1200, 350);
+    ctx.stroke();
+  } else if (cardState.bg === 'lavender') {
+    var grad = ctx.createLinearGradient(0, 0, 1200, 1200);
+    grad.addColorStop(0, '#E3DFFD');
+    grad.addColorStop(1, '#D2DAFF');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1200, 1200);
+
+    var rad1 = ctx.createRadialGradient(900, 200, 100, 900, 200, 800);
+    rad1.addColorStop(0, 'rgba(201, 238, 255, 0.7)');
+    rad1.addColorStop(1, 'rgba(201, 238, 255, 0)');
+    ctx.fillStyle = rad1;
+    ctx.fillRect(0, 0, 1200, 1200);
+
+    var rad2 = ctx.createRadialGradient(200, 1000, 100, 200, 1000, 800);
+    rad2.addColorStop(0, 'rgba(255, 217, 250, 0.8)');
+    rad2.addColorStop(1, 'rgba(255, 217, 250, 0)');
+    ctx.fillStyle = rad2;
+    ctx.fillRect(0, 0, 1200, 1200);
+  } else if (cardState.bg === 'divine') {
+    ctx.fillStyle = '#080B12';
+    ctx.fillRect(0, 0, 1200, 1200);
+    var rad = ctx.createRadialGradient(600, 0, 100, 600, 0, 1100);
+    rad.addColorStop(0, 'rgba(212, 175, 55, 0.35)');
+    rad.addColorStop(0.5, 'rgba(212, 175, 55, 0.08)');
+    rad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = rad;
+    ctx.fillRect(0, 0, 1200, 1200);
+  } else if (cardState.bg === 'emerald') {
+    ctx.fillStyle = '#062C24';
+    ctx.fillRect(0, 0, 1200, 1200);
+    var rad = ctx.createRadialGradient(600, 600, 200, 600, 600, 900);
+    rad.addColorStop(0, '#0F5E4E');
+    rad.addColorStop(1, '#031713');
+    ctx.fillStyle = rad;
+    ctx.fillRect(0, 0, 1200, 1200);
+
+    for (var i = 0; i < 50; i++) {
+      var px = (Math.sin(i * 142.33) * 0.5 + 0.5) * 1200;
+      var py = (Math.cos(i * 473.11) * 0.5 + 0.5) * 1200;
+      var pr = (Math.sin(i * 88.8) * 0.5 + 0.5) * 4 + 1.5;
+      ctx.fillStyle = 'rgba(212, 175, 55, ' + (Math.sin(i * 12.3) * 0.2 + 0.3) + ')';
+      ctx.beginPath();
+      ctx.arc(px, py, pr, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else if (cardState.bg === 'mystic') {
+    var grad = ctx.createLinearGradient(0, 0, 1200, 1200);
+    grad.addColorStop(0, '#E89B93');
+    grad.addColorStop(0.5, '#C471ED');
+    grad.addColorStop(1, '#F64F59');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1200, 1200);
   }
 
   
