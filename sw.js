@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════ SERVICE WORKER - APP OFFLINE ═══════════════════════════════════════════════════════ */
 
-const CACHE_NAME = 'principios-basicos-v25';
+const CACHE_NAME = 'principios-basicos-v26';
 const urlsToCache = [
   './',
   './index.html',
@@ -10,6 +10,12 @@ const urlsToCache = [
   './icon-192.png',
   './icon-512.png',
   './WhatsApp Image 2026-04-14 at 00.37.04.jpeg',
+  './backgrounds/bg_mountains.png',
+  './backgrounds/bg_stars.png',
+  './backgrounds/bg_ocean.png',
+  './backgrounds/bg_forest.png',
+  './backgrounds/bg_desert.png',
+  './backgrounds/bg_clouds.png',
   'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap'
 ];
 

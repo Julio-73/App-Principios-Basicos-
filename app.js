@@ -3416,6 +3416,7 @@ function drawCanvasCard(callback) {
 
   
 
+  function renderTextAndFinish() {
   var textColor = cardState.textLight ? '#F5F5F7' : '#1A1A1E';
 
   var goldColor = cardState.textLight ? '#D4AF37' : '#B8941F';
@@ -3556,12 +3557,33 @@ function drawCanvasCard(callback) {
     console.warn("Filtro de textura omitido por seguridad de origen cruzado de Canvas:", e);
   }
 
-  document.fonts.ready.then(function() {
+    document.fonts.ready.then(function() {
+      callback(canvas);
+    });
+  }
 
-    callback(canvas);
-
-  });
-
+  var isPhoto = (cardState.bg.indexOf('photo_') === 0);
+  if (isPhoto) {
+    var img = new Image();
+    img.src = './backgrounds/' + cardState.bg.replace('photo_', 'bg_') + '.png';
+    img.onload = function() {
+      ctx.drawImage(img, 0, 0, 1200, 1200);
+      if (cardState.textLight) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
+      } else {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+      }
+      ctx.fillRect(0, 0, 1200, 1200);
+      renderTextAndFinish();
+    };
+    img.onerror = function() {
+      ctx.fillStyle = '#0D0D0F';
+      ctx.fillRect(0, 0, 1200, 1200);
+      renderTextAndFinish();
+    };
+  } else {
+    renderTextAndFinish();
+  }
 }
 
 function drawMountainRange(ctx, points, color) {

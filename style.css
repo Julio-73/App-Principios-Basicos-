@@ -1495,6 +1495,40 @@ body.light .sc-qm {
   background-size: 200% 200%;
   animation: luxuryGradient 9s ease infinite;
 }
+.card-preview.style-photo_mountains {
+  background: url('./backgrounds/bg_mountains.png') center/cover no-repeat;
+}
+.card-preview.style-photo_stars {
+  background: url('./backgrounds/bg_stars.png') center/cover no-repeat;
+}
+.card-preview.style-photo_ocean {
+  background: url('./backgrounds/bg_ocean.png') center/cover no-repeat;
+}
+.card-preview.style-photo_forest {
+  background: url('./backgrounds/bg_forest.png') center/cover no-repeat;
+}
+.card-preview.style-photo_desert {
+  background: url('./backgrounds/bg_desert.png') center/cover no-repeat;
+}
+.card-preview.style-photo_clouds {
+  background: url('./backgrounds/bg_clouds.png') center/cover no-repeat;
+}
+.card-preview[class*="style-photo_"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.card-preview[class*="style-photo_"].text-light::after {
+  background: rgba(0, 0, 0, 0.28);
+}
+.card-preview[class*="style-photo_"].text-dark::after {
+  background: rgba(255, 255, 255, 0.15);
+}
+.card-preview-cross, .card-preview-text, .card-preview-ref, .card-preview-footer {
+  position: relative;
+}
 
 @keyframes luxuryGradient {
   0% { background-position: 0% 50%; }
