@@ -2979,7 +2979,7 @@ function changeCardBackground(bgType) {
 
   // Actualizar activo en miniaturas
 
-  var btns = document.querySelectorAll('#bgSelector .bg-option');
+  var btns = document.querySelectorAll('#bgSelector .bg-option, #bgSelector .bg-photo-option');
 
   btns.forEach(function(btn) {
 

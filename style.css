@@ -1595,11 +1595,42 @@ body.light .sc-qm {
   margin-bottom: 10px;
   display: block;
 }
-.bg-selector {
+.bg-group-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 14px;
+  margin-bottom: 8px;
+}
+.bg-selector-row {
   display: flex;
   gap: 10px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+.bg-photo-option {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--t1);
+  flex-shrink: 0;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.bg-photo-option:hover {
+  transform: scale(1.08);
+}
+.bg-photo-option.active {
+  transform: scale(1.08);
+  border-color: var(--gold);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
 }
 .bg-option {
   width: 32px;
