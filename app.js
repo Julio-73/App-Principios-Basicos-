@@ -294,17 +294,13 @@ function openModal(ref) {
   document.body.style.overflow = 'hidden';
 
   setTimeout(function(){
-
-    if (verses[ref]) {
-
-      verse.textContent = verses[ref];
-
+    var cleanRef = ref.split(' — ')[0].split(' - ')[0].trim();
+    var text = verses[cleanRef] || verses[ref];
+    if (text) {
+      verse.textContent = text;
     } else {
-
       verse.innerHTML = '<p style="color:var(--muted);text-align:center;font-style:normal;">Versículo no disponible offline.<br><br><a href="https://www.biblegateway.com/passage/?search=' + encodeURIComponent(ref) + '&version=NVI" target="_blank" style="color:var(--gold);text-decoration:underline;">Leer ' + ref + ' en Bible Gateway (NVI) →</a></p>';
-
     }
-
   }, 450);
 
 }
@@ -464,49 +460,40 @@ function highlightCurrentVerse(color) {
 }
 
 function shareVerse() {
-
   var ref = S.curVerseRef;
-
   if (!ref) return;
 
-  var text = verses[ref];
-
+  var cleanRef = ref.split(' — ')[0].split(' - ')[0].trim();
+  var text = verses[cleanRef] || verses[ref];
   if (!text) return;
 
-  var shareText = '✝️ *' + ref + '*\n\n"' + text + '"\n\nEstudia los Principios Básicos de la Biblia en:\nhttps://julio-73.github.io/App-Principios-Basicos-/';
+  var shareText = '✝️ *' + cleanRef + '*\n\n"' + text + '"\n\nEstudia los Principios Básicos de la Biblia en:\nhttps://julio-73.github.io/App-Principios-Basicos-/';
 
   if (navigator.share) {
-
     navigator.share({
-
-      title: ref,
-
+      title: cleanRef,
       text: shareText
-
     }).then(function() {
-
       console.log('Compartido con éxito');
-
     }).catch(function(err) {
-
       console.log('Error al compartir:', err);
-
     });
-
   } else {
-
     navigator.clipboard.writeText(shareText).then(function() {
-
-      alert('¡Versículo copiado al portapapeles listo para compartir! 📲');
-
+      var btn = document.getElementById('modalShareBtn');
+      if (btn) {
+        var oldHTML = btn.innerHTML;
+        btn.innerHTML = '<span style="font-family:\'Outfit\',sans-serif;font-weight:600;font-size:14px;color:var(--gold);">✓ Copiado</span>';
+        setTimeout(function() {
+          btn.innerHTML = oldHTML;
+        }, 2000);
+      } else {
+        alert('¡Versículo copiado al portapapeles! 📲');
+      }
     }).catch(function() {
-
       alert('No se pudo copiar el texto automáticamente.');
-
     });
-
   }
-
 }
 
 function initNotes(idx) {
@@ -1218,27 +1205,7 @@ updateUI: function() {
 
 window.addEventListener('beforeunload', function() { window.speechSynthesis.cancel(); });
 
-function shareVerse(ref) {
 
-  var text = ref + ' - ' + (verses[ref] || '');
-
-  if (navigator.share) {
-
-    navigator.share({ title: ref, text: text });
-
-  } else {
-
-    navigator.clipboard.writeText(text).then(function(){
-
-      var btn = document.querySelector('.modal-act-btn.share-btn');
-
-      if (btn) { btn.textContent = '✓'; setTimeout(function(){ btn.textContent = '📤'; }, 2000); }
-
-    });
-
-  }
-
-}
 
 function toggleFav(ref) {
 
