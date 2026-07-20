@@ -1,6 +1,6 @@
 {
   "name": "Principios Básicos de la Biblia",
-  "short_name": "Principios Bíblicos",
+  "short_name": "PB Biblia",
   "description": "Curso de 10 principios fundamentales para conocer a Dios y crecer en la fe cristiana.",
   "start_url": "./index.html",
   "display": "standalone",
@@ -24,9 +24,9 @@
       "purpose": "any maskable"
     },
     {
-      "src": "./WhatsApp Image 2026-04-14 at 00.37.04.jpeg",
+      "src": "./icon-pb.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]

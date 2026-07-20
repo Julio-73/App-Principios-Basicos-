@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════ SERVICE WORKER - APP OFFLINE ═══════════════════════════════════════════════════════ */
 
-const CACHE_NAME = 'principios-basicos-v27';
+const CACHE_NAME = 'principios-basicos-v28';
 const urlsToCache = [
   './',
   './index.html',
@@ -9,7 +9,8 @@ const urlsToCache = [
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
-  './WhatsApp Image 2026-04-14 at 00.37.04.jpeg',
+  './apple-touch-icon.png',
+  './icon-pb.png',
   './backgrounds/bg_mountains.png',
   './backgrounds/bg_stars.png',
   './backgrounds/bg_ocean.png',
