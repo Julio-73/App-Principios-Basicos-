@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════ SERVICE WORKER - APP OFFLINE ═══════════════════════════════════════════════════════ */
 
-const CACHE_NAME = 'principios-basicos-v30';
+const CACHE_NAME = 'principios-basicos-v31';
 const urlsToCache = [
   './',
   './index.html',

@@ -305,7 +305,7 @@ function switchVerseVersion(ver) {
   if (text) {
     verse.style.opacity = '0';
     setTimeout(function() {
-      verse.textContent = text;
+      verse.innerHTML = formatLessonHTML(text);
       verse.style.opacity = '1';
     }, 120);
   }
@@ -430,6 +430,42 @@ var GLOSSARY = {
   }
 };
 
+function findGlossaryKey(termKey) {
+  if (!termKey) return 'Arrepentimiento';
+  var t = termKey.toLowerCase().trim();
+  
+  if (t.indexOf('discípul') !== -1 || t.indexOf('discipul') !== -1) return 'Discípulo';
+  if (t.indexOf('bautiz') !== -1 || t.indexOf('bautism') !== -1) return 'Bautismo';
+  if (t.indexOf('arrepent') !== -1) return 'Arrepentimiento';
+  if (t.indexOf('iglesi') !== -1) return 'Iglesia';
+  if (t.indexOf('espíritu') !== -1 || t.indexOf('espiritu') !== -1) return 'Espíritu Santo';
+  if (t.indexOf('gracia') !== -1) return 'Gracia';
+  if (t === 'fe' || t === 'la fe') return 'Fe';
+  if (t.indexOf('justific') !== -1) return 'Justificación';
+  if (t.indexOf('santific') !== -1) return 'Santificación';
+  if (t.indexOf('redenc') !== -1 || t.indexOf('redent') !== -1) return 'Redención';
+  if (t.indexOf('evangel') !== -1) return 'Evangelio';
+  if (t.indexOf('mayordom') !== -1) return 'Mayordomía';
+  if (t.indexOf('trinidad') !== -1) return 'Trinidad';
+  if (t.indexOf('oraci') !== -1 || t.indexOf('orar') !== -1) return 'Oración';
+  if (t.indexOf('nacimien') !== -1 || t.indexOf('nacer') !== -1) return 'Nuevo Nacimiento';
+  if (t.indexOf('farise') !== -1) return 'Fariseos';
+  if (t.indexOf('saduce') !== -1) return 'Saduceos';
+  if (t.indexOf('hades') !== -1 || t.indexOf('seol') !== -1) return 'Hades';
+  if (t.indexOf('eunuco') !== -1) return 'Eunuco';
+  if (t.indexOf('sanedr') !== -1 || t.indexOf('concilio') !== -1) return 'Sanedrín';
+  if (t.indexOf('pretorio') !== -1) return 'Pretorio';
+  if (t.indexOf('iniquidad') !== -1) return 'Iniquidad';
+
+  var keys = Object.keys(GLOSSARY);
+  for (var i = 0; i < keys.length; i++) {
+    if (keys[i].toLowerCase() === t || keys[i].toLowerCase().indexOf(t) !== -1 || t.indexOf(keys[i].toLowerCase()) !== -1) {
+      return keys[i];
+    }
+  }
+  return 'Arrepentimiento';
+}
+
 function openGlossaryModal(termKey) {
   var modal = document.getElementById('glossaryModal');
   var badge = document.getElementById('glossaryBadge');
@@ -437,7 +473,7 @@ function openGlossaryModal(termKey) {
   var refEl = document.getElementById('glossaryRef');
   var chipsEl = document.getElementById('glossaryChips');
 
-  var key = termKey || 'Arrepentimiento';
+  var key = findGlossaryKey(termKey);
   var data = GLOSSARY[key] || GLOSSARY['Arrepentimiento'];
 
   if (badge) badge.textContent = data.term;
@@ -473,18 +509,11 @@ function closeGlossaryModal(e) {
 
 function formatLessonHTML(html) {
   if (!html) return '';
-  var regex = /(<[^>]*>)|(\b(Arrepentimiento|Bautismo|Gracia|Justificación|Santificación|Redención|Mayordomía|Espíritu Santo|Trinidad|Discípulo|discípulo|discípulos|Iglesia|iglesia|Oración|Nuevo Nacimiento|Fariseos|fariseos|Saduceos|Hades|Eunuco|Sanedrín|Pretorio|Iniquidad)\b)/gi;
+  var regex = /(<[^>]*>)|(\b(Arrepentimiento|arrepentimiento|arrepentíos|Bautismo|bautismo|bautizados|bautizándolos|Gracia|gracia|Justificación|justificación|Santificación|santificación|Redención|redención|Mayordomía|mayordomía|Espíritu Santo|espíritu santo|Trinidad|trinidad|Discípulo|discípulo|discípulos|Iglesia|iglesia|iglesias|Oración|oración|Nuevo Nacimiento|nuevo nacimiento|Fariseos|fariseos|Saduceos|saduceos|Hades|Eunuco|eunuco|Sanedrín|Pretorio|Iniquidad|iniquidad)\b)/gi;
   return html.replace(regex, function(match, isTag, isWord) {
     if (isTag) return isTag;
-    var lower = isWord.toLowerCase();
-    var cleanWord = isWord.charAt(0).toUpperCase() + isWord.slice(1).toLowerCase();
-    if (lower.indexOf('discípul') !== -1) cleanWord = 'Discípulo';
-    if (lower.indexOf('iglesi') !== -1) cleanWord = 'Iglesia';
-    if (lower.indexOf('espíritu') !== -1) cleanWord = 'Espíritu Santo';
-    if (lower.indexOf('farise') !== -1) cleanWord = 'Fariseos';
-    if (lower.indexOf('nuevo nacimien') !== -1) cleanWord = 'Nuevo Nacimiento';
-    
-    return '<span class="glossary-link" onclick="openGlossaryModal(\'' + cleanWord + '\')">' + isWord + '</span>';
+    var safeWord = isWord.replace(/'/g, "\\'");
+    return '<span class="glossary-link" onclick="openGlossaryModal(\'' + safeWord + '\')">' + isWord + '</span>';
   });
 }
 
@@ -560,7 +589,7 @@ function openModal(ref) {
     var dict = (currentVerseVersion === 'NVI') ? versesNVI : (currentVerseVersion === 'NTV') ? versesNTV : verses;
     var text = dict[cleanRef] || dict[ref] || verses[cleanRef] || verses[ref];
     if (text) {
-      verse.textContent = text;
+      verse.innerHTML = formatLessonHTML(text);
     } else {
       verse.innerHTML = '<p style="color:var(--muted);text-align:center;font-style:normal;">Versículo no disponible offline.<br><br><a href="https://www.biblegateway.com/passage/?search=' + encodeURIComponent(ref) + '&version=NVI" target="_blank" style="color:var(--gold);text-decoration:underline;">Leer ' + ref + ' en Bible Gateway (NVI) →</a></p>';
     }
