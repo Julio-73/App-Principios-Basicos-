@@ -232,6 +232,222 @@ var verses = {
 
 };
 
+/* ── COMPARADOR DE VERSIONES Y DICCIONARIO TEOLÓGICO ── */
+
+var currentVerseVersion = 'RVR1960';
+
+var versesNVI = {
+  'Salmo 119:1-2': '1 Dichosos los que son intachables en su conducta, los que viven conforme a la ley del Señor. 2 Dichosos los que cumplen sus estatutos y lo buscan de todo corazón;',
+  'Mateo 6:25-34': '25 »Por eso les digo: No se preocupen por su vida, qué van a comer o beber; ni por su cuerpo, qué van a vestir. ¿No vale la vida más que la comida, y el cuerpo más que la ropa? 26 Fíjense en las aves del cielo: no siembran ni cosechan ni almacenan en graneros; sin embargo, el Padre celestial las alimenta. ¿No valen ustedes mucho más que ellas? 27 ¿Quién de ustedes, por mucho que se preocupe, puede añadir siquiera una hora al curso de su vida? 28 »Y por qué se preocupan por la ropa? Fíjense en cómo crecen los lirios del campo. No trabajan ni hilan. 29 Sin embargo, les digo que ni Salomón, con todo su esplendor, se vestía como uno de ellos. 30 Si así viste Dios a la hierba del campo, que hoy es y mañana es echada al horno, ¿no hará mucho más por ustedes, gente de poca fe? 31 »Así que no se preocupen diciendo: “¿Qué vamos a comer?” o “¿Qué vamos a beber?” o “¿Con qué nos vamos a vestir?”. 32 Los paganos se afanan por esas cosas, pero el Padre celestial sabe que ustedes las necesitan. 33 Más bien, busquen primeramente el reino de Dios y su justicia, y todas estas cosas les serán añadidas. 34 Por tanto, no se preocupen por el mañana, pues el mañana traerá sus propias preocupaciones. ¡Basta a cada día con sus propios problemas!',
+  'Hechos 17:24-28': '24 El Dios que hizo el mundo y todo lo que en él hay, es Señor del cielo y de la tierra, y no vive en templos hechos por manos humanas. 25 Tampoco es atendido por manos humanas, como si necesitara algo, porque él es quien da vida y aliento y todas las cosas a todos. 26 De un solo hombre hizo todas las naciones para que habitaran toda la tierra; y determinó los períodos de su historia y las fronteras de sus territorios. 27 Esto lo hizo Dios para que todos lo busquen y, aunque sea a tientas, lo encuentren. En verdad, él no está lejos de ninguno de nosotros. 28 “Puesto que en él vivimos, nos movemos y existimos”. Como algunos de sus propios poetas han dicho: “De él somos descendientes”.',
+  'Juan 4:23-24': '23 Pero se acerca la hora, y ya ha llegado, en que los verdaderos adoradores adorarán al Padre en espíritu y en verdad, porque el Padre busca adoradores que lo adoren así. 24 Dios es espíritu, y quienes lo adoran deben hacerlo en espíritu y en verdad.',
+  'Jeremías 29:11-13': '11 Porque yo sé muy bien los planes que tengo para ustedes —afirma el Señor—, planes de bienestar y no de calamidad, a fin de darles un futuro y una esperanza. 12 Entonces me invocarán, y vendrán a orarme, y yo los escucharé. 13 Me buscarán y me encontrarán cuando me busquen de todo corazón.',
+  'Mateo 7:7-8': '7 Pidan, y se les dará; busquen, y encontrarán; llamen, y se les abrirá. 8 Porque todo el que pide, recibe; el que busca, encuentra; y al que llama, se le abre.',
+  '2 Timoteo 3:16-17': '16 Toda la Escritura es inspirada por Dios y útil para enseñar, para reprender, para corregir y para instruir en la justicia, 17 a fin de que el siervo de Dios esté enteramente capacitado para toda buena obra.',
+  'Hebreos 4:12-13': '12 Ciertamente, la palabra de Dios es viva y eficaz. Más cortante que cualquier espada de dos filos, penetra hasta lo más profundo del alma y del espíritu, de las coyunturas y de los tuétanos, y juzga los pensamientos y las intenciones del corazón. 13 Ninguna cosa creada escapan a su vista. Todo está al descubierto y expuesto ante los ojos de aquel a quien hemos de rendir cuentas.',
+  '2 Pedro 1:19-21': '19 Esto hace más segura la palabra de los profetas, a la cual ustedes hacen bien en prestar atención como a una lámpara que brilla en un lugar oscuro, hasta que despunte el día y salga el lucero de la mañana en sus corazones. 20 Ante todo, tengan presente que ninguna profecía de la Escritura surge de la interpretación particular de nadie, 21 porque la profecía no ha tenido jamás su origen en la voluntad humana, sino que los profetas hablaron de parte de Dios, impulsados por el Espíritu Santo.',
+  'Juan 8:31-32': '31 Jesús les dijo a los judíos que habían creído en él: «Si ustedes se mantienen firmes en mi palabra, serán verdaderamente mis discípulos; 32 conocerán la verdad, y la verdad los hará libres».',
+  'Santiago 1:22-25': '22 No se contenten sólo con escuchar la palabra, pues así se engañan ustedes mismos. Llévenla a la práctica. 23 El que escucha la palabra pero no la pone en práctica es como el que se mira el rostro en un espejo; 24 se contempla a sí mismo, se va y en seguida olvida cómo era. 25 Pero el que se fija atentamente en la ley perfecta que da libertad, y persevera en ella, no como oidor olvidadizo sino como hacedor de la obra, será dichoso en lo que hace.',
+  'Mateo 28:18-20': '18 Jesús se acercó a ellos y les dijo: «Se me ha dado toda autoridad en el cielo y en la tierra. 19 Por tanto, vayan y hagan discípulos de todas las naciones, bautizándolos en el nombre del Padre y del Hijo y del Espíritu Santo, 20 enseñándoles a obedecer todo lo que les he mandado a ustedes. Y les aseguro que estaré con ustedes siempre, hasta el fin del mundo».',
+  'Hechos 11:25-26': '25 Después Bernabé fue a Tarso a buscar a Saulo, 26 y cuando lo encontró, lo llevó a Antioquía. Durante todo un año se reunieron allí con la iglesia e instruyeron a mucha gente. Fue en Antioquía donde por primera vez se llamó cristianos a los discípulos.',
+  'Marcos 1:14-18': '14 Después de que encarcelaron a Juan, Jesús fue a Galilea a predicar el evangelio de Dios. 15 «Se ha cumplido el tiempo —decía—. El reino de Dios está cerca. ¡Arrepiéntanse y crean en el evangelio!». 16 Pasando por la orilla del mar de Galilea, Jesús vio a Simón y a su hermano Andrés que echaban la red al lago, pues eran pescadores. 17 «Vengan, síganme —les dijo Jesús—, y los haré pescadores de hombres». 18 Al instante dejaron las redes y lo siguieron.',
+  'Lucas 9:23-26': '23 Dirigiéndose a todos, dijo: «Si alguno quiere ser mi discípulo, que se niegue a sí mismo, lleve su cruz cada día y me siga. 24 Porque el que quiera salvar su vida la perderá; pero el que pierda su vida por mi causa la salvará. 25 ¿De qué le sirve a uno ganar el mundo entero si se destruye o se pierde a sí mismo? 26 Si alguno se avergüenza de mí y de mis palabras, el Hijo del hombre se avergonzará de él cuando venga en su gloria y en la del Padre y de los santos ángeles.',
+  'Romanos 6:3-4': '3 ¿Acaso no saben ustedes que todos los que fuimos bautizados para unirnos con Cristo Jesús, fuimos bautizados en su muerte? 4 Por tanto, mediante el bautismo fuimos sepultados con él en su muerte, a fin de que, así como Cristo resucitó de entre los muertos por la gloria del Padre, también nosotros llevemos una vida nueva.',
+  'Juan 3:1-7': '1 Había un hombre entre los fariseos llamado Nicodemo, un líder de los judíos. 2 Este vino a Jesús de noche y le dijo: «Rabí, sabemos que has venido de Dios como maestro, porque nadie podría hacer las señales milagrosas que tú haces si Dios no estuviera con él». 3 Respondió Jesús: «De veras te aseguro que quien no naciere de nuevo no puede ver el reino de Dios». 4 «¿Cómo puede uno nacer de nuevo siendo ya viejo? —preguntó Nicodemo—. ¿Acaso puede entrar por segunda vez en el vientre de su madre y nacer?». 5 Respondió Jesús: «De veras te aseguro que quien no naciere de agua y del Espíritu no puede entrar en el reino de Dios. 6 Lo que nace del cuerpo es cuerpo; lo que nace del Espíritu es espíritu. 7 No te sorprendas de que te haya dicho: “Tienen que nacer de nuevo”.',
+  'Romanos 3:23': '23 pues todos han pecado y están privados de la gloria de Dios,',
+  'Romanos 6:23': '23 Porque la paga del pecado es muerte, mientras que el regalo de Dios es vida eterna en Cristo Jesús nuestro Señor.',
+  'Hechos 2:38-42': '38 Pedro les respondió: «Arrepiéntanse y bautícese cada uno de ustedes en el nombre de Jesucristo para perdón de sus pecados, y recibirán el don del Espíritu Santo. 39 La promesa es para ustedes, para sus hijos y para todos los que están lejos, para cuantos el Señor nuestro Dios llame». 40 Con muchas otras palabras les advertía y les rogaba: «¡Sálvense de esta generación perversa!». 41 Los que acogieron su mensaje fueron bautizados, y aquel día se unieron a la iglesia unas tres mil personas. 42 Se mantenían firmes en la enseñanza de los apóstoles, en la comunión, en el partimiento del pan y en la oración.',
+  '1 Pedro 2:9-10': '9 Pero ustedes son linaje escogido, real sacerdocio, nación santa, pueblo que pertenece a Dios, para que proclamen las obras maravillosas de aquel que los llamó de las tinieblas a su luz admirable. 10 Antes ustedes no eran pueblo, pero ahora son el pueblo de Dios; antes no habían recibido misericordia, pero ahora ya la han recibido.'
+};
+
+var versesNTV = {
+  'Salmo 119:1-2': '1 Felices son los de conducta intachable, los que siguen las enseñanzas del Señor. 2 Felices son los que obedecen sus leyes y lo buscan con todo el corazón.',
+  'Mateo 6:25-34': '25 »Por eso les digo que no se preocupen por la vida cotidiana, si tendrán suficiente comida y bebida, o suficiente ropa para vestirse. ¿Acaso no es la vida más que la comida y el cuerpo más que la ropa? 26 Miren los pájaros. No siembran ni cosechan ni guardan comida en graneros, porque el Padre celestial los alimenta. ¿Y no son ustedes mucho más valiosos para él que ellos? 27 ¿Acaso con todas sus preocupaciones pueden añadir un solo momento a su vida?... 33 Busquen el reino de Dios por encima de todo lo demás y lleven una vida justa, y él les dará todo lo que necesiten.',
+  'Hechos 17:24-28': '24 Él es el Dios que hizo el mundo y todo lo que hay en él. Dado que es el Señor del cielo y de la tierra, no vive en templos hechos por manos humanas, 25 ni necesita que manos humanas le sirvan, porque él da vida y aliento a todas las cosas. 26 De un solo hombre creó todas las naciones de la tierra... 28 Pues en él vivimos, nos movemos y existimos.',
+  'Juan 4:23-24': '23 Pero se acerca el tiempo —de hecho, ya ha llegado— cuando los verdaderos adoradores adorarán al Padre en espíritu y en verdad. El Padre busca personas que lo adoren de esa manera. 24 Pues Dios es Espíritu, por eso todos los que lo adoran deben hacerlo en espíritu y en verdad.',
+  'Jeremías 29:11-13': '11 Pues yo sé los planes que tengo para ustedes —dice el Señor—. Son planes para lo bueno y no para lo malo, para darles un futuro y una esperanza. 12 En esos días, cuando oren, los escucharé. 13 Si me buscan de todo corazón, me encontrarán.',
+  'Mateo 7:7-8': '7 »Sigan pidiendo y recibirán lo que piden; sigan buscando y encontrarán; sigan llamando y la puerta se les abrirá. 8 Pues todo el que pide, recibe; todo el que busca, encuentra; y a todo el que llama, se le abre la puerta.',
+  '2 Timoteo 3:16-17': '16 Toda la Escritura es inspirada por Dios y es útil para enseñarnos lo que es verdad y para hacernos comprender lo que está mal en nuestra vida. Nos corrige cuando estamos equivocados y nos enseña a hacer lo correcto. 17 Dios la usa para preparar y capacitar a su pueblo para hacer toda buena obra.',
+  'Hebreos 4:12-13': '12 Pues la palabra de Dios es viva y poderosa. Es más afilada que cualquier espada de dos filos; penetra entre el alma y el espíritu, entre la articulación y la médula. Deja al descubierto nuestros pensamientos y deseos más íntimos. 13 No hay nada en toda la creación que esté oculto a Dios. Todo está desnudo y expuesto ante sus ojos.',
+  '2 Pedro 1:19-21': '19 Además, tenemos la voz de los profetas, que nos da aún más certeza. Ustedes deben prestar mucha atención a lo que ellos escribieron, porque sus palabras son como una lámpara que brilla en un lugar oscuro, hasta que despunte el día y salga el lucero de la mañana en sus corazones.',
+  'Juan 8:31-32': '31 Jesús les dijo a los judíos que habían creído en él: «Si ustedes permanecen fieles a mis enseñanzas, serán verdaderamente mis discípulos; 32 y conocerán la verdad, y la verdad los hará libres».',
+  'Santiago 1:22-25': '22 No se engañen a ustedes mismos limitándose a escuchar la palabra de Dios; tienen que ponerla en práctica. 23 Pues, si escuchan la palabra pero no la obedecen, es como si se miraran la cara en un espejo; 24 se ven a sí mismos, se alejan y se olvidan de cómo se ven. 25 Pero si miran atentamente en la ley perfecta que les da libertad, y la ponen en práctica y no olvidan lo que escucharon, entonces Dios los bendecirá por hacerla.',
+  'Mateo 28:18-20': '18 Jesús se acercó y dijo a sus discípulos: «Se me ha dado toda autoridad en el cielo y en la tierra. 19 Por lo tanto, vayan y hagan discípulos de todas las naciones, bautizándolos en el nombre del Padre y del Hijo y del Espíritu Santo. 20 Enseñen a estos nuevos discípulos a obedecer todos los mandatos que les he dado. Y les aseguro que estoy con ustedes todos los días, hasta el fin del mundo».',
+  'Hechos 11:25-26': '25 Después Bernabé fue a Tarso a buscar a Saulo. 26 Cuando lo encontró, lo llevó de regreso a Antioquía. Los dos se reunieron con la iglesia allí durante todo un año y enseñaron a grandes multitudes. (Fue en Antioquía donde a los creyentes se les llamó “cristianos” por primera vez).',
+  'Marcos 1:14-18': '14 Más tarde, después de que encarcelaron a Juan, Jesús fue a Galilea, donde predicó la Buena Noticia de Dios. 15 «¡Por fin ha llegado el tiempo! —anunciaba—. ¡El reino de Dios está cerca! Arrepiéntanse de sus pecados y crean en la Buena Noticia». 16 Cierto día, mientras Jesús caminaba a lo largo de la orilla del mar de Galilea, vio a Simón y a su hermano Andrés echando la red al agua, porque se ganaban la vida pescando. 17 Jesús los llamó: «Vengan, síganme, ¡y yo les enseñaré a pescar hombres!». 18 De inmediato dejaron sus redes y lo siguieron.',
+  'Lucas 9:23-26': '23 Dirigiéndose a la multitud, dijo: «Si alguno de ustedes quiere ser mi seguidor, tiene que abandonar su manera de vivir egoísta, tomar su cruz cada día y seguirme. 24 Si tratas de aferrarte a tu vida, la perderás; pero si entregas tu vida por mi causa, la salvarás. 25 ¿Qué beneficio obtienes si ganas el mundo entero pero te pierdes o te destruyes a ti mismo? 26 Si alguien se avergüenza de mí y de mis palabras, el Hijo del Hombre se avergonzará de esa persona cuando venga en su gloria.',
+  'Romanos 6:3-4': '3 ¿O acaso olvidaron que, cuando fuimos unidos a Cristo Jesús en el bautismo, nos unimos a él en su muerte? 4 Pues mediante el bautismo fuimos sepultados con Cristo y morimos. Y, así como Cristo resucitó de los muertos por el glorioso poder del Padre, ahora nosotros también podemos vivir una vida nueva.',
+  'Juan 3:1-7': '1 Había un hombre llamado Nicodemo, un líder religioso judío, del grupo de los fariseos. 2 Una noche, fue a hablar con Jesús: «Rabí —le dijo—, todos sabemos que Dios te ha enviado para enseñarnos. Las señales milagrosas que haces demuestran que Dios está contigo». 3 Jesús le respondió: «Te digo la verdad, a menos que nazcas de nuevo, no puedes ver el reino de Dios». 4 «¿Qué quieres decir? —exclamó Nicodemo—. ¿Cómo puede un hombre mayor volver al vientre de su madre y nacer de nuevo?». 5 Jesús le contestó: «Te digo la verdad, nadie puede entrar en el reino de Dios si no nace de agua y del Espíritu. 6 El ser humano solo puede dar a luz la vida humana, pero el Espíritu da a luz la vida espiritual. 7 Así que no te sorprendas cuando digo: “Tienen que nacer de nuevo”.',
+  'Romanos 3:23': '23 Pues todos hemos pecado; nadie alcanza la meta del glorioso ideal de Dios.',
+  'Romanos 6:23': '23 Pues la paga que deja el pecado es la muerte, pero el regalo que Dios da es la vida eterna por medio de Cristo Jesús nuestro Señor.',
+  'Hechos 2:38-42': '38 Pedro contestó: «Cada uno de ustedes debe arrepentirse de sus pecados y volver a Dios, y ser bautizado en el nombre de Jesucristo para el perdón de sus pecados. Entonces recibirán el regalo del Espíritu Santo. 39 Esta promesa es para ustedes, para sus hijos y para los que están lejos... 40 Luego Pedro siguió predicando por un buen rato, les advertía con insistencia a todos sus oyentes: «¡Sálvense de esta generación perversa!». 41 Los que creyeron lo que Pedro dijo fueron bautizados y sumados a la iglesia ese día, como tres mil en total. 42 Todos los creyentes se dedicaban a las enseñanzas de los apóstoles, a la comunión fraterna, a compartir el pan y a la oración.',
+  '1 Pedro 2:9-10': '9 Pero ustedes no son así porque son un pueblo elegido. Son sacerdotes del Rey, una nación santa, posesión exclusiva de Dios. Por esa razón pueden mostrar a otros la bondad de Dios, pues él los llamó a salir de la oscuridad y entrar en su luz maravillosa. 10 «Antes no tenían identidad como pueblo, ahora son el pueblo de Dios. Antes no recibieron misericordia, ahora han recibido la misericordia de Dios».'
+};
+
+function switchVerseVersion(ver) {
+  currentVerseVersion = ver;
+  document.querySelectorAll('#versionTabs .v-tab').forEach(function(btn) {
+    btn.classList.remove('active');
+    if (btn.textContent.trim() === ver) {
+      btn.classList.add('active');
+    }
+  });
+
+  var verse = document.getElementById('modalVerse');
+  if (!verse || !S.curVerseRef) return;
+
+  var ref = S.curVerseRef;
+  var cleanRef = ref.split(' — ')[0].split(' - ')[0].trim();
+  
+  var dict = (ver === 'NVI') ? versesNVI : (ver === 'NTV') ? versesNTV : verses;
+  var text = dict[cleanRef] || dict[ref] || verses[cleanRef] || verses[ref];
+  
+  if (text) {
+    verse.style.opacity = '0';
+    setTimeout(function() {
+      verse.textContent = text;
+      verse.style.opacity = '1';
+    }, 120);
+  }
+
+  // Actualizar la vista previa del diseñador de imagen si está visible
+  var cardGen = document.getElementById('cardGenerator');
+  if (cardGen && cardGen.style.display !== 'none' && typeof updateCardPreview === 'function') {
+    updateCardPreview();
+  }
+}
+
+var GLOSSARY = {
+  'Arrepentimiento': {
+    term: 'Arrepentimiento (Metanoia)',
+    def: 'Un cambio profundo de mente, corazón y dirección. No es solo sentir remordimiento, sino dar la vuelta 180° para buscar a Dios y caminar en vida nueva.',
+    ref: 'Marcos 1:15 & Hechos 3:19'
+  },
+  'Bautismo': {
+    term: 'Bautismo (Baptizo)',
+    def: 'Sepultura y resurrección simbólica bajo el agua. Representa públicamente la muerte al pecado y el nuevo nacimiento espiritual en Jesucristo.',
+    ref: 'Romanos 6:3-4 & Hechos 2:38'
+  },
+  'Fe': {
+    term: 'Fe (Pistis)',
+    def: 'La certeza de lo que se espera y la convicción de lo que no se ve. Es confiar plenamente en las promesas y la fidelidad inmutable de Dios.',
+    ref: 'Hebreos 11:1 & Romanos 10:17'
+  },
+  'Gracia': {
+    term: 'Gracia (Charis)',
+    def: 'El favor inmerecido de Dios hacia el ser humano. El regalo gratuito de la salvación y el perdón que recibimos sin haber hecho méritos.',
+    ref: 'Efesios 2:8-9 & Tito 2:11'
+  },
+  'Justificación': {
+    term: 'Justificación',
+    def: 'La declaración legal de Dios por la cual el pecador arrepentido es constituido justo e inocente mediante la fe en la sangre de Cristo.',
+    ref: 'Romanos 5:1 & Gálatas 2:16'
+  },
+  'Santificación': {
+    term: 'Santificación',
+    def: 'El proceso continuo guiado por el Espíritu Santo mediante el cual el creyente es consagrado, limpio del mal y transformado al carácter de Jesús.',
+    ref: '1 Tesalonicenses 4:3 & 1 Pedro 1:15-16'
+  },
+  'Redención': {
+    term: 'Redención',
+    def: 'Rescate o pago de libertad. Jesús pagó el precio supremo con su propia sangre en la cruz para librarnos de la esclavitud del pecado.',
+    ref: 'Efesios 1:7 & Colosenses 1:14'
+  },
+  'Evangelio': {
+    term: 'Evangelio (Euangelion)',
+    def: 'Buenas Nuevas de gran gozo. El mensaje glorioso del amor de Dios, la encarnación, muerte, resurrección y reino prometido de Jesucristo.',
+    ref: 'Lucas 2:10 & Romanos 1:16'
+  },
+  'Mayordomía': {
+    term: 'Mayordomía',
+    def: 'Administración fiel y responsable de todo lo que Dios nos confía: nuestro tiempo, vida, cuerpo, dones, recursos y mensaje.',
+    ref: '1 Corintios 4:1-2 & 1 Pedro 4:10'
+  },
+  'Espíritu Santo': {
+    term: 'Espíritu Santo (Parácleto)',
+    def: 'La tercera Persona de la Santísima Trinidad. El Consolador, Guía y Consejero divino enviado a morar en el corazón de los creyentes.',
+    ref: 'Juan 14:16-26 & Hechos 1:8'
+  },
+  'Trinidad': {
+    term: 'Trinidad',
+    def: 'Un solo Dios verdadero manifestado eternamente en tres Personas divinas co-iguales: el Padre, el Hijo y el Espíritu Santo.',
+    ref: 'Mateo 28:19 & 2 Corintios 13:14'
+  },
+  'Discípulo': {
+    term: 'Discípulo (Mathetes)',
+    def: 'Un aprendiz, seguidor e imitador de Jesucristo que renuncia al egoísmo para vivir bajo el señorío y las enseñanzas de su Maestro.',
+    ref: 'Lucas 9:23 & Juan 13:35'
+  },
+  'Iglesia': {
+    term: 'Iglesia (Ekklesia)',
+    def: 'La asamblea o familia de creyentes convocados fuera del mundo para formar un solo cuerpo vivo en Cristo y proclamar su verdad.',
+    ref: '1 Timoteo 3:15 & Efesios 1:22-23'
+  },
+  'Oración': {
+    term: 'Oración',
+    def: 'La conversación íntima, sincera y llena de fe con nuestro Padre Celestial en el nombre de Jesús y guiados por el Espíritu Santo.',
+    ref: 'Mateo 6:6 & Filipenses 4:6'
+  },
+  'Nuevo Nacimiento': {
+    term: 'Nuevo Nacimiento (Regeneración)',
+    def: 'La transformación espiritual obrada por el Espíritu Santo mediante la cual una persona recibe vida espiritual nueva al creer en Cristo.',
+    ref: 'Juan 3:3-7 & 2 Corintios 5:17'
+  }
+};
+
+function openGlossaryModal(termKey) {
+  var modal = document.getElementById('glossaryModal');
+  var badge = document.getElementById('glossaryBadge');
+  var defEl = document.getElementById('glossaryDef');
+  var refEl = document.getElementById('glossaryRef');
+  var chipsEl = document.getElementById('glossaryChips');
+
+  var key = termKey || 'Arrepentimiento';
+  var data = GLOSSARY[key] || GLOSSARY['Arrepentimiento'];
+
+  if (badge) badge.textContent = data.term;
+  if (defEl) defEl.textContent = data.def;
+  if (refEl) refEl.innerHTML = '📖 <strong>Pasajes clave:</strong> ' + data.ref;
+
+  if (chipsEl) {
+    var keys = Object.keys(GLOSSARY);
+    var html = '';
+    keys.forEach(function(k) {
+      var isCurrent = (k === key);
+      html += '<button class="glossary-chip ' + (isCurrent ? 'active' : '') + '" onclick="openGlossaryModal(\'' + k + '\')">' + k + '</button>';
+    });
+    chipsEl.innerHTML = html;
+  }
+
+  if (modal) {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeGlossaryModal(e) {
+  if (e && e.target && !e.target.classList.contains('modal-overlay') && !e.target.classList.contains('modal-close')) {
+    return;
+  }
+  var modal = document.getElementById('glossaryModal');
+  if (modal) {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+}
+
+function formatLessonHTML(html) {
+  if (!html) return '';
+  var regex = /(<[^>]*>)|(\b(Arrepentimiento|Bautismo|Gracia|Justificación|Santificación|Redención|Mayordomía|Espíritu Santo|Trinidad|Discípulo|Iglesia|Oración|Nuevo Nacimiento)\b)/gi;
+  return html.replace(regex, function(match, isTag, isWord) {
+    if (isTag) return isTag;
+    var cleanWord = isWord.charAt(0).toUpperCase() + isWord.slice(1).toLowerCase();
+    if (cleanWord === 'Espíritu santo') cleanWord = 'Espíritu Santo';
+    if (cleanWord === 'Nuevo nacimiento') cleanWord = 'Nuevo Nacimiento';
+    return '<span class="glossary-link" onclick="openGlossaryModal(\'' + cleanWord + '\')">' + isWord + ' 📖</span>';
+  });
+}
+
 /* ── MODAL SYSTEM ───────────────────────────────── */
 
 function openModal(ref) {
@@ -293,9 +509,16 @@ function openModal(ref) {
 
   document.body.style.overflow = 'hidden';
 
+  currentVerseVersion = 'RVR1960';
+  document.querySelectorAll('#versionTabs .v-tab').forEach(function(btn) {
+    btn.classList.remove('active');
+    if (btn.textContent.trim() === 'RVR1960') btn.classList.add('active');
+  });
+
   setTimeout(function(){
     var cleanRef = ref.split(' — ')[0].split(' - ')[0].trim();
-    var text = verses[cleanRef] || verses[ref];
+    var dict = (currentVerseVersion === 'NVI') ? versesNVI : (currentVerseVersion === 'NTV') ? versesNTV : verses;
+    var text = dict[cleanRef] || dict[ref] || verses[cleanRef] || verses[ref];
     if (text) {
       verse.textContent = text;
     } else {
@@ -1627,7 +1850,7 @@ var vid=p.vid?'<div class="video-outer"><div class="video-wrap"><iframe src="htt
 
 var done=S.done.indexOf(p.id)!==-1;
 
-return '<div class="pview" id="pv'+i+'"><div class="hero"><div class="hero-glow" style="background:radial-gradient(ellipse at 72% 50%,'+p.color+'18 0%,transparent 65%);"></div><div class="hero-grad"></div><div class="hero-n">✦ Principio '+p.id+' de '+PP.length+'</div><span class="hero-ico">'+ICONS[p.icono]+'</span><h1 class="hero-h">'+p.titulo+'</h1><p class="hero-d">'+p.desc+'</p><div style="margin-top:20px;position:relative;z-index:2;"><button class="note-export-btn" onclick="startAudio('+i+')" style="background:var(--gold-subtle);border-color:var(--gold);color:var(--gold);margin-top:0;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;cursor:pointer;transition:all var(--t2);"><span style="font-size:15px;">🔊</span> Escuchar Lección</button></div><div class="hero-line" style="background:'+p.color+';"></div></div><div class="pbody">'+p.html+'<div class="lesson-actions" style="margin-top:20px;margin-bottom:20px;text-align:right;"><button class="note-export-btn" onclick="exportNotes('+i+')" style="margin-top:0;"><span style="font-size:14px;margin-right:4px;">📥</span> Exportar mis notas</button></div><div class="slabel"><div class="slabel-ico">'+ICONS.video+'</div><div class="slabel-txt">Video Tutorial</div><div class="sdiv"></div></div>'+vid+'<div class="notes-section" id="notes-'+p.id+'"><h3>📝 Notas personales</h3><textarea class="notes-textarea" id="nt-'+p.id+'" placeholder="Escribe tus notas sobre este principio..."></textarea><button class="notes-btn" onclick="saveNotes('+p.id+')">💾 Guardar</button><span class="notes-saved" id="ns-'+p.id+'">✓ Guardado</span></div></div><div class="navfoot"><button class="nbtn" onclick="go('+(i-1)+')"'+(i===0?' disabled':'')+'>← Anterior</button><div class="ncenter"><button class="cbtn'+(done?' done':'')+'" id="cb'+i+'" onclick="markDone('+p.id+','+i+')">'+(done?'✓ Completado':'Marcar completado')+'</button></div><button class="nbtn primary" onclick="'+(i<PP.length-1?'go('+(i+1)+')':'go(-1)')+'">'+(i<PP.length-1?'Siguiente →':'Inicio')+'</button></div></div>';
+return '<div class="pview" id="pv'+i+'"><div class="hero"><div class="hero-glow" style="background:radial-gradient(ellipse at 72% 50%,'+p.color+'18 0%,transparent 65%);"></div><div class="hero-grad"></div><div class="hero-n">✦ Principio '+p.id+' de '+PP.length+'</div><span class="hero-ico">'+ICONS[p.icono]+'</span><h1 class="hero-h">'+p.titulo+'</h1><p class="hero-d">'+p.desc+'</p><div style="margin-top:20px;position:relative;z-index:2;"><button class="note-export-btn" onclick="startAudio('+i+')" style="background:var(--gold-subtle);border-color:var(--gold);color:var(--gold);margin-top:0;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;cursor:pointer;transition:all var(--t2);"><span style="font-size:15px;">🔊</span> Escuchar Lección</button></div><div class="hero-line" style="background:'+p.color+';"></div></div><div class="pbody">'+formatLessonHTML(p.html)+'<div class="lesson-actions" style="margin-top:20px;margin-bottom:20px;text-align:right;"><button class="note-export-btn" onclick="exportNotes('+i+')" style="margin-top:0;"><span style="font-size:14px;margin-right:4px;">📥</span> Exportar mis notas</button></div><div class="slabel"><div class="slabel-ico">'+ICONS.video+'</div><div class="slabel-txt">Video Tutorial</div><div class="sdiv"></div></div>'+vid+'<div class="notes-section" id="notes-'+p.id+'"><h3>📝 Notas personales</h3><textarea class="notes-textarea" id="nt-'+p.id+'" placeholder="Escribe tus notas sobre este principio..."></textarea><button class="notes-btn" onclick="saveNotes('+p.id+')">💾 Guardar</button><span class="notes-saved" id="ns-'+p.id+'">✓ Guardado</span></div></div><div class="navfoot"><button class="nbtn" onclick="go('+(i-1)+')"'+(i===0?' disabled':'')+'>← Anterior</button><div class="ncenter"><button class="cbtn'+(done?' done':'')+'" id="cb'+i+'" onclick="markDone('+p.id+','+i+')">'+(done?'✓ Completado':'Marcar completado')+'</button></div><button class="nbtn primary" onclick="'+(i<PP.length-1?'go('+(i+1)+')':'go(-1)')+'">'+(i<PP.length-1?'Siguiente →':'Inicio')+'</button></div></div>';
 
 }).join('');
 

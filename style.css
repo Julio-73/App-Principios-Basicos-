@@ -1851,3 +1851,121 @@ body.light .sc-card.hl-card-pink { background: linear-gradient(rgba(239, 71, 111
 .sb-hl-dot-indicator.color-green { background-color: #06d6a0; }
 .sb-hl-dot-indicator.color-blue { background-color: #118ab2; }
 .sb-hl-dot-indicator.color-pink { background-color: #ef476f; }
+
+/* ── COMPARADOR DE VERSIONES BÍBLICAS ── */
+.version-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  width: fit-content;
+}
+body.light .version-tabs {
+  background: rgba(0, 0, 0, 0.04);
+}
+.v-tab {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--t1);
+  touch-action: manipulation;
+}
+.v-tab:hover {
+  color: var(--gold);
+}
+.v-tab.active {
+  background: var(--gold);
+  color: var(--bg);
+  box-shadow: 0 2px 8px var(--gold-glow);
+}
+body.light .v-tab.active {
+  color: #FFFFFF !important;
+}
+
+/* ── DICCIONARIO TEOLÓGICO Y GLOSARIO ── */
+.glossary-link {
+  color: var(--gold);
+  border-bottom: 1px dashed var(--gold);
+  cursor: pointer;
+  padding: 0 2px;
+  border-radius: 4px;
+  transition: all var(--t1);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 600;
+}
+.glossary-link:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-bottom-style: solid;
+}
+.glossary-term-badge {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.glossary-term-def {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 14px 16px;
+  border-radius: 12px;
+  border-left: 3px solid var(--gold);
+}
+body.light .glossary-term-def {
+  background: rgba(0, 0, 0, 0.03);
+}
+.glossary-term-ref {
+  font-size: 13px;
+  color: var(--cream2);
+  margin-bottom: 10px;
+}
+.glossary-list-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 160px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.glossary-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all var(--t1);
+  touch-action: manipulation;
+}
+body.light .glossary-chip {
+  background: rgba(0, 0, 0, 0.04);
+}
+.glossary-chip:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+.glossary-chip.active {
+  background: var(--gold);
+  color: var(--bg);
+  border-color: var(--gold);
+}
+body.light .glossary-chip.active {
+  color: #FFFFFF !important;
+}
