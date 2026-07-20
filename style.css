@@ -1894,18 +1894,16 @@ body.light .v-tab.active {
 /* ── DICCIONARIO TEOLÓGICO Y GLOSARIO ── */
 .glossary-link {
   color: var(--gold);
-  border-bottom: 1px dashed var(--gold);
+  border-bottom: 1px dotted rgba(212, 175, 55, 0.7);
   cursor: pointer;
-  padding: 0 2px;
-  border-radius: 4px;
+  padding: 0 1px;
+  border-radius: 2px;
   transition: all var(--t1);
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
+  display: inline;
   font-weight: 600;
 }
 .glossary-link:hover {
-  background: rgba(212, 175, 55, 0.15);
+  background: rgba(212, 175, 55, 0.18);
   border-bottom-style: solid;
 }
 .glossary-term-badge {

@@ -392,6 +392,41 @@ var GLOSSARY = {
     term: 'Nuevo Nacimiento (Regeneración)',
     def: 'La transformación espiritual obrada por el Espíritu Santo mediante la cual una persona recibe vida espiritual nueva al creer en Cristo.',
     ref: 'Juan 3:3-7 & 2 Corintios 5:17'
+  },
+  'Fariseos': {
+    term: 'Fariseos',
+    def: 'Grupo religioso judío muy estricto en el cumplimiento externo de las leyes y tradiciones antiguas, frecuentemente confrontados por Jesús por descuidar el amor y la justicia.',
+    ref: 'Mateo 23:23-27 & Marcos 7:5-9'
+  },
+  'Saduceos': {
+    term: 'Saduceos',
+    def: 'Grupo de líderes judíos pertenecientes a la aristocracia y al sacerdocio que no creían en la resurrección de los muertos ni en los ángeles.',
+    ref: 'Mateo 22:23-33 & Hechos 23:8'
+  },
+  'Hades': {
+    term: 'Hades / Seol',
+    def: 'Término usado en la Biblia para referirse a la morada de los muertos o el reino de las tinieblas vencido por la victoria de Jesús.',
+    ref: 'Mateo 16:18 & Apocalipsis 1:18'
+  },
+  'Eunuco': {
+    term: 'Eunuco',
+    def: 'Alto funcionario de confianza encargados del tesoro o gobierno en los imperios antiguos, como el etíope bautizado por Felipe.',
+    ref: 'Hechos 8:27-39'
+  },
+  'Sanedrín': {
+    term: 'Sanedrín (Concilio)',
+    def: 'El corte o tribunal supremo religioso y judicial de los judíos en Jerusalén, compuesto por 71 ancianos y gobernado por el Sumo Sacerdote.',
+    ref: 'Lucas 23:50 & Hechos 4:5-7'
+  },
+  'Pretorio': {
+    term: 'Pretorio',
+    def: 'Palacio o cuartel general del gobernador romano en Jerusalén donde Jesús fue juzgado por Poncio Pilato.',
+    ref: 'Mateo 27:27 & Juan 18:28'
+  },
+  'Iniquidad': {
+    term: 'Iniquidad',
+    def: 'Perversidad o maldad profunda que tuerce la voluntad de Dios y causa separación espiritual entre el hombre y su Creador.',
+    ref: 'Isaías 59:2 & Salmo 51:2'
   }
 };
 
@@ -438,13 +473,18 @@ function closeGlossaryModal(e) {
 
 function formatLessonHTML(html) {
   if (!html) return '';
-  var regex = /(<[^>]*>)|(\b(Arrepentimiento|Bautismo|Gracia|Justificación|Santificación|Redención|Mayordomía|Espíritu Santo|Trinidad|Discípulo|Iglesia|Oración|Nuevo Nacimiento)\b)/gi;
+  var regex = /(<[^>]*>)|(\b(Arrepentimiento|Bautismo|Gracia|Justificación|Santificación|Redención|Mayordomía|Espíritu Santo|Trinidad|Discípulo|discípulo|discípulos|Iglesia|iglesia|Oración|Nuevo Nacimiento|Fariseos|fariseos|Saduceos|Hades|Eunuco|Sanedrín|Pretorio|Iniquidad)\b)/gi;
   return html.replace(regex, function(match, isTag, isWord) {
     if (isTag) return isTag;
+    var lower = isWord.toLowerCase();
     var cleanWord = isWord.charAt(0).toUpperCase() + isWord.slice(1).toLowerCase();
-    if (cleanWord === 'Espíritu santo') cleanWord = 'Espíritu Santo';
-    if (cleanWord === 'Nuevo nacimiento') cleanWord = 'Nuevo Nacimiento';
-    return '<span class="glossary-link" onclick="openGlossaryModal(\'' + cleanWord + '\')">' + isWord + ' 📖</span>';
+    if (lower.indexOf('discípul') !== -1) cleanWord = 'Discípulo';
+    if (lower.indexOf('iglesi') !== -1) cleanWord = 'Iglesia';
+    if (lower.indexOf('espíritu') !== -1) cleanWord = 'Espíritu Santo';
+    if (lower.indexOf('farise') !== -1) cleanWord = 'Fariseos';
+    if (lower.indexOf('nuevo nacimien') !== -1) cleanWord = 'Nuevo Nacimiento';
+    
+    return '<span class="glossary-link" onclick="openGlossaryModal(\'' + cleanWord + '\')">' + isWord + '</span>';
   });
 }
 
